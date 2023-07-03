@@ -27,6 +27,7 @@ services:
                 "0.0.0.0",
                 "--port",
                 "8000",
+                "--reload", # this for hot-reload in dev
             ] # override Dockerfile CMD
     psql:
         image: postgres:latest
