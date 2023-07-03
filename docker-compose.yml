@@ -29,6 +29,8 @@ services:
                 "8000",
                 "--reload", # this for hot-reload in dev
             ] # override Dockerfile CMD
+        depends_on:
+            - psql
     psql:
         image: postgres:latest
         container_name: postgres
