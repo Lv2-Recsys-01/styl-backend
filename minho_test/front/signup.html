@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign Up</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+            background-color: #4caf50;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: none;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" id="uname" required>
+        <label for="pwd"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" id="pwd" required>
+        <button class="button" onclick="signup()">Sign Up</button>
+    </div>
+
+    <script>
+        function signup() {
+            const username = document.getElementById('uname').value;
+            const password = document.getElementById('pwd').value;
+    
+            fetch('http://127.0.0.1:8000/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            }).then((response) => {
+                return response.json(); // Parse the response body as JSON
+            }).then((data) => {
+                // "data" is the object resulting from parsing the response body as JSON
+                console.log(data);
+                if (data.id && data.username) {
+                    // Sign up was successful, redirect to login page or home page
+                    window.location.href = 'login';
+                } else {
+                    // Sign up was not successful, show an error message
+                    alert('Could not sign up, please try again');
+                }
+            }).catch((error) => {
+                // Handle network errors here
+                console.log(error);
+                alert('A network error occurred');
+            });
+        }
+    </script>    
+</body>
+
+</html>

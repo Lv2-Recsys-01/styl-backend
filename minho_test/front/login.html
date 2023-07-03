@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Log In</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+            background-color: #4caf50;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: none;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Log In</h2>
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" id="uname" required>
+        <label for="pwd"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" id="pwd" required>
+        <button class="button" onclick="login()">Log In</button>
+        <button class="button" onclick="window.location.href='signup'">Sign Up</button>
+        <button class="button" onclick="window.location.href='home'">Start without log-in</button>
+    </div>
+
+    <script>
+        function login() {
+            // You can put your AJAX or fetch() request here.
+            const username = document.getElementById('uname').value;
+            const password = document.getElementById('pwd').value;
+            
+            // This is just an example. Replace the URL and the method according to your API.
+            // fetch: 'http://127.0.0.1:8000/login' 이 주소의 서버에 POST request 보냄
+            fetch('http://127.0.0.1:8000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            // response가 오면 json으로 파싱
+            }).then((response) => {
+                return response.json();  // Parse response body as JSON
+            }).then((data) => {
+                // "data" is the object resulting from parsing the response body as JSON
+                console.log(data);
+                // 받은 data에 id랑 username이 있으면 home으로 이동
+                if (data.id && data.username) {
+                    // Log in was successful, do something, e.g. redirect to another page
+                    window.location.href = 'home';
+                // 없으면 실패 메세지 띄움
+                } else {
+                    // Log in was not successful, show an error message
+                    alert('Incorrect username or password');
+                }
+            }).catch((error) => {
+                // Handle network errors here
+                console.log(error);
+            });
+        }
+    </script>
+</body>
+
+</html>
