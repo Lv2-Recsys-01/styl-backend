@@ -2,14 +2,14 @@ FROM python:3.10
 
 LABEL maintainer="darrenkwondev46@gmail.com"
 
-WORKDIR /code
+WORKDIR /app
 
 # deps install cache
-COPY ./requirements.txt /code/requirements.txt
-RUN pip3 install -r /code/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
+RUN pip3 install -r /app/requirements.txt
 
 # copy source
-COPY ./src /code/src
+COPY ./src /app/src
 
 # EXPOSE와 별도로 명령어 실행시 포트 명시 해야함.
 EXPOSE 8000
