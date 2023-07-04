@@ -6,6 +6,11 @@ from .database import engine, Base, get_db
 from .schema import UserBase, UserOut, UserSignUp
 from .models import User
 
+# [로그인 없이 사용] 
+# 랜덤 uuid(와 같은 식별자)를 프론트 단에서 생성
+# -> LS에 저장
+# -> 매번 요청시 해당 값을 백단에 넘기기
+# -> 백단은 해당 식별자를 가지고 활용
 
 origins = [
     "http://localhost",
