@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, ARRAY
+from sqlalchemy import (ARRAY, Column, DateTime, Float, ForeignKey, Integer,
+                        String)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -44,9 +45,9 @@ class Outfit(Base):
 class Like(Base):
     __tablename__ = "like"
 
-    user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     user = relationship("User")
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     outfit = relationship("Outfit")
     timestamp = Column(DateTime, nullable=False)
 
@@ -54,9 +55,9 @@ class Like(Base):
 class Click(Base):
     __tablename__ = "click"
 
-    user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     user = relationship("User")
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     outfit = relationship("Outfit")
     cnt = Column(Integer)
     timestamp = Column(DateTime, nullable=False)
@@ -65,15 +66,16 @@ class Click(Base):
 class Staytime(Base):
     __tablename__ = "staytime"
 
-    user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     user = relationship("User")
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     outfit = relationship("Outfit")
     staytime = Column(Float)
 
+
 class Similar(Base):
     __tablename__ = "similar"
-    
+
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     outfit = relationship("Outfit")
     similar_outfits = Column(ARRAY(Integer))
