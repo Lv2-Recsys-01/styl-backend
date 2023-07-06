@@ -12,14 +12,12 @@ class User(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    login_id = Column(String, unique=True, index=True)
+    login_id = Column(String, unique=True, index=True) # -> index 필요??
     login_pwd = Column(String)
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
     staytime = relationship("Staytime", back_populates="user")
-
-
 
     def verify_password(self, plain_password):
         return pwd_context.verify(plain_password, self.login_pwd)
@@ -35,7 +33,7 @@ class Outfit(Base):
     gender = Column(String)
     age = Column(Integer)
     img_url = Column(String)
-    date = Column(DateTime, nullable=False) # 촬영일
+    date = Column(DateTime, nullable=False)
     reporter = Column(String)
     style = Column(String)
     origin_url = Column(String)
@@ -49,7 +47,6 @@ class Outfit(Base):
     clicks = relationship("Click", back_populates="outfit")
     staytimes = relationship("Staytime", back_populates="outfit")
     similars = relationship("Similar", back_populates="outfit")
-
 
 
 class Like(Base):
