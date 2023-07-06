@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, ARRAY
+from sqlalchemy import (ARRAY, Column, DateTime, Float, ForeignKey, Integer,
+                        String)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -71,9 +72,10 @@ class Staytime(Base):
     outfit = relationship("Outfit")
     staytime = Column(Float)
 
+
 class Similar(Base):
     __tablename__ = "similar"
-    
+
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     outfit = relationship("Outfit")
     similar_outfits = Column(ARRAY(Integer))
