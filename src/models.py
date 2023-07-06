@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 from sqlalchemy import (ARRAY, Column, DateTime, Float, ForeignKey, Integer,
-                        String)
+                        String, Char)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -30,7 +30,7 @@ class Outfit(Base):
     __tablename__ = "outfits"
 
     outfit_id = Column(Integer, primary_key=True, index=True)
-    gender = Column(String)
+    gender = Column(Char(2))
     age = Column(Integer)
     img_url = Column(String)
     date = Column(DateTime, nullable=False)
