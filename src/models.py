@@ -1,150 +1,99 @@
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey, func
-from sqlalchemy.orm import relationship
 from passlib.context import CryptContext
-from .database import Base  
+from sqlalchemy import (ARRAY, Column, DateTime, ForeignKey, Integer,
+                        String, CHAR, Boolean)
+from sqlalchemy.orm import relationship
+
+from .database import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    login_id = Column(String, unique=True, index=True)
-    login_pwd = Column(String)
+    user_name = Column(String, unique=True, index=True)
+    user_pwd = Column(String)
 
-    likes = relationship("Like", back_populates="users")
-    clicks = relationship("Click", back_populates="users")
-    sessions = relationship("UserSession", back_populates="users")
-    
+    likes = relationship("Like", back_populates="user")
+    clicks = relationship("Click", back_populates="user")
+    session = relationship("UserSession", back_populates="user")
+
     def verify_password(self, plain_password):
-        return pwd_context.verify(plain_password, self.login_pwd) 
+        return pwd_context.verify(plain_password, self.login_pwd)
 
     def hash_password(self, plain_password):
         self.login_pwd = pwd_context.hash(plain_password)
-        
 
-class UserSession(Base):
-    __tablename__ = "sessions"
 
-    session_id = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"))
+class Outfit(Base):
+    __tablename__ = "outfit"
 
-    likes = relationship("Like", back_populates="sessions")
-    clicks = relationship("Click", back_populates="sessions")
-    users = relationship("User", back_populates="sessions")
-    
+    outfit_id = Column(Integer, primary_key=True, index=True)
+    img_url = Column(String)
+    # gender = Column(CHAR)
+    # age = Column(Integer)
+    # origin_url = Column(String)
+    # reporter = Column(String)
+    # tags = Column(ARRAY(String))
+    # brands = Column(ARRAY(String))
+    # region = Column(String)
+    # occupation = Column(String)
+    # style = Column(String)
+    # date = Column(DateTime, nullable=False)
 
-class Image(Base):
-    __tablename__ = "images"
-    
-    img_id = Column(Integer, primary_key=True, index=True)
-    img_url = Column(String, unique=True, index=True)
+    likes = relationship("Like", back_populates="outfit")
+    clicks = relationship("Click", back_populates="outfit")
+    similars = relationship("Similar", back_populates="outfit")
 
-    likes = relationship("Like", back_populates="images")
-    clicks = relationship("Click", back_populates="images")
-    
-
-class Click(Base):
-    __tablename__ = "clicks"
-
-    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
-    img_id = Column(Integer, ForeignKey("images.img_id"), primary_key=True)
-    session_id = Column(String, ForeignKey("sessions.session_id"), primary_key=True)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
-    
-    users = relationship("User", back_populates="clicks")
-    images = relationship("Image", back_populates="clicks")
-    sessions = relationship("UserSession", back_populates="clicks")
-    
 
 class Like(Base):
-    __tablename__ = "likes"
+    __tablename__ = "like"
 
-    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
-    img_id = Column(Integer, ForeignKey("images.img_id"), primary_key=True)
-    session_id = Column(String, ForeignKey("sessions.session_id"), primary_key=True)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    like_id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String, ForeignKey("session.session_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    timestamp = Column(DateTime, nullable=False)
+    is_deleted = Column(Boolean)
 
-    users = relationship("User", back_populates="likes")
-    images = relationship("Image", back_populates="likes")
-    sessions = relationship("UserSession", back_populates="likes")
-
-# from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
-# from sqlalchemy.orm import relationship
-# from passlib.context import CryptContext
-# from .database import Base  
-
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# class User(Base):
-#     __tablename__ = "users"
-
-#     user_id = Column(Integer, primary_key=True, index=True)
-#     login_id = Column(String, unique=True, index=True)
-#     login_pwd = Column(String)
-    
-#     def verify_password(self, plain_password):
-#         return pwd_context.verify(plain_password, self.login_pwd) # type: ignore
-
-#     def hash_password(self, plain_password):
-#         self.login_pwd = pwd_context.hash(plain_password)
-        
-#     likes = relationship("Like", back_populates="users")
-#     clicks = relationship("Click", back_populates="users")
-    
-    
-# class UserSession(Base):
-#     __tablename__ = "sessions"
-
-#     session_id = Column(String, primary_key=True)
-#     user_id = Column(Integer, ForeignKey("users.user_id"))
-    
-#     likes = relationship("Like", back_populates="sessions")
-#     clicks = relationship("Click", back_populates="sessions")
-    
-    
-# class Image(Base):
-#     __tablename__ = "images"
-    
-#     img_id = Column(Integer, primary_key=True, index=True)
-#     img_url = Column(String, unique=True, index=True)
-#     # gender = Column(String)
-#     # tag = Column(String)
-#     # reporter = Column(String)
-#     # style = Column(String)
-#     # origin_url = Column(String)
-#     # date = Column(Date)
-    
-#     likes = relationship("Like", back_populates="images")
-#     clicks = relationship("Click", back_populates="images")
-    
-
-# class Click(Base):
-#     __tablename__ = "clicks"
-
-#     user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
-#     img_id = Column(Integer, ForeignKey("images.img_id"), primary_key=True)
-#     session_id = Column(String, ForeignKey("sessions.session_id"), primary_key=True)
-#     # timestamp = Column(DateTime)
-    
-#     users = relationship("User", back_populates="clicks")
-#     images = relationship("Image", back_populates="clicks")
-#     sessions = relationship("UserSession", back_populates="clicks")
-    
-    
-# class Like(Base):
-#     __tablename__ = "likes"
-
-#     user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
-#     img_id = Column(Integer, ForeignKey("images.img_id"), primary_key=True)
-#     session_id = Column(String, ForeignKey("sessions.session_id"), primary_key=True)
-#     # timestamp = Column(DateTime)
-
-#     users = relationship("User", back_populates="likes")
-#     images = relationship("Image", back_populates="likes")
-#     sessions = relationship("UserSession", back_populates="likes")
+    user = relationship("User", back_populates="likes")
+    outfit = relationship("Outfit", back_populates="likes")
+    session = relationship("UserSession", back_populates="likes")
 
 
-    
-    
-    
+class Click(Base):
+    __tablename__ = "click"
+
+    click_id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String, ForeignKey("session.session_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    timestamp = Column(DateTime, nullable=False)
+    # duration_secondes = Column(Integer)
+
+    user = relationship("User", back_populates="clicks")
+    outfit = relationship("Outfit", back_populates="clicks")
+    session = relationship("UserSession", back_populates="clicks")
+
+
+class Similar(Base):
+    __tablename__ = "similar"
+
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True, index=True)
+    similar_outfits = Column(ARRAY(Integer))
+
+    outfit = relationship("Outfit", back_populates="similars")
+
+
+class UserSession(Base):
+    __tablename__ = "session"
+
+    session_id = Column(String, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    created_at = Column(DateTime)
+    expired_at = Column(DateTime)
+
+    user = relationship("User", back_populates="session")
+    likes = relationship("Like", back_populates="session")
+    clicks = relationship("Click", back_populates="session")
