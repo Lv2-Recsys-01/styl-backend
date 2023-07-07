@@ -63,6 +63,7 @@ class Like(Base):
 class Click(Base):
     __tablename__ = "click"
 
+    session_id = Column(String, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     cnt = Column(Integer)
@@ -75,6 +76,7 @@ class Click(Base):
 class Staytime(Base):
     __tablename__ = "staytime"
 
+    session_id = Column(String, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
     staytime = Column(Float)
