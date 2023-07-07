@@ -3,3 +3,4 @@ fastapi==0.99.1
 SQLAlchemy==2.0.17
 psycopg2==2.9.6
 passlib==1.7.4
+pytz==2023.3
