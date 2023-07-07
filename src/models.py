@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
-from sqlalchemy import (ARRAY, Column, DateTime, Float, ForeignKey, Integer,
-                        String, CHAR)
+from sqlalchemy import (ARRAY, Column, DateTime, ForeignKey, Integer,
+                        String, CHAR, Boolean)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -12,12 +12,11 @@ class User(Base):
     __tablename__ = "user"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    login_id = Column(String, unique=True, index=True) # -> index 필요??
+    login_id = Column(String, unique=True, index=True)
     login_pwd = Column(String)
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
-    staytimes = relationship("Staytime", back_populates="user")
 
     def verify_password(self, plain_password):
         return pwd_context.verify(plain_password, self.login_pwd)
@@ -44,17 +43,18 @@ class Outfit(Base):
 
     likes = relationship("Like", back_populates="outfit")
     clicks = relationship("Click", back_populates="outfit")
-    staytimes = relationship("Staytime", back_populates="outfit")
     similars = relationship("Similar", back_populates="outfit")
 
 
 class Like(Base):
     __tablename__ = "like"
 
-    session_id = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
+    like_id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
+    is_deleted = Column(Boolean)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
@@ -63,26 +63,15 @@ class Like(Base):
 class Click(Base):
     __tablename__ = "click"
 
-    session_id = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
-    cnt = Column(Integer)
+    click_id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
+    duration_secondes = Column(Integer)
 
     user = relationship("User", back_populates="clicks")
     outfit = relationship("Outfit", back_populates="clicks")
-
-
-class Staytime(Base):
-    __tablename__ = "staytime"
-
-    session_id = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
-    staytime = Column(Float)
-
-    user = relationship("User", back_populates="staytimes")
-    outfit = relationship("Outfit", back_populates="staytimes")
 
 
 class Similar(Base):
