@@ -12,11 +12,12 @@ class User(Base):
     __tablename__ = "user"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    login_id = Column(String, unique=True, index=True)
-    login_pwd = Column(String)
+    user_name = Column(String, unique=True, index=True)
+    user_pwd = Column(String)
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
+    session = relationship("Session", back_populates="user")
 
     def verify_password(self, plain_password):
         return pwd_context.verify(plain_password, self.login_pwd)
@@ -58,6 +59,7 @@ class Like(Base):
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
+    session = relationship("Session", back_populates="likes")
 
 
 class Click(Base):
@@ -72,12 +74,26 @@ class Click(Base):
 
     user = relationship("User", back_populates="clicks")
     outfit = relationship("Outfit", back_populates="clicks")
+    session = relationship("Session", back_populates="clicks")
 
 
 class Similar(Base):
     __tablename__ = "similar"
 
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True)
+    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True, index=True)
     similar_outfits = Column(ARRAY(Integer))
 
     outfit = relationship("Outfit", back_populates="similars")
+
+
+class Session(Base):
+    __tablename__ = "session"
+
+    session_id = Column(String, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    created_at = Column(DateTime)
+    expired_at = Column(DateTime)
+
+    user = relationship("User", back_populates="session")
+    likes = relationship("Like", back_populates="user")
+    clicks = relationship("Click", back_populates="user")
