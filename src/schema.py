@@ -1,4 +1,5 @@
 from pydantic import BaseModel, validator
+from datetime import datetime
 
 class UserBase(BaseModel):
     login_id: str
@@ -32,4 +33,17 @@ class UserOut(UserBase):
     class Config:
         orm_mode = True
 
+
+class ImageBase(BaseModel):
+    img_url: str
+    
+    
+class LikeBase(BaseModel):
+    user_id: int
+    img_id: int
+    session_id: str
+    timestamp: datetime
+    
+    class Config:
+        orm_mode = True
 
