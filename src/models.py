@@ -17,7 +17,7 @@ class User(Base):
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
-    session = relationship("Session", back_populates="user")
+    session = relationship("UserSession", back_populates="user")
 
     def verify_password(self, plain_password):
         return pwd_context.verify(plain_password, self.login_pwd)
@@ -30,9 +30,9 @@ class Outfit(Base):
     __tablename__ = "outfit"
 
     outfit_id = Column(Integer, primary_key=True, index=True)
+    img_url = Column(String)
     gender = Column(CHAR(2))
     age = Column(Integer)
-    img_url = Column(String)
     origin_url = Column(String)
     reporter = Column(String)
     tags = Column(ARRAY(String))
@@ -59,7 +59,7 @@ class Like(Base):
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
-    session = relationship("Session", back_populates="likes")
+    session = relationship("UserSession", back_populates="likes")
 
 
 class Click(Base):
@@ -74,7 +74,7 @@ class Click(Base):
 
     user = relationship("User", back_populates="clicks")
     outfit = relationship("Outfit", back_populates="clicks")
-    session = relationship("Session", back_populates="clicks")
+    session = relationship("UserSession", back_populates="clicks")
 
 
 class Similar(Base):
@@ -86,7 +86,7 @@ class Similar(Base):
     outfit = relationship("Outfit", back_populates="similars")
 
 
-class Session(Base):
+class UserSession(Base):
     __tablename__ = "session"
 
     session_id = Column(String, primary_key=True, index=True)
@@ -95,5 +95,5 @@ class Session(Base):
     expired_at = Column(DateTime)
 
     user = relationship("User", back_populates="session")
-    likes = relationship("Like", back_populates="user")
-    clicks = relationship("Click", back_populates="user")
+    likes = relationship("Like", back_populates="session")
+    clicks = relationship("Click", back_populates="session")
