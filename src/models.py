@@ -31,7 +31,7 @@ class Outfit(Base):
 
     outfit_id = Column(Integer, primary_key=True, index=True)
     gender = Column(CHAR(2))
-    age = Column(Integer(4))
+    age = Column(Integer)
     img_url = Column(String)
     origin_url = Column(String)
     reporter = Column(String)
