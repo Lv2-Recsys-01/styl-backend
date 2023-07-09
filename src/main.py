@@ -26,7 +26,6 @@ Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.include_router(base_router)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -38,23 +37,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(base_router)
+
 
 @app.get("/healthz")
 def ping_poing():
     return {"ping": "pong!"}
 
 
-@app.get("/")
-def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
-    if session_id is None:
-        session_id = str(uuid.uuid4())
+# @app.get("/")
+# def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
+#     if session_id is None:
+#         session_id = str(uuid.uuid4())
 
-        response = Response()
-        response.set_cookie(key="session_id", value=session_id)
-        response.set_cookie(key="user_id", value=1)
+#         response = Response()
+#         response.set_cookie(key="session_id", value=session_id)
+#         response.set_cookie(key="user_id", value=1)
 
-        return response
-    return {"message": "Hello World", "session_id": session_id}
+#         return response
+#     return {"message": "Hello World", "session_id": session_id}
 
 
 def merge_likes(session_id: str, guest_user_id: int, real_user_id: int, db: Session):

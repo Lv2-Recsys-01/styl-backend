@@ -66,6 +66,7 @@ function Login({ closeModal = () => {} }) {
     const handleLogin = () => {
         console.log(`login => ID: ${id}, Password: ${password}`);
 
+
         if (checkLoginIneligibility) {
             clearInput();
             setError("로그인에 실패했어요");
