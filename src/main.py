@@ -39,19 +39,6 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
-    if session_id is None:
-        session_id = str(uuid.uuid4())
-
-        response = Response()
-        response.set_cookie(key="session_id", value=session_id)
-        response.set_cookie(key="user_id", value=1)
-
-        return response
-    return {"message": "Hello World", "session_id": session_id}
-
-
 def merge_likes(session_id: str, guest_user_id: int, real_user_id: int, db: Session):
     # Find the rows to update
     guest_likes = db.query(Like).filter(

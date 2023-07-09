@@ -9,6 +9,7 @@ pip install -r requirements.txt
 ## docker
 
 ```bash
+
 # single container
 docker build --platform=linux/amd64 -t stylback .
 docker run -it -p 8000:8000 stylback
@@ -18,64 +19,15 @@ docker compose up
 docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못하면.
 ```
 
-<<<<<<< HEAD
-1. 쿠키와 세션
-- 쿠키
-  - 클라이언트 로컬에 저장되는 key:value 형태 데이터
-  - request하면 자동으로 서버에 전송
-  - 서버에서 쿠키 생성/업데이트해서 response 가능
-  - 유효시간 있음
-- 세션
-  - 쿠키 기반
-  - 클라이언트가 아니라 서버에서 관리
-  - 동작 방식
-    클라이언트가 서버 처음 접속시 세션 id 발급 ->
-    db에 세션 id 저장 ->
-    서버는 세션 id에 해당하는 쿠키 생성해서 response ->
-    이후 서버가 request 받으면 쿠키에 포함된 세션 id로 클라이언트 식별
-
-2. 쿠키/세션 필요한 이유
-- 로그인 안 한 유저의 로그 수집
-  - 로그인 안 하고 사용하다 로그인 하면 병합 필요
-- 세션 단위로 로그 수집
-
-3. 우리 서비스에서 사용하는 지점
-- 최초 접속
-  - 세션id 없으면 로그인 페이지로 리다이렉트
-    - 프론트/백 어디서 처리?
-  - 로그아웃하면 세션id 삭제하고 로그인 페이지로 보냄
-  - 로그인 된 상태(유저id != guest id)에서 접속시 journey 페이지로 리다이렉트
-- 로그인 페이지
-  - 비회원 '로그인 없이 시작'
-    - 세션id 생성
-    - 미리 생성해 놓은 비회원용(guest) id를 유저id에 배정
-    - 유저id, 세션id 같이 db에 저장
-  - 회원 로그인 성공
-    - 좋아요 목록 병합
-      - 현재 세션id 확인 (없으면 pass)
-      - db의 like 테이블에 현재 세션id 기준으로 좋아요 목록이 있는지 확인
-      - 해당 좋아요 목록의 유저id를 변경 (guest id -> 실제 유저id)
-    - 세션id 생성
-    - 유저id, 세션id 같이 db에 저장
-  - "XXX"님 환영합니다 이런 메세지 띄울거면 login id도 저장
-- 유저 로그(클릭/좋아요 등)
-  - 세션id, 유저id를 pk로 db에 저장(like, click 테이블)
-- 좋아요 불러오기
-  - 현재 세션id, 유저id를 기준으로 like 테이블에서 불러옴
-
-4. 기타 문제들
-- 쿠키 수집 거부하는 브라우저면 어떻게?
-=======
 # GET /healthz
 
 목적 : sys. health check.
 
 [request]
-query params :
 
--   유저 식별자
 
 [response(json)]
+- 정상 response
 
 ```json
 {
@@ -88,73 +40,112 @@ query params :
 목적 : 로그인 시키기 위함
 
 [request]
-query params :
-
--   유저 식별자 (기존에 사용하던 유저라면 fake 식별자가 넘어옴)
-
-body params :
-
--   id
--   password
+-   body params
+    -   user_name
+    -   user_pwd
+-   cookie params
+    -   session_id
+    -   user_id
 
 [response(json)]
-
+-   user_id가 guest_user_id(=1)이 아니면 -> 이미 로그인 된 상태
+    -   raise HTTPException(status_code=400, detail="로그아웃을 먼저 하십시오.")
+-   user_name과 user_pwd가 4자리 미만 or 20자리 초과
+    -   raise ValueError("비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
+-   user_name이 db에 존재하지 않거나 user_pwd가 일치하지 않을때
+    -   HTTPException(status_code=400, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
+-   정상 response
 ```json
 {
-"ok": true
-"user_id": user_id
+    "ok": true,
+    "user_name": user_name
 }
 ```
 
-# POST /singin
+# POST /singup
 
 목적 : 회원가입 시키기 위함
 
 [request]
-query params :
-
--   유저 식별자
-
-body params :
-
--   id
--   password
--   confirm password
+-   body params
+    -   user_name
+    -   user_pwd
+    -   confirm_pwd
 
 [response(json)]
-
+-   user_name과 user_pwd가 4자리 미만 or 20자리 초과
+    -   raise ValueError("비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
+-   user_pwd와 confirm_pwd가 같지 않으면
+    -   raise ValueError("비밀번호가 일치하지 않습니다")
+-   user_name이 이미 db에 존재
+    -   raise HTTPException(status_code=400, detail="이미 존재하는 아이디입니다")
+-   정상 response
 ```json
 {
-"ok": true
-"user_id": user_id
+    "ok": true,
+    "user_name": user_name
 }
 ```
 
-<!-- # POST /logout
+# POST /logout
 
 목적 : 로그아웃
-query params : 없음
-body params : 없음
-로그아웃을 프론트 단에서 유저 식별자 지우면 됨. -->
-
-# POST /heart
-
-목적 : 좋아요를 누른 경우 DB에 반영하기 위함
 
 [request]
-
-query params :
-
--   유저 식별자
-
-body params :
-
--   outfit id
+-   cookie params
+    -   session_id
+    -   user_id
 
 [response(json)]
+-   정상 response
+```json
+{
+    "ok": true,
+}
+```
 
+# GET /journey
+
+목적 : 유저에게 코디 이미지를 보여줌
+
+[request]
+- body params
+
+[response]
+
+# POST /journey/{outfit_id}/click
+
+목적 : 유저가 이미지를 클릭한 경우 DB에 반영
+
+[request]
+-   query params
+    -   outfit_id
+-   cookie params
+    -   user_id
+    -   session_id
+
+[response(json)]
+-   정상 response
+```json
+{
+    "ok": true
+}
+```
+
+# POST /journey/{outfit_id}/like
+
+목적 : 유저가 좋아요를 누른 경우 DB에 반영
+
+[request]
+-   query params
+    -   outfit_id
+-   cookie params
+    -   user_id
+    -   session_id
+
+[response(json)]
 -   성공 여부와 관련 없이 프론트에서는 optimistic하게 하트를 채워야 함.
-
+-   정상 response
 ```json
 {
     "ok": true
@@ -321,4 +312,3 @@ body params :
 -   미들웨어에서 로그인 여부 및 로그인했다면 어떤 유저인지 확인 -> request.user dict에 키, 값 추가
 -   해당 유저의 db pk를 통해서 sqlalchemy를 통해서 join 등을 통해 여러 테이블을 연산하여 결과값을 만들어냄
 -   response로 보내줌.
->>>>>>> origin/master
