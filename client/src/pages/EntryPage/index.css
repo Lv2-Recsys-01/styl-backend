@@ -1,0 +1,55 @@
+.entry-background {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: var(--background);
+    filter: blur(1px);
+    opacity: 0.8;
+    overflow: hidden;
+  }
+  @keyframes backMoveUp {
+    0% {
+      transform: translateY(50%);
+    }
+    50% {
+      transform: translateY(0%);
+    }
+    100% {
+      transform: translateY(50%);
+    }
+  }
+
+  @keyframes backMoveDown {
+    0% {
+      transform: translateY(0%);
+    }
+    50% {
+      transform: translateY(50%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+
+  .entry-background .up {
+    width: 80%;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 20px;
+    margin-bottom: 0;
+    animation: backMoveUp 8s infinite;
+  }
+
+  .entry-background .down {
+    width: 80%;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 20px;
+    margin-bottom: 0;
+    animation: backMoveDown 8s infinite;
+  }
+
+  .entry-background .up,
+  .entry-background .down {
+    animation-fill-mode: both;
+  }
