@@ -10,15 +10,10 @@ import uuid
 from .database import engine, Base, get_db
 from .schema import UserBase, UserSignUp, OutfitBase, LikeBase
 from .models import User, Outfit, Like, Click, UserSession
-
+from .router.base import base_router
 
 from pydantic import BaseModel
 
-# [로그인 없이 사용] 
-# 랜덤 uuid(와 같은 식별자)를 프론트 단에서 생성
-# -> LS에 저장
-# -> 매번 요청시 해당 값을 백단에 넘기기
-# -> 백단은 해당 식별자를 가지고 활용
 
 origins = [
     "http://localhost",
@@ -26,10 +21,11 @@ origins = [
     "http://localhost:8000",
     "*"
 ]
-# Base.metadata.drop_all(bind=engine)
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.include_router(base_router)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -41,21 +37,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+# @app.get("/")
+# def read_root():
+#     return {"message": "Hello World"}
 
 
 def merge_likes(session_id: str,
                 guest_user_id: int,
-                real_user_id: int,
+                login_user_id: int,
                 db: Session):
     # Find the rows to update
-    guest_likes = db.query(Like).filter(Like.user_id == guest_user_id, Like.session_id == session_id)
+    guest_likes = db.query(Like).filter(Like.user_id == guest_user_id, Like.session_id == session_id).all()
 
     # Update the rows
     for like in guest_likes:
-        like.user_id = real_user_id
+        like.user_id = login_user_id
 
     # Commit the changes
     db.commit()
@@ -65,61 +61,40 @@ def merge_likes(session_id: str,
 def login(response: Response,
           user: UserBase = None,
           session_id: str = Cookie(None),
+          user_id: str = Cookie(None),
           db: Session = Depends(get_db),
           guest_user_id: int = 1):
-    # 회원가입 없이 시작   
-    if user is None:
-        # guest id 배정
-        guest_user = db.query(User).filter(User.user_id == guest_user_id).first()
-        # 세션id 생성
-        session_id = str(uuid.uuid4())
-        # db 저장
-        user_session = UserSession(session_id=session_id,
-                                   user_id=guest_user_id,
-                                   created_at=datetime.now(timezone("Asia/Seoul")),
-                                   expired_at=datetime.now(timezone("Asia/Seoul")))
-        db.add(user_session)
-        db.commit()
-        db.refresh(user_session)
-        # 쿠키 생성
-        response.set_cookie(key="session_id", value=session_id, httponly=True)
-        response.set_cookie(key='user_id', value=guest_user_id, httponly=True)
-        response.set_cookie(key='user_name', value=guest_user.user_name, httponly=True)
-        
-        return {"message": f"Welcome {guest_user.user_name}",
-                "user_id": guest_user_id,
-                "user_name": guest_user.user_name,
-                "session_id": session_id}
-        
-    # 유저 로그인
-    if user is not None:
-        # 로그인 검증
-        real_user = db.query(User).filter(User.user_name == user.user_name).first()
-        if real_user is None or not pwd_context.verify(user.user_pwd, real_user.user_pwd):
-            raise HTTPException(status_code=400, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
-        
-        # 좋아요 병합
-        if session_id is not None:
-            merge_likes(session_id, guest_user_id, real_user.user_id, db)
-        # 세션id 생성
-        session_id = str(uuid.uuid4())
-        # db 저장
-        user_session = UserSession(session_id=session_id,
-                                   user_id=real_user.user_id,
-                                   created_at=datetime.now(timezone("Asia/Seoul")),
-                                   expired_at=datetime.now(timezone("Asia/Seoul")))
-        db.add(user_session)
-        db.commit()
-        db.refresh(user_session)
-        # 쿠키 생성
-        response.set_cookie(key="session_id", value=session_id, httponly=True)
-        response.set_cookie(key='user_id', value=real_user.user_id, httponly=True)
-        response.set_cookie(key='user_name', value=real_user.user_name, httponly=True)
-        
-        return {"message": f"Welcome {user.user_name}",
-                "user_id": real_user.user_id,
-                "user_name": real_user.user_name,
-                "session_id": session_id}
+    # 현재 로그인 된 상태인지 확인
+    if user_id != guest_user_id:
+        raise HTTPException(status_code=400, detail="로그아웃을 먼저 하십시오.")
+    # 로그인 검증
+    login_user = db.query(User).filter(User.user_name == user.user_name).first()
+    if login_user is None or not pwd_context.verify(user.user_pwd, login_user.user_pwd):
+        raise HTTPException(status_code=400, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
+    # 좋아요 병합
+    merge_likes(session_id, guest_user_id, login_user.user_id, db)
+    # 현재 세션 만료 표시
+    cur_session = db.query(UserSession).filter(UserSession.session_id == session_id).first()
+    cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
+    # 새 세션id 생성
+    session_id = str(uuid.uuid4())
+    # 새 세션 db 저장
+    user_session = UserSession(session_id=session_id,
+                                user_id=login_user.user_id,
+                                created_at=datetime.now(timezone("Asia/Seoul")),
+                                expired_at=datetime.now(timezone("Asia/Seoul")))
+    db.add(user_session)
+    db.commit()
+    db.refresh(user_session)
+    # 쿠키 생성
+    response.set_cookie(key="session_id", value=session_id, httponly=True)
+    response.set_cookie(key='user_id', value=login_user.user_id, httponly=True)
+    response.set_cookie(key='user_name', value=login_user.user_name, httponly=True)
+    
+    return {"message": f"Welcome {user.user_name}",
+            "user_id": login_user.user_id,
+            "user_name": login_user.user_name,
+            "session_id": session_id}
         
         
 @app.post("/logout")
@@ -132,7 +107,7 @@ def logout(response: Response,
     logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))
     
     response.delete_cookie(key='user_id')
-    # response.delete_cookie(key='session_id')
+    response.delete_cookie(key='session_id')
     response.delete_cookie(key='user_name')
     
     return {"message": f"User {user_id} logged out at {datetime.now(timezone('Asia/Seoul'))}"}
