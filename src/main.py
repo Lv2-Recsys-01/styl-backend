@@ -39,6 +39,11 @@ app.add_middleware(
 )
 
 
+@app.get("/healthz")
+def ping_poing():
+    return {"ping": "pong!"}
+
+
 @app.get("/")
 def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
     if session_id is None:
