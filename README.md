@@ -28,7 +28,6 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 [response(json)]
 - 정상 response
-
 ```json
 {
     "ok": true
@@ -44,41 +43,18 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
     -   user_name
     -   user_pwd
 -   cookie params
-    -   session_id
     -   user_id
+    -   session_id
 
 [response(json)]
 -   user_id가 guest_user_id(=1)이 아니면 -> 이미 로그인 된 상태
-    -   raise HTTPException(status_code=400, detail="로그아웃을 먼저 하십시오.")
--   user_name과 user_pwd가 4자리 미만 or 20자리 초과
-    -   raise ValueError("비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_name이 db에 존재하지 않거나 user_pwd가 일치하지 않을때
-    -   HTTPException(status_code=400, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
--   정상 response
-```json
-{
-    "ok": true,
-    "user_name": user_name
-}
-```
-
-# POST /singup
-
-목적 : 회원가입 시키기 위함
-
-[request]
--   body params
-    -   user_name
-    -   user_pwd
-    -   confirm_pwd
-
-[response(json)]
--   user_name과 user_pwd가 4자리 미만 or 20자리 초과
-    -   raise ValueError("비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_pwd와 confirm_pwd가 같지 않으면
-    -   raise ValueError("비밀번호가 일치하지 않습니다")
--   user_name이 이미 db에 존재
-    -   raise HTTPException(status_code=400, detail="이미 존재하는 아이디입니다")
+    -   raise HTTPException(status_code=500, detail="로그아웃을 먼저 하십시오.")
+-   user_name 4자리 미만 or 20자리 초과
+    -   raise HTTPException(status_code=500, detail="아이디는 4자리 이상 20자리 이하의 숫자 or 영문자")
+- user_pwd가 4자리 미만 or 20자리 초과
+    -   raise HTTPException(status_code=500, detail="비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
+-   user_name이 DB에 존재하지 않거나 user_pwd가 일치하지 않을때
+    - raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
 -   정상 response
 ```json
 {
@@ -93,8 +69,8 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 [request]
 -   cookie params
-    -   session_id
     -   user_id
+    -   session_id
 
 [response(json)]
 -   정상 response
@@ -104,14 +80,57 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 }
 ```
 
+# POST /singup
+
+목적 : 회원가입 시키기 위함
+
+[request]
+-   body params
+    -   user_name
+    -   user_pwd
+    -   confirm_pwd
+
+[response(json)]
+-   user_name 4자리 미만 or 20자리 초과
+    -   raise HTTPException(status_code=500, detail="아이디는 4자리 이상 20자리 이하의 숫자 or 영문자")
+-    user_pwd가 4자리 미만 or 20자리 초과
+     - raise HTTPException(status_code=500, detail="비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
+-   user_pwd와 confirm_pwd가 같지 않으면
+    -   raise HTTPException(status_code=500, detail="비밀번호가 일치하지 않습니다")
+-   user_name이 이미 DB에 존재
+    -   raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다")
+-   정상 response
+```json
+{
+    "ok": true,
+    "user_name": user_name
+}
+```
+
 # GET /journey
 
 목적 : 유저에게 코디 이미지를 보여줌
 
 [request]
-- body params
+- query params
+  - pagesize
+  - offset
+- cookie params
+  - user_id
+  - session_id
 
 [response]
+- 정상 response
+```json
+{
+  "ok": true,
+  "outfit_list": outfit_list,
+  "pagesize": pagesize,
+  "offset": offset,
+  "is_last": is_last,
+  "total_page_count": total_page_count
+}
+```
 
 # POST /journey/{outfit_id}/click
 
@@ -152,78 +171,34 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 }
 ```
 
-# GET /heart
+# GET /collection
 
 목적 : 유저가 좋아요 한 코디를 가져온다. my collections 페이지 렌더용
 
 [request]
-query params :
-
--   유저 식별자
--   pagesize : 한번에 가져올 이미지의 개수
--   offset: 어디서부터
+- query params
+  - pagesize
+  - offset
+- cookie params
+  - user_id
+  - session_id
 
 example)
 최신순 가정
-GET /heart?userid=1&pagesize=10&offset=0 (0번째 ~ 10번째)
-GET /heart?userid=1&pagesize=10&offset=10 (10번째 ~ 20번째)
+GET /collection?pagesize=10&offset=0 (0번째 ~ 10번째)
+GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
 
 [response(json)]
-
+- 좋아요한 이미지가 없을때
+  - raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
+- 정상 response
 ```json
 {
-    "outfits": [{
-        Outfit properties,
-        }
-    ],
-    "pagesize": pagesize,
-    "offset": offset,
-    "is_last": boolean,
-}
-```
-
-# PUT /heart
-
-목적 : 유저가 하트를 취소 했을 때. hard delete가 아니고 soft delete하자(is_deleted = True) 같은 식임.
-[request]
-query params :
-
--   유저 식별자
-
-body params :
-
--   outfit id
-
-[response(json)]
-
-```json
-{
-    "ok": true
-}
-```
-
-# GET /images
-
-목적 : 해당 유저가 journey 페이지에 접근했을 때 여러 이미지를 옵니다. 추천할만한 이미지를 불러와야 함.
-[request]
-query params :
-
--   유저 식별자
--   pagesize : 한번에 가져올 이미지의 개수
--   offset: 어디서부터
-
-[response(json)]
-
-```json
-{
-    "outfits": [{
-        Outfit properties,
-        is_liked, // 넣어줘야 함.
-        }
-    ],
-    "pagesize": pagesize,
-    "offset": offset,
-    "is_last": boolean,
+  "ok": True,
+  "outfit_list": outfit_list,
+  "pagesize": pagesize,
+  "offset": offset,
+  "is_last": is_last
 }
 ```
 
