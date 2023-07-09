@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3"
 
 services:
   app:
@@ -43,53 +43,7 @@ services:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 1s
-      timeout: 5s
-      retries: 5
-
-# version: "3"
-
-# services:
-#     app:
-#         # meta data
-#         container_name: styl-app
-#         platform: "linux/amd64"
-#         working_dir: /app
-#         # port forwarding
-#         expose:
-#             - "8000"
-#         ports:
-#             - "8000:8000"
-#         environment:
-#             PORT: 8000
-#         # volumes
-#         volumes:
-#             - .:/app:consistent
-#         # containre
-#         build:
-#             context: .
-#             dockerfile: Dockerfile
-#         command: [
-#                 "uvicorn",
-#                 "src.main:app",
-#                 "--host",
-#                 "0.0.0.0",
-#                 "--port",
-#                 "8000",
-#                 "--reload", # this for hot-reload in dev
-#             ] # override Dockerfile CMD
-#         depends_on:
-#             - psql
-#     psql:
-#             image: postgres:latest
-#             container_name: postgres
-#             restart: always
-#             ports:
-#                 - "5432:5432"
-#             environment:
-#                 POSTGRES_USER: "postgres"
-#                 POSTGRES_PASSWORD: "password"
-#                 PGDATA: /data/postgres
-#             volumes:
-#                 - ./db/:/data/postgres
-#                 - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
