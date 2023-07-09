@@ -10,8 +10,8 @@ import random
 
 from .database import engine, Base, get_db
 from .schema import UserBase, UserSignUp, OutfitBase, LikeBase
-from .models import User, Outfit, Like, Click, UserSession, Similar
-
+from .models import User, Outfit, Like, Click, UserSession
+from .router.base import base_router
 
 from pydantic import BaseModel
 

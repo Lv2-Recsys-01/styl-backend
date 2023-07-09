@@ -38,4 +38,3 @@ def base_path(response: Response,
         # 쿠키 생성
         response.set_cookie(key='user_id', value=guest_user_id, httponly=True)
         response.set_cookie(key='user_name', value=guest_user_name, httponly=True)
-    

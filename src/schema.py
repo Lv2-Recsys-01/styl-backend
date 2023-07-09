@@ -24,9 +24,9 @@ class UserSignUp(UserBase):
     def passwords_match(cls, confirm_pwd: str, values: dict):
         if confirm_pwd and confirm_pwd != values['user_pwd']:
             raise ValueError("비밀번호가 일치하지 않습니다")
-        return confirm_pwd    
-    
-    
+        return confirm_pwd
+
+
 class UserOut(UserBase):
     user_id: int
     user_name: str
@@ -37,24 +37,23 @@ class UserOut(UserBase):
 
 class OutfitBase(BaseModel):
     img_url: str
-    
-    
+
+
 class LikeBase(BaseModel):
     user_id: int
     outfit_id: int
     session_id: str
     timestamp: datetime
-    
+
     class Config:
         orm_mode = True
-        
-        
+
+
 class ClickBase(BaseModel):
     user_id: int
     img_id: int
     session_id: str
     timestamp: datetime
-    
+
     class Config:
         orm_mode = True
-

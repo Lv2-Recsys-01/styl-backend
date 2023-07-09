@@ -49,7 +49,7 @@
         function signup() {
             const username = document.getElementById('uname').value;
             const password = document.getElementById('pwd').value;
-    
+
             fetch('http://127.0.0.1:8000/signup', {
                 method: 'POST',
                 headers: {
@@ -74,7 +74,7 @@
                 alert('A network error occurred');
             });
         }
-    </script>    
+    </script>
 </body>
 
 </html>
