@@ -32,7 +32,7 @@ services:
     psql:
         image: postgres:latest
         container_name: postgres
-        restart: always
+        # restart: always
         ports:
             - "5432:5432"
         environment:
