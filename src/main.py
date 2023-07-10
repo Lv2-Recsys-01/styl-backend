@@ -235,26 +235,26 @@ def user_like(
         
 
 
-@app.get("/likes/{user_id}", response_model=List[LikeBase])
-def show_likes(
-    user_id: int, session_id: str = Cookie(None), db: Session = Depends(get_db)
-):
-    # Find the likes by user_id and session_id
-    likes = (
-        db.query(Like)
-        .filter(
-            Like.session_id == session_id,
-            Like.user_id == user_id,
-            Like.is_deleted == False,
-        )
-        .all()
-    )
+# @app.get("/likes/{user_id}", response_model=List[LikeBase])
+# def show_likes(
+#     user_id: int, session_id: str = Cookie(None), db: Session = Depends(get_db)
+# ):
+#     # Find the likes by user_id and session_id
+#     likes = (
+#         db.query(Like)
+#         .filter(
+#             Like.session_id == session_id,
+#             Like.user_id == user_id,
+#             Like.is_deleted == False,
+#         )
+#         .all()
+#     )
 
-    # If no likes found, return a 404
-    if not likes:
-        raise HTTPException(status_code=404, detail="Likes not found")
+#     # If no likes found, return a 404
+#     if not likes:
+#         raise HTTPException(status_code=404, detail="Likes not found")
 
-    return likes
+#     return likes
 
 
 ### 여기서부터 상우가 함
@@ -353,9 +353,9 @@ def likes(
     db: Session = Depends(get_db),
 ):
     if user_id == 1:
-        Liked = db.query(Like).filter(Like.session_id == session_id).all()
+        Liked = db.query(Like).filter(Like.session_id == session_id).filter(Like.is_deleted == False).all()
     else:
-        Liked = db.query(Like).filter(Like.user_id == user_id).all()
+        Liked = db.query(Like).filter(Like.user_id == user_id).filter(Like.is_deleted == False).all()
     total_cnt = len(Liked)
     total_page_count = total_cnt // pagesize
 
