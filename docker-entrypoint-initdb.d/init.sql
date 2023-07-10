@@ -68,8 +68,8 @@ CREATE TABLE "similar" (
 
 
 -- insert가 에러도 안 나고 로그에서도 "postgres    | INSERT 0 1" 이렇게 잘 됐다고 뜨는데 막상 db에 가보면 insert된 것이 없음. 그래서 우선은 직접 psql로 insert 해줌.
--- INSERT INTO "user" (user_name, user_pwd)
--- VALUES ('guest1', 'guest_pwd1');
+INSERT INTO "user" (user_name, user_pwd)
+VALUES ('guest', 'guest_pwd');
 
 -- INSERT INTO "user" (user_name, user_pwd)
 -- VALUES ('guest2', 'guest_pwd2');
