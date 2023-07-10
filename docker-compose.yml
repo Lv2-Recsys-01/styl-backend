@@ -63,7 +63,5 @@ services:
             PORT: 3000
         volumes:
             - ./client/src:/app/src:consistent
-            # - ./client/build:/usr/share/nginx/html:consistent
-            # - ./client:/usr/share/nginx/html:consistent
         depends_on:
             - app
