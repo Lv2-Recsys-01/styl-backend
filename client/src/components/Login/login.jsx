@@ -107,7 +107,7 @@ function Login({ closeModal = () => {} }) {
              .then(response => {
             // Response handling
             console.log(response.data);
-            navigate('/journey');
+            navigate('/');
         })
           .catch(error => {
             // Error handling
