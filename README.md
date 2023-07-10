@@ -41,9 +41,9 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 - guest인 경우에만 로그인 가능
 - user_name, user_pwd 자리수 체크, user_pwd 맞는지 검증
 - 로그인 성공 시
-  - 비회원 상태에서 좋아요 목록 병합 (DB 수정)
-  - 현재 비회원 세션 만료 시간 표시 (DB 수정)
-  - 새 세션 id 생성, DB 추가
+  - 비회원 상태에서 좋아요 목록 병합 (DB의 Like 테이블 수정)
+  - 현재 비회원 세션 만료 시간 표시 (DB의 UserSession 테이블 수정)
+  - 새 세션 id 생성, DB의 UserSession 테이블에 추가
   - cookie의 session_id, user_id, user_name 변경
 
 [request]
@@ -73,7 +73,11 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 # POST /logout
 
-목적 : 로그아웃
+[목적 및 기능]
+- 목적 : 로그아웃
+- DB의 UserSession 테이블 수정
+  - expired_at 업데이트
+- 쿠키의 user_id, session_id, user_name 삭제
 
 [request]
 -   cookie params
@@ -90,7 +94,12 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 # POST /singup
 
-목적 : 회원가입 시키기 위함
+[목적 및 기능]
+- 목적 : 회원가입
+- user_name, user_pwd 자리수 확인
+- user_pwd, confirm_pwd 같은지 확인
+- DB의 User 테이블에 존재하는 user_name인지 확인
+- 검증 통과하면 DB의 User 테이블에 추가
 
 [request]
 -   body params
@@ -117,12 +126,16 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 # GET /journey
 
-목적 : 유저에게 코디 이미지를 보여줌
-
-example)
-최신순 가정  
-GET /journey?pagesize=10&offset=0 (0번째 ~ 10번째)  
-GET /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
+[목적 및 기능]
+- 유저에게 코디 이미지를 보여줌
+- 한 페이지당 offset부터 pagesize 개수만큼 보여줌
+  - /journey?pagesize=10&offset=0 (0번째 ~ 10번째)  
+  - /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
+- DB의 Outfit 테이블에서 가져올 이미지 목록 불러옴
+  - 이 개수가 pagesize보다 작으면 is_last = True
+- 유저가 좋아요 누른 outfit_id 집합 생성
+- 각 outfit마다 유저가 좋아요 눌렀는지 확인
+- 이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 outfits_list로 목록 생성
 
 [request]
 - query params
@@ -147,7 +160,10 @@ GET /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
 
 # POST /journey/{outfit_id}/click
 
-목적 : 유저가 이미지를 클릭한 경우 DB에 반영
+[목적 및 기능]
+- 목적 : 유저가 이미지를 클릭한 경우 DB에 반영
+- outfit_id가 존재하지 않으면 에러 반환
+- DB의 Click 테이블에 클릭 로그 저장
 
 [request]
 -   query params
@@ -168,7 +184,12 @@ GET /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
 
 # POST /journey/{outfit_id}/like
 
-목적 : 유저가 좋아요를 누른 경우 DB에 반영
+[목적 및 기능]
+- 목적 : 유저가 좋아요를 누르거나 취소한 경우 DB에 반영
+- outfit_id가 존재하지 않으면 에러 반환
+- 이전에 유저가 좋아요 누른적 있는지 DB의 Like 테이블에서 확인
+- 없으면 DB에 추가
+- 있으면 is_deleted 바꿔줌(True면 False로, False면 True로)
 
 [request]
 -   query params
@@ -190,12 +211,15 @@ GET /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
 
 # GET /collection
 
-목적 : 유저가 좋아요 한 코디를 가져온다. my collections 페이지 렌더용
-
-example)
-최신순 가정  
-GET /collection?pagesize=10&offset=0 (0번째 ~ 10번째)  
-GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
+[목적 및 기능]
+- 목적 : 유저가 좋아요 한 코디 이미지 가져옴
+- 한 페이지당 offset부터 pagesize 개수만큼 보여줌
+  - /collection?pagesize=10&offset=0 (0번째 ~ 10번째)  
+  - /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
+- DB의 Like 테이블에서 outfit_id 목록 가져옴
+- 목록 길이가 pagesize보다 작으면 is_last = True
+- 좋아요 목록이 없으면 에러 반환
+- 이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부(모두 True) 합쳐서 outfits_list로 목록 생성
 
 [request]
 - query params
@@ -221,7 +245,13 @@ GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
 
 # GET /journey/{outfit_id}
 
-목적 : 단건의 이미지와 유사 이미지를 가져옵니다.
+[목적 및 기능]
+- 목적 : 이미지 하나의 상세 정보와 유사 이미지를 가져옴
+- 해당 outfit_id의 이미지가 없으면 에러 반환
+- DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 outfit 생성
+- DB의 Similar 테이블에서 유사 이미지의 outfit_id 목록 가져옴
+  - 해당 목록에서 outfit_id의 이미지가 없으면 에러 반환
+- 개별 유사 이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 similar_outfits_list 목록 생성
 
 [request]
 - query params
@@ -235,6 +265,8 @@ GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
   - raise HTTPException(status_code=500, detail="Outfit not found")
 - 해당 outfit과 유사한 outfit이 존재하지 않을때
   - raise HTTPException(status_code=500, detail="Similar outfits not found")
+- 유사 이미지의 outfit_id가 존재하지 않을 때
+  - raise HTTPException(status_code=500, detail="Id for this similar outfit not found")
 - 정상 response
 ```json
 {
