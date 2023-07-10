@@ -21,7 +21,11 @@ from pydantic import BaseModel
 # -> 매번 요청시 해당 값을 백단에 넘기기
 # -> 백단은 해당 식별자를 가지고 활용
 
-origins = ["http://localhost", "http://localhost:3000", "http://localhost:8000", "*"]
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
 # Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
@@ -32,7 +36,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=True,  # True인 경우 allow_origins을 ['*'] 로 설정할 수 없음.
     allow_methods=["*"],
     allow_headers=["*"],
 )
