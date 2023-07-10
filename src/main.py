@@ -22,7 +22,7 @@ from pydantic import BaseModel
 # -> 백단은 해당 식별자를 가지고 활용
 
 origins = ["http://localhost", "http://localhost:3000", "http://localhost:8000", "*"]
-Base.metadata.drop_all(bind=engine)
+# Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
