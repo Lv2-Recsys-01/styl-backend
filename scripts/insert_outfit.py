@@ -24,19 +24,19 @@ with open(csv_file, 'r') as f:
     cursor = conn.cursor()
     for row in reader:
         outfit_id = int(row[0])
-        
+
         # outfit_id가 이미 존재하는지 확인
         check_query = 'SELECT COUNT(*) FROM outfit WHERE outfit_id = %s'
         cursor.execute(check_query, (outfit_id,))
         count = cursor.fetchone()[0]
-        
+
         if count > 0:
             print(f"Skipping duplicate outfit_id: {outfit_id}")
             continue
-        
+
         age = int(row[2]) if row[2] != '연령미상' else None
         occupation = row[9] if row[9] != '정보없음' else None
-        tags = ast.literal_eval(row[6])  
+        tags = ast.literal_eval(row[6])
         brands = ast.literal_eval(row[7]) if row[7] != '[]' else None
 
         query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, "date") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
