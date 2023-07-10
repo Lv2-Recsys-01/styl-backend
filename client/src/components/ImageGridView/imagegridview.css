@@ -1,0 +1,7 @@
+.heart {
+    display:flex;
+    justify-content: right;
+    margin:10px;
+    font-size:30px;
+    color:var(--vivamagenta);
+  }

@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap');
+
+.global-container {
+    font-family: 'Noto Serif KR', serif;
+    min-width: 320px;
+    max-width: 500px;
+    min-height: 100vh;
+    margin: 0 auto; /* for global centering */
+    background-color: var(--background);
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  max-width: 500px;
+  height:70px;
+  background-color: var(--graylilac);
+  opacity: 0.8;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .wrapper .options{
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    line-height: 64px;
+    margin:10px;
+    margin-top:20px;
+  }
+
+  .header .wrapper .user_id{
+    text-align: left;
+    padding: 15px;
+    margin-right: auto;
+    font-size: 20px;
+    font-style: italic;
+    color:var(--palekhaki)
+  }
+
+  .header .wrapper .login{
+    text-align: right;
+    opacity: 1;
+    margin-right:30px;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: underline;
+    font-style: italic;
+    color:var(--vivamagenta)
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:50px;
+    overflow: hidden;
+  }

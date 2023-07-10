@@ -1,0 +1,38 @@
+.skeleton-wrapper {
+    display: flex;
+    width: 100%;
+  }
+
+  .skeleton-rectangle {
+    width:100%;
+    padding-top:77%;
+    margin:10px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid var(--vivamagenta);
+    background-color: var(--graylilac);
+    animation: skeleton-animation 3s infinite;
+  }
+
+  @keyframes skeleton-animation {
+    0% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+
+  .loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:var(--vivamagenta);
+    font-size: 25px;
+    font-weight: 600;
+  }

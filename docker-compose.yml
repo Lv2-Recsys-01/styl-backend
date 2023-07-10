@@ -1,49 +1,67 @@
 version: "3"
 
 services:
-  app:
-    container_name: styl-app
-    platform: "linux/amd64"
-    working_dir: /app
-    expose:
-      - "8000"
-    ports:
-      - "8000:8000"
-    environment:
-      PORT: 8000
-    volumes:
-      - .:/app:consistent
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: [
-            "uvicorn",
-            "src.main:app",
-            "--host",
-            "0.0.0.0",
-            "--port",
-            "8000",
-            "--reload",
-        ]
-    depends_on:
-      psql:
-        condition: service_healthy
-  psql:
-    image: postgres:latest
-    container_name: postgres
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "password"
-      PGDATA: /data/postgres
-    volumes:
-      - ./db/:/data/postgres
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    app:
+        container_name: styl-app
+        platform: "linux/amd64"
+        working_dir: /app
+        expose:
+            - "8000"
+        ports:
+            - "8000:8000"
+        environment:
+            PORT: 8000
+        volumes:
+            - .:/app:consistent
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command:
+            [
+                "uvicorn",
+                "src.main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+                "--reload",
+            ]
+        depends_on:
+            psql:
+                condition: service_healthy
+    psql:
+        image: postgres:latest
+        container_name: postgres
+        # restart: always
+        ports:
+            - "6000:5432"
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+            PGDATA: /data/postgres
+        volumes:
+            - ./db/:/data/postgres
+            - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+    client:
+        container_name: styl-front
+        platform: "linux/amd64"
+        working_dir: /app
+        build:
+            context: ./client
+            dockerfile: Dockerfile.dev
+        expose:
+            - "3000"
+        ports:
+            - "3000:3000"
+        environment:
+            PORT: 3000
+        volumes:
+            - ./client/src:/app/src:consistent
+        depends_on:
+            - app

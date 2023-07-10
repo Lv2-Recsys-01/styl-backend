@@ -26,7 +26,6 @@ Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.include_router(base_router)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -37,6 +36,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(base_router)
+
+
+@app.get("/healthz")
+def ping_poing():
+    return {"ping": "pong!"}
 
 
 def merge_likes(
@@ -403,26 +409,3 @@ def show_single_image(
         "outfit": outfit_out,
         "similar_outfits_list": similar_outfits_list
         }
-
-
-
-# @app.get("/likes/{user_id}")
-# def show_likes(user_id: int,
-#                session_id: str = Cookie(None),
-#                db: Session = Depends(get_db)):
-
-
-# @app.post("/journey")
-# def create_click(user_id:int, outfit_id:int , db: Session = Depends(get_db)):
-#     new_click = Like(user_id=user_id, outfit_id=outfit_id)
-#     db.add(new_click)
-#     db.commit()
-#     db.refresh(new_click)
-#     return {"detail": f"User {user_id} liked Image {outfit_id}"}
-
-# @app.get("/users/{user_id}", response_model=UserOut)
-# def read_user(user_id: int, db: Session = Depends(get_db)):
-#     result = db.query(User).filter(User.user_id == user_id).first()
-#     if result is None:
-#         raise HTTPException(status_code=404, detail="존재하지 않는 유저입니다")
-#     return result
