@@ -26,6 +26,16 @@ CREATE TABLE outfit (
         PRIMARY KEY (outfit_id)
 );
 
+
+DROP TABLE IF EXISTS "session";
+CREATE TABLE "session" (
+        session_id VARCHAR PRIMARY KEY,
+        user_id INTEGER REFERENCES "user" (user_id),
+        created_at TIMESTAMP WITHOUT TIME ZONE,
+        expired_at TIMESTAMP WITHOUT TIME ZONE
+);
+
+
 DROP TABLE IF EXISTS "like";
 CREATE TABLE "like" (
         like_id SERIAL NOT NULL,
@@ -55,13 +65,6 @@ CREATE TABLE similar (
         PRIMARY KEY (outfit_id)
 );
 
-DROP TABLE IF EXISTS "session";
-CREATE TABLE "session" (
-        session_id VARCHAR PRIMARY KEY,
-        user_id INTEGER REFERENCES "user" (user_id),
-        created_at TIMESTAMP WITHOUT TIME ZONE,
-        expired_at TIMESTAMP WITHOUT TIME ZONE
-);
 
 INSERT INTO "user" (user_name, user_pwd)
 VALUES ('guest', 'guest_pwd');
