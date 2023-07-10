@@ -36,7 +36,15 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 # POST /login
 
-목적 : 로그인 시키기 위함
+[목적 및 기능]
+- 목적 : 로그인
+- guest인 경우에만 로그인 가능
+- user_name, user_pwd 자리수 체크, user_pwd 맞는지 검증
+- 로그인 성공 시
+  - 비회원 상태에서 좋아요 목록 병합 (DB 수정)
+  - 현재 비회원 세션 만료 시간 표시 (DB 수정)
+  - 새 세션 id 생성, DB 추가
+  - cookie의 session_id, user_id, user_name 변경
 
 [request]
 -   body params
@@ -111,6 +119,11 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 목적 : 유저에게 코디 이미지를 보여줌
 
+example)
+최신순 가정  
+GET /journey?pagesize=10&offset=0 (0번째 ~ 10번째)  
+GET /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
+
 [request]
 - query params
   - pagesize
@@ -124,7 +137,7 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 ```json
 {
   "ok": true,
-  "outfit_list": outfit_list,
+  "outfits_list": outfits_list,
   "pagesize": pagesize,
   "offset": offset,
   "is_last": is_last,
@@ -144,6 +157,8 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
     -   session_id
 
 [response(json)]
+- 해당 outfit_id의 이미지가 존재하지 않을 때
+  - raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
 -   정상 response
 ```json
 {
@@ -164,6 +179,8 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 [response(json)]
 -   성공 여부와 관련 없이 프론트에서는 optimistic하게 하트를 채워야 함.
+- 해당 outfit_id의 이미지가 존재하지 않을 때
+  - raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
 -   정상 response
 ```json
 {
@@ -175,6 +192,11 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 
 목적 : 유저가 좋아요 한 코디를 가져온다. my collections 페이지 렌더용
 
+example)
+최신순 가정  
+GET /collection?pagesize=10&offset=0 (0번째 ~ 10번째)  
+GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
+
 [request]
 - query params
   - pagesize
@@ -183,11 +205,6 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
   - user_id
   - session_id
 
-example)
-최신순 가정
-GET /collection?pagesize=10&offset=0 (0번째 ~ 10번째)
-GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
-
 [response(json)]
 - 좋아요한 이미지가 없을때
   - raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
@@ -195,84 +212,37 @@ GET /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
 ```json
 {
   "ok": True,
-  "outfit_list": outfit_list,
+  "outfits_list": outfits_list,
   "pagesize": pagesize,
   "offset": offset,
   "is_last": is_last
 }
 ```
 
-# GET /image
+# GET /journey/{outfit_id}
+
+목적 : 단건의 이미지와 유사 이미지를 가져옵니다.
 
 [request]
-목적 : 단건의 이미지를 가져옵니다.
-
-query params :
-
--   유저 식별자
--   outfit id
-
-[response(json)]
-
-```json
-{
-    "outfit": {
-        Outfit properties,
-        is_liked, // 넣어줘야 함.
-    },
-    similar_outfits: [
-        {
-            outfit_id,
-            img_url,
-        }
-    ],
-    "pagesize": pagesize,
-    "offset": offset,
-    "is_last": boolean,
-}
-```
-
-# POST /shared
-
-목적 : 공유 버튼을 눌렀을 때 해당 행동을 기록하기 위함
-
-[request]
-query params :
-
--   유저 식별자
-
-body params :
-
--   outfit id
+- query params
+  - outfit_id
+- cookie params
+  - user_id
+  - sesseion_id
 
 [response(json)]
-
+- 해당 outfit_id가 존재하지 않을때
+  - raise HTTPException(status_code=500, detail="Outfit not found")
+- 해당 outfit과 유사한 outfit이 존재하지 않을때
+  - raise HTTPException(status_code=500, detail="Similar outfits not found")
+- 정상 response
 ```json
 {
-    "ok": true
+  "ok": true,
+  "outfit": outfit_out,
+  "similar_outfits_list": similar_outfits_list
 }
-```
 
-# POST /similar
-
-목적 : 유사 아이템 클릭시 기록
-
-[request]
-query params :
-
--   유저 식별자
-
-body params :
-
--   base outfit id: 들어온 페이지의 코디 id
--   clicked outfit id: 밑에 유사한 코디를 클릭했을 때
-
-[response(json)]
-
-```json
-{
-    "ok": true
-}
 ```
 
 # 기타

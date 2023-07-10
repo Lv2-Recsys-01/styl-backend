@@ -10,7 +10,7 @@ import random
 
 from .database import engine, Base, get_db
 from .schema import UserBase, UserSignUp, OutfitBase, LikeBase, OutfitOut
-from .models import User, Outfit, Like, Click, UserSession
+from .models import User, Outfit, Like, Click, UserSession, Similar
 from .router.base import base_router
 
 from pydantic import BaseModel
@@ -46,8 +46,9 @@ def merge_likes(
     db: Session):
     # Find the rows to update
     guest_likes = db.query(Like).filter(
-        Like.user_id == guest_id, Like.session_id == session_id
-    )
+        Like.user_id == guest_id,
+        Like.session_id == session_id
+    ).all()
 
     # Update the rows
     for like in guest_likes:
@@ -75,7 +76,7 @@ def login(
         raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
     # 좋아요 병합
     merge_likes(session_id, guest_id, login_user.user_id, db)
-    # 현재 세션 만료 표시
+    # 현재 비회원 세션 만료 표시
     cur_session = (
         db.query(UserSession).filter(UserSession.session_id == session_id).first()
     )
@@ -147,6 +148,7 @@ def signup(
         }
 
 
+# 실험용 임시
 @app.post("/upload")
 def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
     new_outfit = Outfit(img_url=outfit.img_url)
@@ -189,19 +191,19 @@ def show_journey_images(
     # 유저가 좋아요 누른 이미지의 id 집합 생성
     likes_set = {like.outfit_id for like in likes}
 
-    outfit_list = []
+    outfits_list = []
     for outfit in outfits:
         # 각 outfit 마다 유저가 좋아요 눌렀는지 확인
         is_liked = (outfit.outfit_id in likes_set)
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
-        outfit_list.append(outfit_out)
+        outfits_list.append(outfit_out)
 
     # total_cnt = 64400
     # total_page_count = total_cnt // pagesize + (1 if total_cnt % pagesize else 0)
 
     return {
         "ok": True,
-        "outfit_list": outfit_list,
+        "outfits_list": outfits_list,
         "pagesize": pagesize,
         "offset": offset,
         "is_last": is_last
@@ -215,6 +217,11 @@ def user_click(
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
 ):
+    db_outfit = db.query(Outfit).filter(
+        Outfit.outfit_id == outfit_id
+    ).first()
+    if db_outfit is None:
+        raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
     new_click = Click(
         session_id=session_id,
         user_id=user_id,
@@ -238,6 +245,12 @@ def user_like(
     db: Session = Depends(get_db),
     guest_id: int = 1
 ):
+    db_outfit = db.query(Outfit).filter(
+        Outfit.outfit_id == outfit_id
+    ).first()
+    if db_outfit is None:
+        raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+    
     # 이전에 좋아요 누른적 있는지 확인
     # 비회원
     if user_id == guest_id:
@@ -285,179 +298,84 @@ def show_collection_images(
 ):
     # 비회원일때
     if user_id == guest_id:
-        outfit_list = [db.query(Like).filter(
+        outfits_list = [db.query(Like).filter(
             Like.user_id == guest_id,
             Like.session_id == session_id,
             Like.is_deleted == False).offset(offset).limit(pagesize).all()]
     # 회원일때
     else:
-        outfit_list = [db.query(Like).filter(
+        outfits_list = [db.query(Like).filter(
             Like.user_id == user_id,
             Like.is_deleted == False).offset(offset).limit(pagesize).all()]
         
-    is_last = (len(outfit_list) < pagesize)
+    is_last = (len(outfits_list) < pagesize)
         
-    if not outfit_list:
+    if not outfits_list:
         raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
 
     return {
         "ok": True,
-        "outfit_list": outfit_list,
+        "outfits_list": outfits_list,
         "pagesize": pagesize,
         "offset": offset,
         "is_last": is_last
     }
 
 
-### 여기서부터 상우가 함
 
-
-@app.get("/images")
-def images(
-    response: Response,
-    pagesize: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
-    db: Session = Depends(get_db),
-):
-    total_cnt = 64400
-    total_page_count = total_cnt // pagesize
-    outfits = [i for i in range(1, total_cnt + 1)]
-    try:
-        outfits = outfits[offset : offset + pagesize]
-        is_last = False
-    except:
-        outfits = outfits[offset:]
-        is_last = True
-    liked_outfits = db.query(Like.outfit_id).filter(Like.session_id == session_id).all()
-    db_outfits = []
-    for outfit in outfits:
-        db_outfits.append(db.query(Outfit).filter(Outfit.outfit_id == outfit).first())
-
-    response.set_cookie(key="outfits", value=outfits)
-
-    return {
-        "outfits": db_outfits,
-        "liked_outfits": liked_outfits,
-        "pagesize": pagesize,
-        "offset": offset,
-        "is_last": is_last,
-        "total_page_count": total_page_count,
-    }
-
-
-@app.get("/image")
-def image(
-    response: Response,
+@app.get("/journey/{outfit_id}")
+def show_single_image(
     outfit_id: int,
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
+    guest_id: int = 1
 ):
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
-        raise HTTPException(status_code=404, detail="Outfit not found")
-    if user_id == 1:
-        is_liked = (
-            db.query(Like)
-            .filter(Like.session_id == session_id)
-            .filter(Like.outfit_id == outfit_id)
-            .first()
+        raise HTTPException(status_code=500, detail="Outfit not found")
+    
+    # 좋아요 눌렀는지 체크
+    # 비회원
+    if user_id == guest_id:
+        user_like = db.query(Like).filter(
+            Like.user_id == guest_id,
+            Like.session_id == session_id,
+            Like.outfit_id == outfit_id,
+            Like.is_deleted == False
         )
+    # 회원
     else:
-        is_liked = (
-            db.query(Like)
-            .filter(Like.user_id == user_id)
-            .filter(Like.outfit_id == outfit_id)
-            .first()
+        user_like = db.query(Like).filter(
+            Like.user_id == user_id,
+            Like.outfit_id == outfit_id,
+            Like.is_deleted == False
         )
-
-    if is_liked is None:
-        outfit.is_liked = False
-    else:
-        if is_liked.is_deleted == False:
-            outfit.is_liked = True
-        else:
-            outfit.is_liked = False
-
-    similar_outfits = db.query(Similar).filter(Outfit.outfit_id == outfit_id).all()
-    similar_outfits_list = []
-
-    for similar in similar_outfits:
+    # is_liked : user_like 존재하면 True, 아니면 False
+    is_liked = (user_like is not None)
+    outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
+    
+    similar_outfits = db.query(Similar).filter(
+        Similar.outfit_id == outfit_id
+        ).first()
+    if similar_outfits is None:
+        raise HTTPException(status_code=500, detail="Similar outfits not found")
+    
+    similar_outfits_list = list()
+    for similar_outfit_id in similar_outfits:
         similar_outfit = (
             db.query(Outfit)
-            .filter(Outfit.outfit_id == similar.similar_outfit_id)
+            .filter(Outfit.outfit_id == similar_outfit_id)
             .first()
-        )
+            )
         similar_outfits_list.append(similar_outfit)
 
-    return {"outfit": outfit, "similar_outfits": similar_outfits_list}
-
-
-@app.get("/heart")
-def heart(
-    response: Response,
-    pagesize: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
-    db: Session = Depends(get_db),
-):
-    if user_id == 1:
-        Liked = db.query(Like).filter(Like.session_id == session_id).all()
-    else:
-        Liked = db.query(Like).filter(Like.user_id == user_id).all()
-    total_cnt = len(Liked)
-    total_page_count = total_cnt // pagesize
-
-    try:
-        Liked = Liked[offset : offset + pagesize]
-        is_last = False
-    except:
-        Liked = Liked[offset:]
-        is_last = True
-
-    outfits = []
-    for like in Liked:
-        outfit = db.query(Outfit).filter(Outfit.outfit_id == like.outfit_id).first()
-        outfits.append(outfit)
-
     return {
-        "outfits": outfits,
-        "pagesize": pagesize,
-        "offset": offset,
-        "is_last": is_last,
-        "total_page_count": total_page_count,
-    }
+        "ok": True,
+        "outfit": outfit_out,
+        "similar_outfits_list": similar_outfits_list
+        }
 
-
-@app.put("/heart/{outfit_id}")
-def heart(
-    response: Response,
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
-    db: Session = Depends(get_db),
-):
-    if user_id == 1:
-        stmt = (
-            db.update(Like)
-            .where(Like.session_id == session_id)
-            .where(Like.outfit_id == outfit_id)
-            .values(is_deleted=True)
-        )
-        db.execute(stmt)
-        db.commit()
-    else:
-        stmt = (
-            db.update(Like)
-            .where(Like.user_id == user_id)
-            .where(Like.outfit_id == outfit_id)
-            .values(is_deleted=True)
-        )
-        db.execute(stmt)
-        db.commit()
 
 
 # @app.get("/likes/{user_id}")

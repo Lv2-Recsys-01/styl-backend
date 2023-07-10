@@ -53,8 +53,9 @@ class ClickBase(BaseModel):
         orm_mode = True
         
         
-class OutfitOut(OutfitBase):
+class OutfitOut(BaseModel):
     outfit_id: int
+    img_url: str
     gender: str
     age: int
     origin_url: str
