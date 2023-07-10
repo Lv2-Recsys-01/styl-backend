@@ -37,7 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(base_router)
+# app.include_router(base_router)
 
 
 @app.get("/healthz")
@@ -51,10 +51,28 @@ def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
         session_id = str(uuid.uuid4())
 
         response = Response()
-        response.set_cookie(key="session_id", value=session_id)
-        response.set_cookie(key="user_id", value=1)
+        
+        db_user = User(user_name='guest', user_pwd=pwd_context.hash('1234'))
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        user_session = UserSession(
+            session_id=session_id,
+            user_id=1,
+            created_at=datetime.now(timezone("Asia/Seoul")),
+            expired_at=datetime.now(timezone("Asia/Seoul")),
+        )
+        db.add(user_session)
+        db.commit()
+        db.refresh(user_session)
+        # 쿠키 생성
+        response.set_cookie(key="user_id", value=1, httponly=True)
+        response.set_cookie(key="user_name", value='guest', httponly=True)
+        response.set_cookie(key='session_id', value=session_id)
 
         return response
+
+    
     return {"message": "Hello World", "session_id": session_id}
 
 
