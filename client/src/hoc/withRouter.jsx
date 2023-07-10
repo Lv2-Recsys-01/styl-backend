@@ -9,10 +9,8 @@ function withRouter(Component) {
         let params = useParams();
 
         useEffect(() => {
-            console.log("changed!");
-
             const checkAuth = async () => {
-                const res = await axios.get("http://localhost:8000/");
+                const res = await axios.get("http://localhost:8000/healthz");
 
                 console.log(res);
             };
