@@ -72,3 +72,5 @@ with codecs.open(csv_file, 'r', encoding='utf-8-sig') as f:
     conn.commit()
 
 cursor.close()
+conn.close()
+
