@@ -10,7 +10,7 @@ function withRouter(Component) {
 
         useEffect(() => {
             const checkAuth = async () => {
-                const res = await axios.get("http://localhost:8000/healthz");
+                const res = await axios.get("http://localhost:8000/");
 
                 console.log(res);
             };
