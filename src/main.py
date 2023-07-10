@@ -26,7 +26,6 @@ from pydantic import BaseModel
 print = pprint.pprint
 
 
-# Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -58,6 +57,12 @@ async def handle_user_auth_logic(request: Request, call_next):
 @app.get("/healthz")
 def ping_poing():
     return {"ping": "pong!"}
+
+
+@app.get("/drop_all")
+def drop_all_db():
+    Base.metadata.drop_all(bind=engine)
+    return {"drop": "all"}
 
 
 def merge_likes(session_id: str, guest_id: int, real_user_id: int, db: Session):
