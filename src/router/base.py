@@ -24,8 +24,6 @@ def base_path(
     db: Session = Depends(get_db),
     guest_user_id: int = 1,
 ):
-    print("야 여기 쳤어, hit hit hit hit")
-
     if user_id is None:
         # guest id, name 배정
         guest_user = db.query(User).filter(User.user_id == guest_user_id).first()
