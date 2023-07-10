@@ -10,7 +10,7 @@ import random
 
 from .database import engine, Base, get_db
 from .schema import UserBase, UserSignUp, OutfitBase, LikeBase
-from .models import User, Outfit, Like, Click, UserSession
+from .models import User, Outfit, Like, Click, UserSession,Similar
 from .router.base import base_router
 
 from pydantic import BaseModel
@@ -45,17 +45,17 @@ def ping_poing():
     return {"ping": "pong!"}
 
 
-# @app.get("/")
-# def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
-#     if session_id is None:
-#         session_id = str(uuid.uuid4())
+@app.get("/")
+def read_root(session_id: str = Cookie(None), db: Session = Depends(get_db)):
+    if session_id is None:
+        session_id = str(uuid.uuid4())
 
-#         response = Response()
-#         response.set_cookie(key="session_id", value=session_id)
-#         response.set_cookie(key="user_id", value=1)
+        response = Response()
+        response.set_cookie(key="session_id", value=session_id)
+        response.set_cookie(key="user_id", value=1)
 
-#         return response
-#     return {"message": "Hello World", "session_id": session_id}
+        return response
+    return {"message": "Hello World", "session_id": session_id}
 
 
 def merge_likes(session_id: str, guest_user_id: int, real_user_id: int, db: Session):
@@ -77,7 +77,7 @@ def login(
     response: Response,
     user: UserBase = None,
     session_id: str = Cookie(None),
-    user_id: str = Cookie(None),
+    user_id: int = Cookie(None),
     db: Session = Depends(get_db),
     guest_user_id: int = 1,
 ):
@@ -201,20 +201,38 @@ def user_like(
 ):
     print(user_id)
     print(session_id)
-    new_like = Like(
-        session_id=session_id,
-        user_id=user_id,
-        outfit_id=outfit_id,
-        timestamp=datetime.now(timezone("Asia/Seoul")),
-        is_deleted=False,
-    )
-    db.add(new_like)
-    db.commit()
-    db.refresh(new_like)
-
-    return {
-        "message": f"User {user_id} likes outfit {outfit_id} at {new_like.timestamp}"
-    }
+    if user_id == 1:
+        like_flag = db.query(Like).filter(Like.session_id==session_id, Like.outfit_id==outfit_id).first()
+    else:
+        like_flag = db.query(Like).filter(Like.user_id==user_id, Like.outfit_id==outfit_id).first()
+        
+    if like_flag is None:
+        new_like = Like(
+            session_id=session_id,
+            user_id=user_id,
+            outfit_id=outfit_id,
+            timestamp=datetime.now(timezone("Asia/Seoul")),
+            is_deleted=False,
+        )
+        db.add(new_like)
+        db.commit()
+        db.refresh(new_like)
+        
+        return {"message": f"User {user_id} likes outfit {outfit_id} at {new_like.timestamp}"}
+        
+    elif like_flag.is_deleted == True:
+        like_flag.is_deleted = False
+        db.commit()
+        db.refresh(like_flag)
+        
+        return {"message": f"User {user_id} likes outfit {outfit_id} at {like_flag.timestamp}"}
+    else:
+        like_flag.is_deleted = True
+        db.commit()
+        db.refresh(like_flag)
+        
+        return {"message": f"User {user_id} dislikes outfit {outfit_id} at {like_flag.timestamp}"}
+        
 
 
 @app.get("/likes/{user_id}", response_model=List[LikeBase])
@@ -242,7 +260,7 @@ def show_likes(
 ### 여기서부터 상우가 함
 
 
-@app.get("/images")
+@app.get("/journey")
 def images(
     response: Response,
     pagesize: int,
@@ -325,8 +343,8 @@ def image(
     return {"outfit": outfit, "similar_outfits": similar_outfits_list}
 
 
-@app.get("/heart")
-def heart(
+@app.get("/likes")
+def likes(
     response: Response,
     pagesize: int,
     offset: int,
@@ -362,32 +380,34 @@ def heart(
     }
 
 
-@app.put("/heart/{outfit_id}")
-def heart(
-    response: Response,
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
-    db: Session = Depends(get_db),
-):
-    if user_id == 1:
-        stmt = (
-            db.update(Like)
-            .where(Like.session_id == session_id)
-            .where(Like.outfit_id == outfit_id)
-            .values(is_deleted=True)
-        )
-        db.execute(stmt)
-        db.commit()
-    else:
-        stmt = (
-            db.update(Like)
-            .where(Like.user_id == user_id)
-            .where(Like.outfit_id == outfit_id)
-            .values(is_deleted=True)
-        )
-        db.execute(stmt)
-        db.commit()
+# @app.put("/heart/{outfit_id}")
+# def heart(
+#     response: Response,
+#     outfit_id: int,
+#     user_id: int = Cookie(None),
+#     session_id: str = Cookie(None),
+#     db: Session = Depends(get_db),
+# ):
+#     if user_id == 1:
+#         stmt = (
+#             db.update(Like)
+#             .where(Like.session_id == session_id)
+#             .where(Like.outfit_id == outfit_id)
+#             .values(is_deleted=True)
+#         )
+#         db.execute(stmt)
+#         db.commit()
+#     else:
+#         stmt = (
+#             db.update(Like)
+#             .where(Like.user_id == user_id)
+#             .where(Like.outfit_id == outfit_id)
+#             .values(is_deleted=True)
+#         )
+#         db.execute(stmt)
+#         db.commit()
+        
+#     return {"detail": f"User {user_id} unliked Image {outfit_id}"}
 
 
 # @app.get("/likes/{user_id}")
