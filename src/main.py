@@ -37,18 +37,43 @@ app.add_middleware(
         "http://localhost",
         "http://localhost:3000",
         "http://localhost:8000",
+        "https://7dd0-125-141-116-185.ngrok-free.app",
     ],
+    allow_origin_regex="https://.*\.ngrok\-free\.app",
     allow_credentials=True,  # True인 경우 allow_origins을 ['*'] 로 설정할 수 없음.
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
+def get_or_create_session_id(response: Response, session_id: str = Cookie(None)):
+    if session_id is None:
+        session_id = str(uuid.uuid4())
+        response.set_cookie(key="session_id", value=session_id, httponly=True)
+    return session_id
+
+
 @app.middleware("http")
 async def handle_user_auth_logic(request: Request, call_next):
     response = await call_next(request)
 
+    request_dict = dict(request)
+    cookies = request_dict.get("cookies", None)
+    print("cookies: ", cookies)
+
     # handle user auth logic
+    print("*" * 20)
+
+    print(type(response))
+
+    response.set_cookie(
+        "temp_cookie",
+        "temp_cookie_value",
+        httponly=True,
+        samesite="None",  # for cross-site cookie
+        secure=True,  # for https
+    )
+    response.headers["X-Custom-Header"] = "Custom Value"
 
     return response
 
