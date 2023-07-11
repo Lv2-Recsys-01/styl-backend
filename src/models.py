@@ -91,10 +91,11 @@ class Similar(Base):
 class UserSession(Base):
     __tablename__ = "session"
 
+    # user_session_pk = Column(Integer, primary_key=True, index=True)
     session_id = Column(String, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     created_at = Column(DateTime)
-    expired_at = Column(DateTime)
+    expired_at = Column(DateTime, default=None)
 
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")

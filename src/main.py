@@ -29,11 +29,13 @@ def create_session_id_first_visit(
         response.set_cookie(key="session_id", value=session_id)
 
         # db 저장
+
         user_session = UserSession(
             session_id=session_id,
+            user_id=user_id if user_id else None,
             created_at=datetime.now(timezone("Asia/Seoul")),
-            expired_at=datetime.now(timezone("Asia/Seoul")),
         )
+
         db.add(user_session)
         db.commit()
         db.refresh(user_session)

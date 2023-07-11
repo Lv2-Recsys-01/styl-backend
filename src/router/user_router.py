@@ -72,14 +72,13 @@ def login(
     response.set_cookie(key="user_id", value=str(login_user.user_id), httponly=True)
     response.set_cookie(key="user_name", value=str(login_user.user_name), httponly=True)
 
-    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
-
     # # 좋아요 병합
     # merge_likes(session_id, guest_id, login_user.user_id, db)
-    # # 현재 비회원 세션 만료 표시
-    # cur_session = (
-    #     db.query(UserSession).filter(UserSession.session_id == session_id).first()
-    # )
+
+    # 현재 비회원 세션 만료 표시
+    cur_session = (
+        db.query(UserSession).filter(UserSession.session_id == session_id).first()
+    )
     # cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
     # # 새 세션id 생성
     # session_id = str(uuid.uuid4())
@@ -95,7 +94,7 @@ def login(
     # db.refresh(user_session)
     # # 쿠키 생성
 
-    # return {"ok": True, "user_name": login_user.user_name}
+    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
 
 
 @router.post("/signup")
