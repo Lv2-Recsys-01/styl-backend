@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import "./login.css";
 import { NavLink, useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import { notification } from "antd";
 
 Modal.setAppElement("#root");
@@ -61,14 +61,13 @@ function Login({ closeModal = () => {} }) {
 
     const handleSignupSuccess = () => {
         notification.success({
-          message: '회원가입에 성공했어요!',
-          description: '로그인 해주세요!',
+            message: "회원가입에 성공했어요!",
+            description: "로그인 해주세요!",
         });
-      };
+    };
 
     const checkLoginIneligibility = id.length < 4 || password.length < 4;
-    const checkSignupIneligibility =
-        id.length < 4 || password.length < 4 || confirm.length < 4 || password !== confirm;
+    const checkSignupIneligibility = id.length < 4 || password.length < 4 || confirm.length < 4 || password !== confirm;
     const isSignUpMode = modalMode === "signup";
     const isLogInMode = modalMode === "login";
 
@@ -117,22 +116,23 @@ function Login({ closeModal = () => {} }) {
             confirm_pwd: confirm,
         };
 
-        axios.post("http://localhost:8000/users/signup", SignUpParams)
-             .then(response => {
-            // Response handling
-            console.log(response.data);
-            handleSignupSuccess();
-            setModalMode("login");
-            setTitle("Login");
-            clearInput();
-            navigate('/');
-        })
-          .catch(error => {
-            // Error handling
-            console.error(error);
-            clearInput();
-            setError("회원가입에 실패했어요");
-          });
+        axios
+            .post("http://localhost:8000/users/signup", SignUpParams)
+            .then((response) => {
+                // Response handling
+                console.log(response.data);
+                handleSignupSuccess();
+                setModalMode("login");
+                setTitle("Login");
+                clearInput();
+                navigate("/");
+            })
+            .catch((error) => {
+                // Error handling
+                console.error(error);
+                clearInput();
+                setError("회원가입에 실패했어요");
+            });
 
         if (checkSignupIneligibility) {
             clearInput();
