@@ -5,6 +5,7 @@ import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
 import "./imagegridview.css";
 import axios from "axios";
+import { notification } from "antd";
 
 const PAGE_SIZE = 10;
 const DELAY =1000;
@@ -133,7 +134,14 @@ function ImageGridView(props) {
       currentPage.current += 1;
     } catch (error) {
       console.error(error);
-      setIsLoading(false);
+      if (error.code === 'ERR_BAD_REQUEST') {
+        notification.warning({
+            message: 'JOURNEY 페이지로 이동합니다.',
+            description: '마음에 드는 코디에 하트를 눌러보세요!',
+            duration: 3,
+        });
+        navigate('/journey');
+    }
     } finally {
       setIsLoading(false);
     }
