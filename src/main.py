@@ -53,25 +53,16 @@ def get_or_create_session_id(response: Response, session_id: str = Cookie(None))
 
 
 @app.middleware("http")
-async def handle_user_auth_logic(request: Request, call_next):
+async def handle_user_auth_logic(
+    request: Request,
+    call_next,
+):
+    # in case of using request directly,
+    # https://www.starlette.io/requests/
+
     response = await call_next(request)
 
-    request_dict = dict(request)
-    cookies = request_dict.get("cookies", None)
-    print("cookies: ", cookies)
-
-    # handle user auth logic
-    print("*" * 20)
-
-    print(type(response))
-
-    response.set_cookie(
-        "temp_cookie",
-        "temp_cookie_value",
-        httponly=True,
-        samesite="None",  # for cross-site cookie
-        secure=True,  # for https
-    )
+    response.set_cookie("temp_cookie", "temp_cookie_value")
     response.headers["X-Custom-Header"] = "Custom Value"
 
     return response
