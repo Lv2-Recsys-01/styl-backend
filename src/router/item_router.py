@@ -10,11 +10,6 @@ router = APIRouter(
 )
 
 
-@router.get("/wow")
-def wow():
-    return {"wow": "wow"}
-
-
 @router.get("/journey")
 def show_journey_images(
     pagesize: int,
