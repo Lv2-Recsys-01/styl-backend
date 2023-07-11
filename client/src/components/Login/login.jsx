@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import "./login.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 Modal.setAppElement("#root");
 
@@ -20,6 +21,7 @@ function Login({ closeModal = () => {} }) {
     const [confirm, setConfirm] = useState("");
     const [error, setError] = useState(false);
     const [title, setTitle] = useState("Login");
+
 
     const handleIdChange = (e) => {
         const value = e.target.value;
@@ -63,9 +65,28 @@ function Login({ closeModal = () => {} }) {
     const isSignUpMode = modalMode === "signup";
     const isLogInMode = modalMode === "login";
 
+    const navigate = useNavigate();
+
     const handleLogin = () => {
         console.log(`login => ID: ${id}, Password: ${password}`);
 
+        const LoginParams = {
+            user_name: id,
+            user_pwd: password,
+          };
+
+        axios.post("http://localhost:8000/login", LoginParams)
+             .then(response => {
+            // Response handling
+            console.log(response.data);
+            navigate('/journey');
+        })
+          .catch(error => {
+            // Error handling
+            console.error(error);
+            clearInput();
+            setError("로그인에 실패했어요");
+          });
 
         if (checkLoginIneligibility) {
             clearInput();
@@ -74,7 +95,26 @@ function Login({ closeModal = () => {} }) {
     };
 
     const handleSignup = () => {
-        console.log(`signup => ID: ${id}, Password: ${password}`);
+        console.log(`signup => ID: ${id}, Password: ${password}, ConfirmPassword: ${confirm}`);
+        
+        const SignUpParams = {
+            user_name: id,
+            user_pwd: password,
+            confirm_pwd: confirm,
+          };
+
+        axios.post("http://localhost:8000/signup", SignUpParams)
+             .then(response => {
+            // Response handling
+            console.log(response.data);
+            navigate('/journey');
+        })
+          .catch(error => {
+            // Error handling
+            console.error(error);
+            clearInput();
+            setError("회원가입에 실패했어요");
+          });
 
         if (checkSignupIneligibility) {
             clearInput();

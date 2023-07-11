@@ -31,16 +31,16 @@ class Outfit(Base):
 
     outfit_id = Column(Integer, primary_key=True, index=True)
     img_url = Column(String)
-    # gender = Column(CHAR)
-    # age = Column(Integer)
-    # origin_url = Column(String)
-    # reporter = Column(String)
-    # tags = Column(ARRAY(String))
-    # brands = Column(ARRAY(String))
-    # region = Column(String)
-    # occupation = Column(String)
-    # style = Column(String)
-    # date = Column(DateTime, nullable=False)
+    gender = Column(CHAR)
+    age = Column(Integer)
+    origin_url = Column(String)
+    reporter = Column(String)
+    tags = Column(ARRAY(String))
+    brands = Column(ARRAY(String))
+    region = Column(String)
+    occupation = Column(String)
+    style = Column(String)
+    date = Column(DateTime, nullable=False)
 
     likes = relationship("Like", back_populates="outfit")
     clicks = relationship("Click", back_populates="outfit")
@@ -97,3 +97,6 @@ class UserSession(Base):
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")
     clicks = relationship("Click", back_populates="session")
+    
+    
+

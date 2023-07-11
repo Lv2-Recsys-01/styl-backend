@@ -77,7 +77,7 @@ const GlobalStyle = createGlobalStyle`
         min-height: 100%;
         width: 100%;
         font-family: "Noto Sans KR", sans-serif;
-        background-color: gray;
+        background-color: var(--background);
     }
 
     html {
