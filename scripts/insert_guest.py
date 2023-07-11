@@ -11,8 +11,8 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-user_name = 'guest'
-user_pwd = 'guest_pwd'
+user_name = "guest"
+user_pwd = "guest_pwd"
 
 # user_name이 이미 존재하는지 확인
 check_query = 'SELECT COUNT(*) FROM "user" WHERE user_name = %s'

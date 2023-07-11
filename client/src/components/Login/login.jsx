@@ -23,7 +23,6 @@ function Login({ closeModal = () => {} }) {
     const [error, setError] = useState(false);
     const [title, setTitle] = useState("Login");
 
-
     const handleIdChange = (e) => {
         const value = e.target.value;
         setId(value);
@@ -81,20 +80,27 @@ function Login({ closeModal = () => {} }) {
         const LoginParams = {
             user_name: id,
             user_pwd: password,
-          };
+        };
 
-        axios.post("http://localhost:8000/login", LoginParams)
-             .then(response => {
-            // Response handling
-            console.log(response.data);
-            navigate('/journey');
-        })
-          .catch(error => {
-            // Error handling
-            console.error(error);
-            clearInput();
-            setError("로그인에 실패했어요");
-          });
+        axios
+            .post("http://localhost:8000/users/login", LoginParams)
+            .then((response) => {
+                console.log(response);
+                console.log(response.data);
+                // navigate("/journey");
+            })
+            .catch((error) => {
+                console.error(error);
+                console.error(error.data);
+                clearInput();
+                const {
+                    response: {
+                        data: { detail },
+                    },
+                } = error;
+
+                setError(`로그인에 실패했어요. ${detail ?? ""}`);
+            });
 
         if (checkLoginIneligibility) {
             clearInput();
@@ -109,7 +115,7 @@ function Login({ closeModal = () => {} }) {
             user_name: id,
             user_pwd: password,
             confirm_pwd: confirm,
-          };
+        };
 
         axios.post("http://localhost:8000/signup", SignUpParams)
              .then(response => {

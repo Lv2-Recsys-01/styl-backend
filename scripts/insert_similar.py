@@ -15,7 +15,7 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-with open(csv_file, 'r') as f:
+with open(csv_file, "r") as f:
     reader = csv.DictReader(f)
     for row in reader:
         outfit_id = int(row["id"])
