@@ -87,7 +87,7 @@ function Login({ closeModal = () => {} }) {
             .then((response) => {
                 console.log(response);
                 console.log(response.data);
-                // navigate("/journey");
+                navigate("/journey");
             })
             .catch((error) => {
                 console.error(error);
@@ -117,7 +117,7 @@ function Login({ closeModal = () => {} }) {
             confirm_pwd: confirm,
         };
 
-        axios.post("http://localhost:8000/signup", SignUpParams)
+        axios.post("http://localhost:8000/users/signup", SignUpParams)
              .then(response => {
             // Response handling
             console.log(response.data);

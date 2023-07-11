@@ -30,7 +30,7 @@ export function Header() {
     };
 
     const handleLogout = () => {
-        axios.post("http://localhost:8000/logout")
+        axios.post("http://localhost:8000/users/logout")
                 .then(response => {
                 setIsLoggedIn(false);
                 navigate(window.location.pathname, { replace: true });
