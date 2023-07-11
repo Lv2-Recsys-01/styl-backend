@@ -60,14 +60,14 @@ export function Footer() {
 }
 
 function Layout({ children, location }) {
-    const [isDetailPage, setIsDetailPage] = useState(() => location.pathname === "/detail");
+    const [isMainlPage, setIsMainPage] = useState(() => location.pathname === "/journey");
     useEffect(() => {
-        setIsDetailPage(location.pathname === "/detail" || location.pathname === "/");
+        setIsMainPage(location.pathname === "/journey" || location.pathname === "/collections");
     }, [location]);
 
     return (
         <div className="global-container">
-            {isDetailPage ? (
+            {!isMainlPage ? (
                 <div>{children}</div>
             ) : (
                 <>
