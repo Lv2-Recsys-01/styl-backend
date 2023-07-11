@@ -38,7 +38,7 @@
     margin-right: auto;
     font-size: 20px;
     font-style: italic;
-    color:var(--palekhaki)
+    color:var(--background);
   }
 
   .header .wrapper .login{
