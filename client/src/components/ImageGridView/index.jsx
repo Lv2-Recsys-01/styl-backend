@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
@@ -45,11 +46,12 @@ function ImageGridView(props) {
   const totalPage = useRef(100);
   const [outfits, setOutfits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   useLayoutEffect(() => {
     totalPage.current = 100;
   }, []);
-
+  
   useEffect(() => {
     let observer;
     const gridViewWrapperBottomDom = gridViewWrapperBottomDomRef.current;
@@ -75,24 +77,22 @@ function ImageGridView(props) {
     return () => {
       observer.disconnect();
     };
-  }, [isLoading]);
+  }, [isLoading, fetchDataWithDelay]);
 
   async function fetchDataWithDelay(delay) {
     setIsLoading(true);
-    const startFetchTime = Date.now();
     const remainingDelay = Math.max(delay, 0);
     await new Promise((resolve) => setTimeout(resolve, remainingDelay));
-  
-    const fetchDataPromise = fetchData();
-    await fetchDataPromise;
-  
+
+    await fetchData();
+
     setIsLoading(false);
-  }  
-  
+  }
 
   async function fetchData() {
     try {
-      const viewUrl = props.view === "journey" ? "http://localhost:8000/journey" : "http://localhost:8000/collection";
+      const viewUrl =
+        props.view === "journey" ? "http://localhost:8000/journey" : "http://localhost:8000/collection";
       const viewParams = new URLSearchParams({
         pagesize: PAGE_SIZE.toString(),
         offset: currentPage.current.toString(),
@@ -101,15 +101,20 @@ function ImageGridView(props) {
       const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
       const data = response.data;
       console.log(data);
+      //TODO: outfit_id, url, liked 정보 가져와서 적용하기!
 
-      const newOutfits = response.data;
+      const outfit_id = 1;
 
       const newData = [...outfits];
       for (let i = 0; i < PAGE_SIZE; i++) {
         newData.push(
           <GridItem key={currentPage.current * PAGE_SIZE + i}>
-            <img src="sample_codi.png" alt={currentPage.current * PAGE_SIZE + i} />
-            <HeartButton classname="heart-button" outfitId ={12} likeState ={false}/>
+            <img
+              src="sample_codi.png"
+              alt={currentPage.current * PAGE_SIZE + i}
+              onClick={() => goToDetailPage(outfit_id)}
+            />
+            <HeartButton className="heart-button" outfitId={outfit_id} likeState={false} />
           </GridItem>
         );
       }
@@ -123,6 +128,10 @@ function ImageGridView(props) {
       setIsLoading(false);
     }
   }
+
+  const goToDetailPage = (outfit_id) => {
+    navigate(`/detail/${outfit_id}`);
+  };
 
   return (
     <div className="custom-wrapper">
