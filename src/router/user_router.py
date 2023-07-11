@@ -22,22 +22,6 @@ router = APIRouter(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def merge_likes(session_id: str, guest_id: int, real_user_id: int, db: Session):
-    # Find the rows to update
-    guest_likes = (
-        db.query(Like)
-        .filter(Like.user_id == guest_id, Like.session_id == session_id)
-        .all()
-    )
-
-    # Update the rows
-    for like in guest_likes:
-        like.user_id = real_user_id
-
-    # Commit the changes
-    db.commit()
-
-
 @router.post("/login")
 def login(
     response: Response,
@@ -72,8 +56,11 @@ def login(
     response.set_cookie(key="user_id", value=str(login_user.user_id))
     response.set_cookie(key="user_name", value=str(login_user.user_name))
 
-    # # 좋아요 병합
-    # merge_likes(session_id, guest_id, login_user.user_id, db)
+    # 비회원 세션의 Like에 user_id 삽입
+    likes = db.query(Like).filter(Like.session_id == session_id).all()
+    for like in likes:
+        like.user_id = int(login_user.user_id)  # type: ignore
+    db.commit()
 
     # 현재 비회원 세션에 user_id 추가하기
     cur_session: UserSession | None = (
@@ -84,7 +71,7 @@ def login(
         cur_session.user_id = int(login_user.user_id)  # type: ignore
 
     db.commit()
-    db.refresh(cur_session)
+    # db.refresh(cur_session)
 
     return {"user_id": login_user.user_id, "user_name": login_user.user_name}
 
@@ -108,7 +95,7 @@ def signup(
     db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)
+    # db.refresh(db_user)
 
     return {"ok": True, "user_name": db_user.user_name}
 
