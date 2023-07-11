@@ -100,19 +100,16 @@ function ImageGridView(props) {
       });
 
       const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
+      //TODO: collection/response api에서 
+      //outfits_list를 통해 아래 데이터 처리,
+      // is_last를 통해 fetch끝 지점 나타내기
+
       const data = response.data;
-      console.log(1,data);
+      console.log('data', data);
       // 응답 데이터 처리
       const outfitsList = data.outfits_list;
-      const pageSize = data.pagesize;
-      const offset = data.offset;
       const isLast = data.is_last;
-
-      
-      console.log(2,outfitsList,pageSize,offset,isLast );
-      console.log(3,outfitsList);
-      
-      //TODO: outfit_id, url, liked 정보 가져와서 적용하기!
+      console.log(1,outfitsList);
 
       const outfit_id = 1;
 
@@ -120,11 +117,14 @@ function ImageGridView(props) {
       for (let i = 0; i < PAGE_SIZE; i++) {
         newData.push(
           <GridItem key={currentPage.current * PAGE_SIZE + i}>
+            //TODO: POST /items/journey/{outfit_id}/click
+            //이미지 클릭시, 
             <img
               src="sample_codi.png"
               alt={currentPage.current * PAGE_SIZE + i}
               onClick={() => goToDetailPage(outfit_id)}
             />
+            //TODO: outfit_id, 좋아요 상태 전달
             <HeartButton className="heart-button" outfitId={outfit_id} likeState={false} />
           </GridItem>
         );

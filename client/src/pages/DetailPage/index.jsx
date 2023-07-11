@@ -73,6 +73,7 @@ function SimilarItems() {
         <div>
             <p className="description">Similar Style</p>
             <Space direction="horizontal" className="similar">
+                //TODO: /items/journey/{outfit_id}/click
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id1)} />
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id2)} />
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id3)} />
@@ -83,10 +84,12 @@ function SimilarItems() {
 
 
 function DetailPage({ outfitId }) {
+    //TODO: GET items/journey/{outfit_id}
+    //유사 아이템, 메인 아이템 링크 걸기
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("/items/journey/", {
+                const response = await axios.get("http://localhost:8000/items/journey/", {
                     params: {
                         outfit_id: outfitId, // outfitId를 적절한 outfit_id 값으로 변경해주세요.
                     },
@@ -96,7 +99,6 @@ function DetailPage({ outfitId }) {
                 console.error("Failed to fetch data:", error);
             }
         };
-
         fetchData();
     }, [outfitId]);
     
