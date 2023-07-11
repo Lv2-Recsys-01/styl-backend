@@ -37,7 +37,6 @@ app.add_middleware(
         "http://localhost",
         "http://localhost:3000",
         "http://localhost:8000",
-        "https://7dd0-125-141-116-185.ngrok-free.app",
     ],
     allow_origin_regex="https://.*\.ngrok\-free\.app",
     allow_credentials=True,  # True인 경우 allow_origins을 ['*'] 로 설정할 수 없음.
