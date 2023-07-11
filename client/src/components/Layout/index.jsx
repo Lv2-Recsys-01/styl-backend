@@ -14,13 +14,12 @@ export function Header() {
     const [userName, SetUserName] = useState('guest');
     const navigate = useNavigate();
 
-    const [cookieUserId] = useCookies(['user_id']);
-    const [cookieUserName] = useCookies(['user_name']);
+    const [cookies, setCookie] = useCookies('Cookies');
 
     useEffect(() => {
-        if (cookieUserId.name !==undefined) {
+        if (cookies.user_id !==undefined) {
             setIsLoggedIn(true);
-            SetUserName(cookieUserName.name);
+            SetUserName(cookies.user_name);
         }
     }, []);
 
@@ -32,7 +31,7 @@ export function Header() {
         axios.post("http://localhost:8000/users/logout")
                 .then(response => {
                 setIsLoggedIn(false);
-                navigate(window.location.pathname, { replace: true });
+                navigate("/journey");
                 console.log(response.data);
             })
             .catch(error => {
