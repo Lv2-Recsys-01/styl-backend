@@ -109,7 +109,7 @@ function ImageGridView(props) {
         newData.push(
           <GridItem key={currentPage.current * PAGE_SIZE + i}>
             <img src="sample_codi.png" alt={currentPage.current * PAGE_SIZE + i} />
-            <HeartButton classname="heart-button" />
+            <HeartButton classname="heart-button" outfitId ={12} likeState ={false}/>
           </GridItem>
         );
       }
