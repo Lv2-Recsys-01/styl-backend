@@ -110,7 +110,7 @@ function Login({ closeModal = () => {} }) {
         };
 
         axios
-            .post("http://localhost:8000/signup", SignUpParams)
+            .post("http://localhost:8000/users/signup", SignUpParams)
             .then((response) => {
                 // Response handling
                 console.log(response.data);

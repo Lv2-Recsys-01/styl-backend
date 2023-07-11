@@ -10,7 +10,7 @@ from pytz import timezone
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Like, User
+from ..models import Like, User, UserSession
 from ..schema import UserBase, UserSignUp
 
 router = APIRouter(
@@ -37,16 +37,12 @@ def merge_likes(session_id: str, guest_id: int, real_user_id: int, db: Session):
     db.commit()
 
 
-from fastapi.responses import JSONResponse
-
-
 @router.post("/login")
 def login(
     user_body: Annotated[UserBase | None, Body()] = None,
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     if user_body is None or user_body.user_name is None or user_body.user_pwd is None:
         raise HTTPException(
@@ -97,13 +93,37 @@ def login(
     # return {"ok": True, "user_name": login_user.user_name}
 
 
+@router.post("/signup")
+def signup(
+    user_body: Annotated[UserSignUp | None, Body()] = None,
+    db: Session = Depends(get_db),
+) -> dict:
+    if user_body is None or user_body.user_name is None or user_body.user_pwd is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="회원가입 정보가 없습니다.",
+        )
+
+    existed_user = db.query(User).filter(User.user_name == user_body.user_name).first()
+    if existed_user:
+        raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다")
+
+    hashed_password = pwd_context.hash(user_body.user_pwd)
+    db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+    return {"ok": True, "user_name": db_user.user_name}
+
+
 @router.post("/logout")
 def logout(
     response: Response,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-):
+) -> dict:
     logout_session = (
         db.query(UserSession)
         .filter(UserSession.user_id == user_id, UserSession.session_id == session_id)
@@ -116,18 +136,3 @@ def logout(
     response.delete_cookie(key="user_name")
 
     return {"ok": True}
-
-
-@router.post("/signup")
-def signup(user: UserSignUp, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.user_name == user.user_name).first()
-    if existing_user:
-        raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다")
-
-    hashed_password = pwd_context.hash(user.user_pwd)
-    db_user = User(user_name=user.user_name, user_pwd=hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-    return {"ok": True, "user_name": user.user_name}
