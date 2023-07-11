@@ -79,9 +79,9 @@ def login(
     cur_session: UserSession | None = (
         db.query(UserSession).filter(UserSession.session_id == session_id).first()
     )
-    if cur_session:
+    if cur_session and cur_session.user_id is None:
         # type: ignore
-        cur_session.user_id = int(login_user.user_id)
+        cur_session.user_id = int(login_user.user_id)  # type: ignore
 
     db.commit()
     db.refresh(cur_session)
@@ -122,7 +122,10 @@ def logout(
 ) -> dict:
     logout_session: UserSession | None = (
         db.query(UserSession)
-        .filter(UserSession.user_id == user_id, UserSession.session_id == session_id)
+        .filter(
+            UserSession.session_id == session_id,
+            UserSession.user_id == user_id,
+        )
         .first()
     )
 

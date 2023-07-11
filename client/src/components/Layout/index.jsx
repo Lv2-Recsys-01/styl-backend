@@ -51,7 +51,7 @@ export function Header() {
             </div>
         </div>
     );
-}    
+}
 
 export function Footer() {
     return <div className={`footer-container`}>footer</div>;
