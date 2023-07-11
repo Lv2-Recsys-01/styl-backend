@@ -39,11 +39,12 @@ def merge_likes(session_id: str, guest_id: int, real_user_id: int, db: Session):
 
 @router.post("/login")
 def login(
+    response: Response,
     user_body: Annotated[UserBase | None, Body()] = None,
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-):
+) -> dict:
     if user_body is None or user_body.user_name is None or user_body.user_pwd is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -64,8 +65,14 @@ def login(
             detail="존재하지 않는 아이디 입니다.",
         )
 
-    # if pwd_context.verify(user_body.user_pwd, login_user.user_pwd):
-    #     raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
+    if not pwd_context.verify(user_body.user_pwd, str(login_user.user_pwd)):
+        raise HTTPException(status_code=500, detail="비밀번호 검증에 실패했습니다.")
+
+    response.set_cookie(key="user_id", value=str(login_user.user_id), httponly=True)
+    response.set_cookie(key="user_name", value=str(login_user.user_name), httponly=True)
+
+    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
+
     # # 좋아요 병합
     # merge_likes(session_id, guest_id, login_user.user_id, db)
     # # 현재 비회원 세션 만료 표시
@@ -86,9 +93,6 @@ def login(
     # db.commit()
     # db.refresh(user_session)
     # # 쿠키 생성
-    # response.set_cookie(key="session_id", value=session_id, httponly=True)
-    # response.set_cookie(key="user_id", value=login_user.user_id, httponly=True)
-    # response.set_cookie(key="user_name", value=login_user.user_name, httponly=True)
 
     # return {"ok": True, "user_name": login_user.user_name}
 
