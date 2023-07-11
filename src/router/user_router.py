@@ -95,7 +95,7 @@ def signup(
     db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)
+    # db.refresh(db_user)
 
     return {"ok": True, "user_name": db_user.user_name}
 
