@@ -52,7 +52,7 @@ class Like(Base):
 
     like_id = Column(Integer, primary_key=True, index=True)
     session_id = Column(String, ForeignKey("session.session_id"))
-    user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
     is_deleted = Column(Boolean)
