@@ -1,5 +1,4 @@
 import pprint
-import uuid
 
 from fastapi import Cookie, Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -79,16 +78,3 @@ def drop_all_db():
 
 app.include_router(user_router.router)
 app.include_router(item_router.router)
-
-
-# 실험용 임시
-@app.post("/upload")
-def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
-    new_outfit = Outfit(img_url=outfit.img_url)
-    db.add(new_outfit)
-    db.commit()
-    db.refresh(new_outfit)
-
-    return {
-        "message": f"new outfit {new_outfit.outfit_id} from {new_outfit.img_url} uploaded"
-    }

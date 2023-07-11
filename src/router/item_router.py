@@ -1,8 +1,12 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Cookie, Depends, HTTPException
+from pytz import timezone
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Like
+from ..models import Click, Like, Outfit
+from ..schema import OutfitBase, OutfitOut
 
 router = APIRouter(
     prefix="/items",
@@ -255,4 +259,17 @@ def show_single_image(
         "ok": True,
         "outfit": outfit_out,
         "similar_outfits_list": similar_outfits_list,
+    }
+
+
+# 실험용 임시
+@router.post("/upload")
+def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
+    new_outfit = Outfit(img_url=outfit.img_url)
+    db.add(new_outfit)
+    db.commit()
+    db.refresh(new_outfit)
+
+    return {
+        "message": f"new outfit {new_outfit.outfit_id} from {new_outfit.img_url} uploaded"
     }
