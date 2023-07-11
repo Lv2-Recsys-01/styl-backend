@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import "./login.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { notification } from "antd";
 
 Modal.setAppElement("#root");
 
@@ -58,9 +59,15 @@ function Login({ closeModal = () => {} }) {
         setError("");
     };
 
-    const checkLoginIneligibility = id.length < 4 || password.length !== 4;
-    const checkSignupIneligibility =
-        id.length < 4 || password.length !== 4 || confirm.length !== 4 || password !== confirm;
+    const handleSignupSuccess = () => {
+        notification.success({
+            message: "회원가입에 성공했어요!",
+            description: "로그인 해주세요!",
+        });
+    };
+
+    const checkLoginIneligibility = id.length < 4 || password.length < 4;
+    const checkSignupIneligibility = id.length < 4 || password.length < 4 || confirm.length < 4 || password !== confirm;
     const isSignUpMode = modalMode === "signup";
     const isLogInMode = modalMode === "login";
 
@@ -79,7 +86,7 @@ function Login({ closeModal = () => {} }) {
             .then((response) => {
                 console.log(response);
                 console.log(response.data);
-                // navigate("/journey");
+                navigate("/journey");
             })
             .catch((error) => {
                 console.error(error);
@@ -114,7 +121,11 @@ function Login({ closeModal = () => {} }) {
             .then((response) => {
                 // Response handling
                 console.log(response.data);
-                navigate("/journey");
+                handleSignupSuccess();
+                setModalMode("login");
+                setTitle("Login");
+                clearInput();
+                navigate("/");
             })
             .catch((error) => {
                 // Error handling
@@ -158,7 +169,7 @@ function Login({ closeModal = () => {} }) {
                         placeholder="Password"
                         value={password}
                         onChange={handlePasswordChange}
-                        maxLength={4}
+                        maxLength={20}
                     />
                 </div>
                 {isSignUpMode && (
@@ -170,7 +181,7 @@ function Login({ closeModal = () => {} }) {
                             placeholder="Confirm Password"
                             value={confirm}
                             onChange={handleConfirmChange}
-                            maxLength={4}
+                            maxLength={20}
                         />
                     </div>
                 )}

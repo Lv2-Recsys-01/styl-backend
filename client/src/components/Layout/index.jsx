@@ -3,65 +3,70 @@ import "./layout.css";
 import withRouter from "../../hoc/withRouter";
 import { Space } from "antd";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ArrowDownOutlined } from "@ant-design/icons";
 import MoveToTop from "../MoveToTop";
 import MoveBottom from "../MoveBottom";
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
+
 
 export function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userId, setUserId] = useState("");
+    const [userName, SetUserName] = useState('guest');
     const navigate = useNavigate();
 
-    //로그인 여부를 확인해서 로그인 했으면
-    //setIsLoggedIn('true')
-    //setUserId('user123')
+    const [cookieUserId] = useCookies(['user_id']);
+    const [cookieUserName] = useCookies(['user_name']);
+
+    useEffect(() => {
+        if (cookieUserId.name !==undefined) {
+            setIsLoggedIn(true);
+            SetUserName(cookieUserName.name);
+        }
+    }, []);
 
     const handleLogin = () => {
-        // 로그인 버튼 클릭 시 처리할 이벤트
         navigate("/");
-        // 추가적인 로직 및 리다이렉션 등을 수행할 수 있습니다.
     };
 
     const handleLogout = () => {
-        // 로그아웃 버튼 클릭 시 처리할 이벤트
-        // 추가적인 로직 및 리다이렉션 등을 수행할 수 있습니다.
-    };
-
-    const handleLoginLogout = () => {
-        if (isLoggedIn) {
-            handleLogout();
-        } else {
-            handleLogin();
-        }
+        axios.post("http://localhost:8000/users/logout")
+                .then(response => {
+                setIsLoggedIn(false);
+                navigate(window.location.pathname, { replace: true });
+                console.log(response.data);
+            })
+            .catch(error => {
+            console.error(error);
+            });
     };
 
     return (
         <div className="header">
             <div className="wrapper">
                 <Space direction="horizontal" className="options">
-                    <div className="user_id">{userId}</div>
-                    <NavLink to="/" className="login" onClick={handleLoginLogout}>
+                    <div className="user-name">{userName}</div>
+                    <NavLink to="/" className="login" onClick={isLoggedIn ? handleLogout : handleLogin}>
                         {isLoggedIn ? "Logout" : "Login"}
                     </NavLink>
                 </Space>
             </div>
         </div>
     );
-}
+}    
 
 export function Footer() {
     return <div className={`footer-container`}>footer</div>;
 }
 
 function Layout({ children, location }) {
-    const [isDetailPage, setIsDetailPage] = useState(() => location.pathname === "/detail");
+   const [isMainlPage, setIsMainPage] = useState(() => location.pathname === "/journey");
     useEffect(() => {
-        setIsDetailPage(location.pathname === "/detail" || location.pathname === "/");
+        setIsMainPage(location.pathname === "/journey" || location.pathname === "/collections");
     }, [location]);
 
     return (
         <div className="global-container">
-            {isDetailPage ? (
+            {!isMainlPage ? (
                 <div>{children}</div>
             ) : (
                 <>

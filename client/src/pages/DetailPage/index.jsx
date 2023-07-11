@@ -75,7 +75,8 @@ function SimilarItems() {
     );
 }
 
-function DetailPage() {
+function DetailPage({ outfitId }) {
+    //TODO: outfitId를 기준으로 silimar, 단건 이미지 가져오기!
     return (
         <Space
             direction="vertical"
