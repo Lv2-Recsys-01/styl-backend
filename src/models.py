@@ -92,7 +92,7 @@ class UserSession(Base):
     __tablename__ = "session"
 
     session_id = Column(String, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"))
+    user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     created_at = Column(DateTime)
     expired_at = Column(DateTime)
 
