@@ -117,14 +117,14 @@ function ImageGridView(props) {
       for (let i = 0; i < PAGE_SIZE; i++) {
         newData.push(
           <GridItem key={currentPage.current * PAGE_SIZE + i}>
-            //TODO: POST /items/journey/{outfit_id}/click
-            //이미지 클릭시, 
+            {/* TODO: POST /items/journey/{outfit_id}/click
+            이미지 클릭시,  */}
             <img
               src="sample_codi.png"
               alt={currentPage.current * PAGE_SIZE + i}
               onClick={() => goToDetailPage(outfit_id)}
             />
-            //TODO: outfit_id, 좋아요 상태 전달
+            {/* TODO: outfit_id, 좋아요 상태 전달 */}
             <HeartButton className="heart-button" outfitId={outfit_id} likeState={false} />
           </GridItem>
         );

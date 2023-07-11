@@ -73,7 +73,7 @@ function SimilarItems() {
         <div>
             <p className="description">Similar Style</p>
             <Space direction="horizontal" className="similar">
-                //TODO: /items/journey/{outfit_id}/click
+                {/* TODO: /items/journey/{outfit_id}/click */}
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id1)} />
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id2)} />
                 <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id3)} />
