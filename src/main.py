@@ -24,17 +24,15 @@ def create_session_id_first_visit(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
-    if session_id is None and user_id is None:
+    if session_id is None:
         session_id = str(uuid.uuid4())
         response.set_cookie(key="session_id", value=session_id)
-
-        # db 저장
 
         user_session = UserSession(
             session_id=session_id,
             user_id=user_id if user_id else None,
             created_at=datetime.now(timezone("Asia/Seoul")),
-        )
+        )  # type: ignore
 
         db.add(user_session)
         db.commit()
