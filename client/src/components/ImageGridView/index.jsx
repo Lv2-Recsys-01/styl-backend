@@ -95,12 +95,22 @@ function ImageGridView(props) {
         props.view === "journey" ? "http://localhost:8000/items/journey" : "http://localhost:8000/collection";
       const viewParams = new URLSearchParams({
         pagesize: PAGE_SIZE.toString(),
-        offset: currentPage.current.toString(),
+        offset: (currentPage.current * PAGE_SIZE).toString(),
       });
 
       const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
       const data = response.data;
-      console.log(data);
+      console.log(1,data);
+      // 응답 데이터 처리
+      const outfitsList = data.outfits_list;
+      const pageSize = data.pagesize;
+      const offset = data.offset;
+      const isLast = data.is_last;
+
+      
+      console.log(2,outfitsList,pageSize,offset,isLast );
+      console.log(3,outfitsList);
+      
       //TODO: outfit_id, url, liked 정보 가져와서 적용하기!
 
       const outfit_id = 1;
