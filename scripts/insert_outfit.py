@@ -1,7 +1,8 @@
-import psycopg2
-import csv
 import ast
 import codecs
+import csv
+
+import psycopg2
 
 host = "localhost"
 port = "6000"
