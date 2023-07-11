@@ -18,8 +18,7 @@ export function Header() {
     const [cookieUserName] = useCookies(['user_name']);
 
     useEffect(() => {
-
-        if (cookieUserId.name !=='1') {
+        if (cookieUserId.name !==undefined) {
             setIsLoggedIn(true);
             SetUserName(cookieUserName.name);
         }

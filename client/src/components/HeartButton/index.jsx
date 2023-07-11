@@ -14,7 +14,7 @@ function HeartButton(props) {
     const outfitId = props.outfitId; // outfit_id 값을 가져와야 함
 
     axios
-      .post(`http://localhost:8000/journey/${outfitId}/like`)
+      .post(`http://localhost:8000/items/journey/${outfitId}/like`)
       .then((response) => {
         console.log(response.data); // API 응답 데이터 처리
       })
