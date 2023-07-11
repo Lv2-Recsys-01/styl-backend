@@ -92,7 +92,7 @@ function ImageGridView(props) {
   async function fetchData() {
     try {
       const viewUrl =
-        props.view === "journey" ? "http://localhost:8000/journey" : "http://localhost:8000/collection";
+        props.view === "journey" ? "http://localhost:8000/items/journey" : "http://localhost:8000/collection";
       const viewParams = new URLSearchParams({
         pagesize: PAGE_SIZE.toString(),
         offset: currentPage.current.toString(),
