@@ -9,18 +9,25 @@ password = 'password'
 conn = psycopg2.connect(host=host, port=port, database=database, user=user, password=password)
 cursor = conn.cursor()
 
-# 삽입할 데이터
 user_name = 'guest'
 user_pwd = 'guest_pwd'
 
-# INSERT 쿼리 실행
+# user_name이 이미 존재하는지 확인
+check_query = 'SELECT COUNT(*) FROM "user" WHERE user_name = %s'
+cursor.execute(check_query, (user_name,))
+count = cursor.fetchone()[0]
+
+if count > 0:
+    print(f"User with user_name '{user_name}' already exists. Exiting...")
+    cursor.close()
+    conn.close()
+    exit()
+
 query = 'INSERT INTO "user" (user_name, user_pwd) VALUES (%s, %s)'
 values = (user_name, user_pwd)
 cursor.execute(query, values)
 
-# 변경 사항 저장
 conn.commit()
 
-# 연결 종료
 cursor.close()
 conn.close()
