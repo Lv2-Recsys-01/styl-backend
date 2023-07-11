@@ -6,6 +6,7 @@ from ..models import Like
 
 router = APIRouter(
     prefix="/items",
+    tags=["items"],
 )
 
 

@@ -7,6 +7,7 @@ from ..schema import UserBase, UserSignUp
 
 router = APIRouter(
     prefix="/users",
+    tags=["users"],
 )
 
 
