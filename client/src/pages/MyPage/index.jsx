@@ -6,7 +6,7 @@ function MyPage() {
     return (
         <div>
             <ToggleRouter />
-            <ImageGridView />
+            <ImageGridView view={'collections'}/>
         </div>
     );
 }

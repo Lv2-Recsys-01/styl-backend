@@ -6,7 +6,7 @@ function Journey() {
     return (
         <div>
             <ToggleRouter />
-            <ImageGridView />
+            <ImageGridView view={'journey'}/>
         </div>
     );
 }
