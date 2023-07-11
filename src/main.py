@@ -21,7 +21,11 @@ print = pprint.pprint
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    description="Outfit Recommendation API",
+    version="0.1.0",
+    title="Outfit Recommendation API",
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
