@@ -25,7 +25,6 @@ from pydantic import BaseModel
 
 print = pprint.pprint
 
-
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
