@@ -138,6 +138,7 @@ def logout(
     if logout_session:
         # type: ignore
         logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))  # type: ignore
+        db.commit()
 
     response.delete_cookie(key="user_id")
     response.delete_cookie(key="session_id")
