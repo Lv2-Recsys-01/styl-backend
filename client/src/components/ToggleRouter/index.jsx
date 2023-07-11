@@ -13,15 +13,15 @@ function ToggleRouter() {
     const isActiveRoute = (route) => {
         return (
             location.pathname.toLowerCase() === `/${route.toLowerCase()}` ||
-            (location.pathname === "/" && route === "Journey")
+            (location.pathname === "/" && route === "journey")
         );
     };
 
     return (
         <div className="toggle_wrapper">
             <button
-                className={`route-btn route-btn-journey ${isActiveRoute("Journey") ? "active" : ""}`}
-                onClick={() => onRouteBtnClick("Journey")}
+                className={`route-btn route-btn-journey ${isActiveRoute("journey") ? "active" : ""}`}
+                onClick={() => onRouteBtnClick("journey")}
             >
                 JOURNEY
             </button>
