@@ -31,7 +31,8 @@ export function Header() {
         axios.post("http://localhost:8000/users/logout")
                 .then(response => {
                 setIsLoggedIn(false);
-                navigate(window.location.href);
+                const currentURL = window.location.pathname;
+                navigate(currentURL);
                 console.log(response.data);
             })
             .catch(error => {
