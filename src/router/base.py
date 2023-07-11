@@ -1,10 +1,12 @@
-from datetime import datetime
-from pytz import timezone
 import uuid
-from fastapi import APIRouter, Cookie, Response, Depends
+from datetime import datetime
+
+from fastapi import APIRouter, Cookie, Depends, Response
+from pytz import timezone
 from sqlalchemy.orm import Session
+
 from ..database import get_db
-from ..models import User, Outfit, Like, Click, UserSession
+from ..models import User, UserSession
 
 base_router = APIRouter()
 
