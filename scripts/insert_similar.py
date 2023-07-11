@@ -15,9 +15,6 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-delete_query = 'DELETE FROM "similar"'
-cursor.execute(delete_query)
-
 with open(csv_file, "r") as f:
     reader = csv.DictReader(f)
     for row in reader:
@@ -26,7 +23,7 @@ with open(csv_file, "r") as f:
             int(outfit.strip()) for outfit in row["top3"].strip("[]").split(",")
         ]
 
-        # outfit_id가 "outfit" 테이블에 존재하는지 확인
+        # outfit_id(FK)가 "outfit" 테이블에 존재하는지 확인
         check_query = 'SELECT COUNT(*) FROM "outfit" WHERE outfit_id = %s'
         cursor.execute(check_query, (outfit_id,))
         count = cursor.fetchone()[0]

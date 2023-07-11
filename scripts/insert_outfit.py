@@ -1,4 +1,5 @@
 import ast
+import codecs
 import csv
 
 import psycopg2
@@ -16,17 +17,27 @@ conn = psycopg2.connect(
 csv_file = "../meta_22-23.csv"
 
 cursor = conn.cursor()
-delete_query = "DELETE FROM outfit"
-cursor.execute(delete_query)
-conn.commit()
 
-with open(csv_file, "r") as f:
+with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     reader = csv.reader(f)
-    next(reader)
+    headers = next(reader)
 
-    cursor = conn.cursor()
+    # 열 인덱스 동적으로 결정
+    outfit_id_index = headers.index("outfit_id")
+    gender_index = headers.index("gender")
+    age_index = headers.index("age")
+    img_url_index = headers.index("img_url")
+    origin_url_index = headers.index("origin_url")
+    reporter_index = headers.index("reporter")
+    tags_index = headers.index("tags")
+    brands_index = headers.index("brands")
+    region_index = headers.index("region")
+    occupation_index = headers.index("occupation")
+    style_index = headers.index("style")
+    date_index = headers.index("date")
+
     for row in reader:
-        outfit_id = int(row[0])
+        outfit_id = int(row[outfit_id_index])
 
         # outfit_id가 이미 존재하는지 확인
         check_query = "SELECT COUNT(*) FROM outfit WHERE outfit_id = %s"
@@ -37,28 +48,33 @@ with open(csv_file, "r") as f:
             print(f"Skipping duplicate outfit_id: {outfit_id}")
             continue
 
-        age = int(row[2]) if row[2] != "연령미상" else None
-        occupation = row[9] if row[9] != "정보없음" else None
-        tags = ast.literal_eval(row[6])
-        brands = ast.literal_eval(row[7]) if row[7] != "[]" else None
+        age = int(row[age_index]) if row[age_index] != "연령미상" else None
+        occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
+        tags = ast.literal_eval(row[tags_index])
+        brands = (
+            ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
+        )
 
         query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, "date") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+
         values = (
-            outfit_id,  # outfit_id: INTEGER
-            row[1],  # gender: CHAR(1)
-            age,  # age: INTEGER
-            row[3],  # img_url: VARCHAR
-            row[4],  # origin_url: VARCHAR
-            row[5],  # reporter: VARCHAR
-            tags,  # tags: VARCHAR[]
-            brands,  # brands: VARCHAR[]
-            row[8],  # region: VARCHAR
-            occupation,  # occupation: VARCHAR
-            row[10],  # style: VARCHAR
-            row[11],  # date: TIMESTAMP WITHOUT TIME ZONE
+            outfit_id,
+            row[gender_index],
+            age,
+            row[img_url_index],
+            row[origin_url_index],
+            row[reporter_index],
+            tags,
+            brands,
+            row[region_index],
+            occupation,
+            row[style_index],
+            row[date_index],
         )
+
         cursor.execute(query, values)
 
     conn.commit()
 
 cursor.close()
+conn.close()
