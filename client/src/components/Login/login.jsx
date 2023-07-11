@@ -104,7 +104,7 @@ function Login({ closeModal = () => {} }) {
 
     const handleSignup = () => {
         console.log(`signup => ID: ${id}, Password: ${password}, ConfirmPassword: ${confirm}`);
-        
+
         const SignUpParams = {
             user_name: id,
             user_pwd: password,

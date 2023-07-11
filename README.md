@@ -129,7 +129,7 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 [목적 및 기능]
 - 유저에게 코디 이미지를 보여줌
 - 한 페이지당 offset부터 pagesize 개수만큼 보여줌
-  - /journey?pagesize=10&offset=0 (0번째 ~ 10번째)  
+  - /journey?pagesize=10&offset=0 (0번째 ~ 10번째)
   - /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
 - DB의 Outfit 테이블에서 가져올 이미지 목록 불러옴
   - 이 개수가 pagesize보다 작으면 is_last = True
@@ -214,7 +214,7 @@ docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못
 [목적 및 기능]
 - 목적 : 유저가 좋아요 한 코디 이미지 가져옴
 - 한 페이지당 offset부터 pagesize 개수만큼 보여줌
-  - /collection?pagesize=10&offset=0 (0번째 ~ 10번째)  
+  - /collection?pagesize=10&offset=0 (0번째 ~ 10번째)
   - /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
 - DB의 Like 테이블에서 outfit_id 목록 가져옴
 - 목록 길이가 pagesize보다 작으면 is_last = True

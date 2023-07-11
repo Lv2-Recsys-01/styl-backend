@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
-from sqlalchemy import (ARRAY, Column, DateTime, ForeignKey, Integer,
-                        String, CHAR, Boolean)
+from sqlalchemy import (ARRAY, CHAR, Boolean, Column, DateTime, ForeignKey,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -80,7 +80,9 @@ class Click(Base):
 class Similar(Base):
     __tablename__ = "similar"
 
-    outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"), primary_key=True, index=True)
+    outfit_id = Column(
+        Integer, ForeignKey("outfit.outfit_id"), primary_key=True, index=True
+    )
     similar_outfits = Column(ARRAY(Integer))
 
     outfit = relationship("Outfit", back_populates="similars")
@@ -97,6 +99,3 @@ class UserSession(Base):
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")
     clicks = relationship("Click", back_populates="session")
-    
-    
-
