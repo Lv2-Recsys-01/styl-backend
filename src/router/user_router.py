@@ -7,6 +7,7 @@ from fastapi import (APIRouter, Body, Cookie, Depends, HTTPException, Response,
 from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from pytz import timezone
+from sqlalchemy import Column, DateTime
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -128,12 +129,15 @@ def logout(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
-    logout_session = (
+    logout_session: UserSession | None = (
         db.query(UserSession)
         .filter(UserSession.user_id == user_id, UserSession.session_id == session_id)
         .first()
     )
-    logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))
+
+    if logout_session:
+        # type: ignore
+        logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))  # type: ignore
 
     response.delete_cookie(key="user_id")
     response.delete_cookie(key="session_id")
