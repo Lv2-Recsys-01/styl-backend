@@ -84,9 +84,3 @@
     font-weight: 600;
     cursor: pointer;
 }
-
-.signup-notification{
-    background-color: var(--vivamagenta); /* 배경색 변경 */
-    color: var(--graylilac); /* 텍스트 색상 변경 */
-
-}
