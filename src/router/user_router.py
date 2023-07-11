@@ -40,38 +40,39 @@ def login(
     db: Session = Depends(get_db),
     guest_id: int = 1,
 ):
-    # 현재 로그인 된 상태인지 확인
-    if user_id != guest_id:
-        raise HTTPException(status_code=500, detail="로그아웃을 먼저 하십시오.")
-    # 로그인 검증
-    login_user = db.query(User).filter(User.user_name == user.user_name).first()
-    if login_user is None or not pwd_context.verify(user.user_pwd, login_user.user_pwd):
-        raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
-    # 좋아요 병합
-    merge_likes(session_id, guest_id, login_user.user_id, db)
-    # 현재 비회원 세션 만료 표시
-    cur_session = (
-        db.query(UserSession).filter(UserSession.session_id == session_id).first()
-    )
-    cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
-    # 새 세션id 생성
-    session_id = str(uuid.uuid4())
-    # 새 세션 db 저장
-    user_session = UserSession(
-        session_id=session_id,
-        user_id=login_user.user_id,
-        created_at=datetime.now(timezone("Asia/Seoul")),
-        expired_at=datetime.now(timezone("Asia/Seoul")),
-    )
-    db.add(user_session)
-    db.commit()
-    db.refresh(user_session)
-    # 쿠키 생성
-    response.set_cookie(key="session_id", value=session_id, httponly=True)
-    response.set_cookie(key="user_id", value=login_user.user_id, httponly=True)
-    response.set_cookie(key="user_name", value=login_user.user_name, httponly=True)
+    print(db)
+    # # 현재 로그인 된 상태인지 확인
+    # if user_id != guest_id:
+    #     raise HTTPException(status_code=500, detail="로그아웃을 먼저 하십시오.")
+    # # 로그인 검증
+    # login_user = db.query(User).filter(User.user_name == user.user_name).first()
+    # if login_user is None or not pwd_context.verify(user.user_pwd, login_user.user_pwd):
+    #     raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
+    # # 좋아요 병합
+    # merge_likes(session_id, guest_id, login_user.user_id, db)
+    # # 현재 비회원 세션 만료 표시
+    # cur_session = (
+    #     db.query(UserSession).filter(UserSession.session_id == session_id).first()
+    # )
+    # cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
+    # # 새 세션id 생성
+    # session_id = str(uuid.uuid4())
+    # # 새 세션 db 저장
+    # user_session = UserSession(
+    #     session_id=session_id,
+    #     user_id=login_user.user_id,
+    #     created_at=datetime.now(timezone("Asia/Seoul")),
+    #     expired_at=datetime.now(timezone("Asia/Seoul")),
+    # )
+    # db.add(user_session)
+    # db.commit()
+    # db.refresh(user_session)
+    # # 쿠키 생성
+    # response.set_cookie(key="session_id", value=session_id, httponly=True)
+    # response.set_cookie(key="user_id", value=login_user.user_id, httponly=True)
+    # response.set_cookie(key="user_name", value=login_user.user_name, httponly=True)
 
-    return {"ok": True, "user_name": login_user.user_name}
+    # return {"ok": True, "user_name": login_user.user_name}
 
 
 @router.post("/logout")
