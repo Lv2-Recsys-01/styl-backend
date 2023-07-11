@@ -7,6 +7,7 @@ from fastapi import (APIRouter, Body, Cookie, Depends, HTTPException, Response,
 from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from pytz import timezone
+from sqlalchemy import Column, DateTime
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -71,14 +72,13 @@ def login(
     response.set_cookie(key="user_id", value=str(login_user.user_id), httponly=True)
     response.set_cookie(key="user_name", value=str(login_user.user_name), httponly=True)
 
-    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
-
     # # 좋아요 병합
     # merge_likes(session_id, guest_id, login_user.user_id, db)
-    # # 현재 비회원 세션 만료 표시
-    # cur_session = (
-    #     db.query(UserSession).filter(UserSession.session_id == session_id).first()
-    # )
+
+    # 현재 비회원 세션 만료 표시
+    cur_session = (
+        db.query(UserSession).filter(UserSession.session_id == session_id).first()
+    )
     # cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
     # # 새 세션id 생성
     # session_id = str(uuid.uuid4())
@@ -94,7 +94,7 @@ def login(
     # db.refresh(user_session)
     # # 쿠키 생성
 
-    # return {"ok": True, "user_name": login_user.user_name}
+    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
 
 
 @router.post("/signup")
@@ -128,12 +128,16 @@ def logout(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
-    logout_session = (
+    logout_session: UserSession | None = (
         db.query(UserSession)
         .filter(UserSession.user_id == user_id, UserSession.session_id == session_id)
         .first()
     )
-    logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))
+
+    if logout_session:
+        # type: ignore
+        logout_session.expired_at = datetime.now(timezone("Asia/Seoul"))  # type: ignore
+        db.commit()
 
     response.delete_cookie(key="user_id")
     response.delete_cookie(key="session_id")
