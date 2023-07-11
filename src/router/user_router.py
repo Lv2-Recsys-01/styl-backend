@@ -69,30 +69,22 @@ def login(
     if not pwd_context.verify(user_body.user_pwd, str(login_user.user_pwd)):
         raise HTTPException(status_code=500, detail="비밀번호 검증에 실패했습니다.")
 
-    response.set_cookie(key="user_id", value=str(login_user.user_id), httponly=True)
-    response.set_cookie(key="user_name", value=str(login_user.user_name), httponly=True)
+    response.set_cookie(key="user_id", value=str(login_user.user_id))
+    response.set_cookie(key="user_name", value=str(login_user.user_name))
 
     # # 좋아요 병합
     # merge_likes(session_id, guest_id, login_user.user_id, db)
 
-    # 현재 비회원 세션 만료 표시
-    cur_session = (
+    # 현재 비회원 세션에 user_id 추가하기
+    cur_session: UserSession | None = (
         db.query(UserSession).filter(UserSession.session_id == session_id).first()
     )
-    # cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
-    # # 새 세션id 생성
-    # session_id = str(uuid.uuid4())
-    # # 새 세션 db 저장
-    # user_session = UserSession(
-    #     session_id=session_id,
-    #     user_id=login_user.user_id,
-    #     created_at=datetime.now(timezone("Asia/Seoul")),
-    #     expired_at=datetime.now(timezone("Asia/Seoul")),
-    # )
-    # db.add(user_session)
-    # db.commit()
-    # db.refresh(user_session)
-    # # 쿠키 생성
+    if cur_session:
+        # type: ignore
+        cur_session.user_id = int(login_user.user_id)
+
+    db.commit()
+    db.refresh(cur_session)
 
     return {"user_id": login_user.user_id, "user_name": login_user.user_name}
 
