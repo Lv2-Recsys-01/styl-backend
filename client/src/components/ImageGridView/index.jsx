@@ -23,7 +23,7 @@ const S = {
     padding-top: 162%; /* 황금비 1.618의 근사값. 가로 대비 세로의 높이 */
     overflow: hidden;
     border-radius: 12px;
-    border: 2px solid var(--vivamagenta);
+    border: 3px double var(--graylilac);
 
     img {
       position: absolute;
@@ -32,7 +32,7 @@ const S = {
       width: 100%;
       height: 85%;
       object-fit: cover;
-      border-bottom: 2px dashed var(--vivamagenta);
+      border-bottom: 2px dashed var(--graylilac);
     }
   `,
 };
@@ -135,12 +135,12 @@ function ImageGridView(props) {
     } catch (error) {
       console.error(error);
       if (error.code === 'ERR_BAD_REQUEST') {
+        navigate('/journey');
         notification.warning({
             message: 'JOURNEY 페이지로 이동합니다.',
             description: '마음에 드는 코디에 하트를 눌러보세요!',
             duration: 3,
-        });
-        navigate('/journey');
+        });   
     }
     } finally {
       setIsLoading(false);

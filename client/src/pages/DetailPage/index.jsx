@@ -40,8 +40,8 @@ function DetailCodi(props) {
             .then(() => {
                 console.log('URL copied to clipboard');
                 notification.success({
-                    message: 'URL Copied',
-                    description: 'The URL has been copied to the clipboard.',
+                    message: 'URL이 복사되었습니다!',
+                    description: '클립보드에 URL이 복사되었어요',
                     duration: 1,
                 });
             })

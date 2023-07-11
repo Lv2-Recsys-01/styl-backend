@@ -63,6 +63,7 @@ function Login({ closeModal = () => {} }) {
         notification.success({
             message: "회원가입에 성공했어요!",
             description: "로그인 해주세요!",
+            duration: 2,
         });
     };
 
