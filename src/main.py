@@ -1,12 +1,16 @@
 import pprint
 import uuid
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import Cookie, Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
+from pytz import timezone
+from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
+from .models import UserSession
 from .router import item_router, user_router
 
 print = pprint.pprint
@@ -18,10 +22,24 @@ def create_session_id_first_visit(
     response: Response,
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
 ):
     if session_id is None and user_id is None:
         session_id = str(uuid.uuid4())
         response.set_cookie(key="session_id", value=session_id)
+
+        # db 저장
+
+        user_session = UserSession(
+            session_id=session_id,
+            user_id=user_id if user_id else None,
+            created_at=datetime.now(timezone("Asia/Seoul")),
+        )
+
+        db.add(user_session)
+        db.commit()
+        db.refresh(user_session)
+
     return session_id
 
 
