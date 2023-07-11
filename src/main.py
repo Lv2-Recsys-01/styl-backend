@@ -48,7 +48,7 @@ app.add_middleware(
 )
 
 
-# @app.middleware("http")
+@app.middleware("http")
 async def handle_user_auth_logic(
     request: Request,
     call_next,
@@ -58,7 +58,7 @@ async def handle_user_auth_logic(
 
     response = await call_next(request)
 
-    # examples
+    # response examples
     response.set_cookie("temp_cookie", "temp_cookie_value")
     response.headers["X-Custom-Header"] = "Custom Value"
 
