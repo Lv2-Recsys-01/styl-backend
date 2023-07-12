@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Path, Query
+from fastapi import (APIRouter, Cookie, Depends, HTTPException, Path, Query,
+                     status)
 from pytz import timezone
 from sqlalchemy.orm import Session
 
@@ -185,14 +186,22 @@ def show_collection_images(
 
     is_last = len(outfit_ids_list) < page_size
 
+    print("outfit_ids_list", outfit_ids_list)
+    print(len(outfit_ids_list))
+
     if not outfit_ids_list:
-        raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="좋아요한 사진이 없습니다.",
+        )
 
     outfits_list = list()
     for outfit_id in outfit_ids_list:
         outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id)
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=True)
         outfits_list.append(outfit_out)
+
+    print("outfits_list", outfits_list)
 
     return {
         "ok": True,
@@ -271,16 +280,4 @@ def show_single_image(
         "ok": True,
         "outfit": outfit_out,
         "similar_outfits_list": similar_outfits_list,
-    }
-
-
-# 실험용 임시
-@router.post("/upload")
-def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
-    new_outfit = Outfit(img_url=outfit.img_url)
-    db.add(new_outfit)
-    db.commit()
-
-    return {
-        "message": f"new outfit {new_outfit.outfit_id} \from {new_outfit.img_url} uploaded"
     }

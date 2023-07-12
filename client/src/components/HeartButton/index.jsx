@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import axios from "axios";
 
-function HeartButton(props) {
-    const [isLiked, setIsLiked] = useState(props.likeState);
+function HeartButton({ likeState, outfitId }) {
+    const [isLiked, setIsLiked] = useState(likeState);
 
     const handleToggleLike = () => {
         setIsLiked((prevIsLiked) => !prevIsLiked);
@@ -11,8 +11,6 @@ function HeartButton(props) {
     };
 
     const sendLikeRequest = () => {
-        const outfitId = props.outfitId; // outfit_id 값을 가져와야 함
-
         axios
             .post(`http://localhost:8000/items/journey/${outfitId}/like`)
             .then((response) => {
