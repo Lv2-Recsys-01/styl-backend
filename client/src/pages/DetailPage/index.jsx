@@ -1,7 +1,7 @@
 import { Layout, Space } from "antd";
 import "./index.css";
 import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import axios from "axios";
@@ -85,7 +85,6 @@ function DetailCodi() {
 function SimilarItems() {
     const { outfit_id } = useParams();
     const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
-    let location = useLocation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -98,7 +97,7 @@ function SimilarItems() {
             }
         };
         fetchData();
-    }, [location.pathname]);
+    }, [outfit_id]);
 
     const navigate = useNavigate();
     const goToDetailPage = (similarOutfitId) => {
@@ -113,14 +112,33 @@ function SimilarItems() {
         const sim2_url = similarOutfitsList[1].img_url;
         const sim3 = similarOutfitsList[2].outfit_id;
         const sim3_url = similarOutfitsList[2].img_url;
-        
+        console.log('sim1', sim1, typeof(sim1));
         return (
             <div>
                 <p className="description">Similar Style</p>
                 <Space direction="horizontal" className="similar">
-                    <img src={sim1_url} alt="NoImg" onClick={() => goToDetailPage(sim1)} />
-                    <img src={sim2_url} alt="NoImg" onClick={() => goToDetailPage(sim2)} />
-                    <img src={sim3_url} alt="NoImg" onClick={() => goToDetailPage(sim3)} />
+                    <img src={sim1_url} alt="NoImg" onClick={() => {
+                        goToDetailPage(sim1);
+                        axios.post("http://localhost:8000/items/journey/${sim1}/click")
+                          .catch((error) => {
+                            console.error(error);
+                          });
+                      }}
+                    />
+                    <img src={sim2_url} alt="NoImg" onClick={() => {
+                        axios.post("http://localhost:8000/items/journey/${sim2/click")
+                        .catch((error) => {
+                          console.error(error);
+                            });
+                        }}
+                    />
+                    <img src={sim3_url} alt="NoImg" onClick={() =>{
+                        axios.post("http://localhost:8000/items/journey/${sim3}/click")
+                        .catch((error) => {
+                          console.error(error);
+                            });
+                        }}
+                    />
                 </Space>
             </div>
         );
