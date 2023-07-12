@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Query
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Path, Query
 from pytz import timezone
 from sqlalchemy.orm import Session
 
@@ -78,20 +78,22 @@ def show_journey_images(
 
 @router.post("/journey/{outfit_id}/click")
 def user_click(
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    outfit_id: Annotated[int, Path()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+
     new_click = Click(
         session_id=session_id,
         user_id=user_id,
         outfit_id=outfit_id,
         timestamp=datetime.now(timezone("Asia/Seoul")),
     )
+
     db.add(new_click)
     db.commit()
 
