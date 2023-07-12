@@ -16,17 +16,22 @@ router = APIRouter(
 
 @router.get("/journey")
 def show_journey_images(
-    page_size: int,
+    pagesize: int,
     offset: int,
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
+    guest_id: int = 1,
 ):
     # 한 페이지에 표시할 전체 outfit
+<<<<<<< Updated upstream
+    outfits = db.query(Outfit).offset(offset).limit(pagesize).all()
+=======
     outfits = db.query(Outfit).offset(offset).limit(page_size).all()
 
+>>>>>>> Stashed changes
     # 마지막 페이지인지 확인
-    is_last = len(outfits) < page_size
+    is_last = len(outfits) < pagesize
 
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
@@ -62,12 +67,12 @@ def show_journey_images(
         outfits_list.append(outfit_out)
 
     # total_cnt = 64400
-    # total_page_count = total_cnt // page_size + (1 if total_cnt % page_size else 0)
+    # total_page_count = total_cnt // pagesize + (1 if total_cnt % pagesize else 0)
 
     return {
         "ok": True,
         "outfits_list": outfits_list,
-        "page_size": page_size,
+        "pagesize": pagesize,
         "offset": offset,
         "is_last": is_last,
     }
@@ -141,7 +146,7 @@ def user_like(
 
 @router.get("/collection")
 def show_collection_images(
-    page_size: int,
+    pagesize: int,
     offset: int,
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
@@ -158,7 +163,7 @@ def show_collection_images(
                 Like.is_deleted is False,
             )
             .offset(offset)
-            .limit(page_size)
+            .limit(pagesize)
             .all()
         ]
     # 회원일때
@@ -167,11 +172,11 @@ def show_collection_images(
             db.query(Like)
             .filter(Like.user_id == user_id, Like.is_deleted is False)
             .offset(offset)
-            .limit(page_size)
+            .limit(pagesize)
             .all()
         ]
 
-    is_last = len(outfit_ids_list) < page_size
+    is_last = len(outfit_ids_list) < pagesize
 
     if not outfit_ids_list:
         raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
@@ -185,7 +190,7 @@ def show_collection_images(
     return {
         "ok": True,
         "outfits_list": outfits_list,
-        "page_size": page_size,
+        "pagesize": pagesize,
         "offset": offset,
         "is_last": is_last,
     }
