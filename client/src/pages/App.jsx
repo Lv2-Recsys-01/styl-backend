@@ -23,8 +23,6 @@ function App() {
           <Route path="/journey" element={<Journey />} />
           <Route path="/collections" element={<MyPage />} />
           <Route path="/detail/:outfit_id" element={<DetailPageWrapper />} />
-          {/* TODO: 이렇게 해도 되나요?? */}
-          <Route path="*" element={<EntryPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
