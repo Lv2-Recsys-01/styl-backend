@@ -15,6 +15,7 @@ from .router import item_router, user_router
 
 print = pprint.pprint
 
+# Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 

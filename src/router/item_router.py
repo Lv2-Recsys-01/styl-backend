@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Path, Query
 from pytz import timezone
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Click, Like, Outfit
+from ..models import Click, Like, Outfit, Similar
 from ..schema import OutfitBase, OutfitOut
 
 router = APIRouter(
@@ -16,12 +17,12 @@ router = APIRouter(
 
 @router.get("/journey")
 def show_journey_images(
-    page_size: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    page_size: Annotated[int, Query()],
+    offset: Annotated[int, Query()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-):
+) -> dict:
     # 한 페이지에 표시할 전체 outfit
     outfits = db.query(Outfit).offset(offset).limit(page_size).all()
 
@@ -55,6 +56,7 @@ def show_journey_images(
     likes_set = {like.outfit_id for like in likes}
 
     outfits_list = []
+
     for outfit in outfits:
         # 각 outfit 마다 유저가 좋아요 눌렀는지 확인
         is_liked = outfit.outfit_id in likes_set
@@ -75,20 +77,22 @@ def show_journey_images(
 
 @router.post("/journey/{outfit_id}/click")
 def user_click(
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    outfit_id: Annotated[int, Path()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+
     new_click = Click(
         session_id=session_id,
         user_id=user_id,
         outfit_id=outfit_id,
         timestamp=datetime.now(timezone("Asia/Seoul")),
     )
+
     db.add(new_click)
     db.commit()
 
@@ -97,11 +101,10 @@ def user_click(
 
 @router.post("/journey/{outfit_id}/like")
 def user_like(
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    outfit_id: Annotated[int, Path()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
@@ -109,16 +112,25 @@ def user_like(
 
     # 이전에 좋아요 누른적 있는지 확인
     # 비회원
-    if user_id == guest_id:
-        already_like = db.query(Like).filter(
-            Like.user_id == guest_id,
-            Like.session_id == session_id,
-            Like.outfit_id == outfit_id,
+    if user_id is None and session_id is not None:
+        already_like: Like = (
+            db.query(Like)
+            .filter(
+                Like.user_id == bool(None),
+                Like.session_id == session_id,
+                Like.outfit_id == outfit_id,
+            )
+            .first()
         )
     # 회원
     else:
-        already_like = db.query(Like).filter(
-            Like.user_id == user_id, Like.outfit_id == outfit_id
+        already_like = (
+            db.query(Like)
+            .filter(
+                Like.user_id == user_id,
+                Like.outfit_id == outfit_id,
+            )
+            .first()
         )
     # 누른적 없으면 DB에 추가
     if not already_like:
@@ -127,35 +139,32 @@ def user_like(
             user_id=user_id,
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
-            is_deleted=False,
         )
         db.add(new_like)
         db.commit()
+        return {"ok": True}
     # 누른적 있으면 취소 여부 바꿔줌
     else:
-        already_like.is_delete = ~already_like.is_delete
+        already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
         db.commit()
-
-    return {"ok": True}
+        return {"ok": True}
 
 
 @router.get("/collection")
 def show_collection_images(
-    page_size: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    page_size: Annotated[int, Query()],
+    offset: Annotated[int, Query()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     # 비회원일때
-    if user_id == guest_id:
+    if user_id is None and session_id is not None:
         outfit_ids_list = [
             db.query(Like)
             .filter(
-                Like.user_id == guest_id,
                 Like.session_id == session_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(False),
             )
             .offset(offset)
             .limit(page_size)
@@ -165,7 +174,10 @@ def show_collection_images(
     else:
         outfit_ids_list = [
             db.query(Like)
-            .filter(Like.user_id == user_id, Like.is_deleted is False)
+            .filter(
+                Like.user_id == user_id,
+                Like.is_deleted == bool(False),
+            )
             .offset(offset)
             .limit(page_size)
             .all()
@@ -197,7 +209,6 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
@@ -205,19 +216,18 @@ def show_single_image(
 
     # 좋아요 눌렀는지 체크
     # 비회원
-    if user_id == guest_id:
+    if user_id is None and session_id is not None:
         user_like = db.query(Like).filter(
-            Like.user_id == guest_id,
             Like.session_id == session_id,
             Like.outfit_id == outfit_id,
-            Like.is_deleted is False,
+            Like.is_deleted == bool(None),
         )
     # 회원
     else:
         user_like = db.query(Like).filter(
             Like.user_id == user_id,
             Like.outfit_id == outfit_id,
-            Like.is_deleted is False,
+            Like.is_deleted == bool(None),
         )
     # is_liked : user_like 존재하면 True, 아니면 False
     is_liked = user_like is not None
@@ -228,7 +238,8 @@ def show_single_image(
         raise HTTPException(status_code=500, detail="Similar outfits not found")
 
     similar_outfits_list = list()
-    for similar_outfit_id in similar_outfits:
+
+    for similar_outfit_id in similar_outfits.similar_outfits:
         similar_outfit = (
             db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
         )
@@ -238,19 +249,18 @@ def show_single_image(
             )
         # 좋아요 눌렀는지 체크
         # 비회원
-        if user_id == guest_id:
+        if user_id is None and session_id is not None:
             user_like = db.query(Like).filter(
-                Like.user_id == guest_id,
                 Like.session_id == session_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(None),
             )
         # 회원
         else:
             user_like = db.query(Like).filter(
                 Like.user_id == user_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(None),
             )
         # is_liked : user_like 존재하면 True, 아니면 False
         is_liked = user_like is not None
@@ -272,5 +282,5 @@ def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
     db.commit()
 
     return {
-        "message": f"new outfit {new_outfit.outfit_id} from {new_outfit.img_url} uploaded"
+        "message": f"new outfit {new_outfit.outfit_id} \from {new_outfit.img_url} uploaded"
     }
