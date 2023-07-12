@@ -1,11 +1,11 @@
 import { Layout, Space } from "antd";
 import "./index.css";
 import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const { Header, Footer, Content } = Layout;
 
@@ -27,11 +27,24 @@ function DetailHeader() {
     );
 }
 
-function DetailCodi(props) {
-    const navigate = useNavigate();
-    const goMusinsa = () => {
-        navigate("/musinsa");
-    };
+function DetailCodi() {
+    const { outfit_id } = useParams();
+    const [singleOutfit, setSingleOutfit] = useState(null);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
+                const singleOutfitData = response.data.outfit;
+                setSingleOutfit(singleOutfitData);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
+        };
+        fetchData();
+    }, [outfit_id]);
+
     const handleShareClick = () => {
         const currentURL = window.location.href;
         navigator.clipboard
@@ -48,55 +61,76 @@ function DetailCodi(props) {
                 console.error("Failed to copy URL to clipboard:", error);
             });
     };
+
     return (
         <div className="body">
-            <img className="codi" src="sample_codi.png" alt="NoImg" />
-            <p className="options">
-                <img className="musinsa" src="musinsa.png" alt="NoImg" onClick={goMusinsa} />
-                <ShareAltOutlined className="share" onClick={handleShareClick} />
-                <HeartButton />
-            </p>
+            {singleOutfit && (
+                <>
+                    <img className="codi" src={singleOutfit.img_url} alt="NoImg" />
+                    <p className="options">
+                        <a href={singleOutfit.origin_url}>
+                            <img className="musinsa" src="musinsa.png" alt="NoImg" />
+                        </a>
+                        <ShareAltOutlined className="share" onClick={handleShareClick} />
+                        <HeartButton  
+                        outfitId={singleOutfit.outfit_id}
+                        likeState={singleOutfit.is_liked}/>
+                    </p>
+                </>
+            )}
         </div>
     );
 }
 
 function SimilarItems() {
-    const navigate = useNavigate();
-    const goToDetailPage = (outfit_id) => {
-        navigate(`/detail/${outfit_id}`);
-    };
-    const outfit_id1 = 1;
-    const outfit_id2 = 2;
-    const outfit_id3 = 3;
-    return (
-        <div>
-            <p className="description">Similar Style</p>
-            <Space direction="horizontal" className="similar">
-                {/* TODO: /items/journey/{outfit_id}/click */}
-                <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id1)} />
-                <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id2)} />
-                <img src="sample_codi.png" alt="NoImg" onClick={goToDetailPage(outfit_id3)} />
-            </Space>
-        </div>
-    );
-}
-
-function DetailPage() {
-    //TODO: GET items/journey/{outfit_id}
-    //유사 아이템, 메인 아이템 링크 걸기
     const { outfit_id } = useParams();
+    const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
+    let location = useLocation();
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
+            try{
                 const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
-                console.log(response.data); // 요청 결과 출력
-            } catch (error) {
+                const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
+                setSimilarOutfitsList(fetchedSimilarOutfitsList);
+            }catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
         fetchData();
-    }, []);
+    }, [location.pathname]);
+
+    const navigate = useNavigate();
+    const goToDetailPage = (similarOutfitId) => {
+        navigate(`/detail/${similarOutfitId}`);
+    };
+
+    // SimilarItems 컴포넌트가 렌더링될 때 similarOutfitsList가 존재할 경우에만 실행되도록 조건문 추가
+    if (similarOutfitsList.length > 0) {
+        const sim1 = similarOutfitsList[0].outfit_id;
+        const sim1_url = similarOutfitsList[0].img_url;
+        const sim2 = similarOutfitsList[1].outfit_id;
+        const sim2_url = similarOutfitsList[1].img_url;
+        const sim3 = similarOutfitsList[2].outfit_id;
+        const sim3_url = similarOutfitsList[2].img_url;
+        
+        return (
+            <div>
+                <p className="description">Similar Style</p>
+                <Space direction="horizontal" className="similar">
+                    <img src={sim1_url} alt="NoImg" onClick={() => goToDetailPage(sim1)} />
+                    <img src={sim2_url} alt="NoImg" onClick={() => goToDetailPage(sim2)} />
+                    <img src={sim3_url} alt="NoImg" onClick={() => goToDetailPage(sim3)} />
+                </Space>
+            </div>
+        );
+    }
+
+    return null;
+}
+
+
+function DetailPage() {
 
     return (
         <Space
@@ -111,7 +145,7 @@ function DetailPage() {
                     <DetailHeader />
                 </Header>
                 <Content className="detail-content">
-                    <DetailCodi detail_outfitId={outfit_id} />
+                    <DetailCodi />
                 </Content>
                 <Footer className="detail-footer">
                     <SimilarItems />
