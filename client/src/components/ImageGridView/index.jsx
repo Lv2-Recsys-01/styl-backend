@@ -120,14 +120,14 @@ function ImageGridView(props) {
             currentPage.current += 1;
         } catch (error) {
             console.log(error);
-            // if (error.response.data.status === 501) {
-            //     navigate("/journey");
-            //     notification.warning({
-            //         message: "JOURNEY 페이지로 이동합니다.",
-            //         description: "마음에 드는 코디에 하트를 눌러보세요!",
-            //         duration: 3,
-            //     });
-            // }
+            if (error.response.request.status === 501) {
+                navigate("/journey");
+                notification.warning({
+                    message: "JOURNEY 페이지로 이동합니다.",
+                    description: "먼저, 마음에 드는 코디에 하트를 눌러보세요!",
+                    duration: 3,
+                });
+            }
         } finally {
             setIsLoading(false);
         }
