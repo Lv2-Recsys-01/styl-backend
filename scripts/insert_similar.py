@@ -1,4 +1,5 @@
 import csv
+import os
 
 import psycopg2
 
@@ -8,10 +9,15 @@ database = "postgres"
 user = "postgres"
 password = "password"
 
-csv_file = "../top3_22-23.csv"
+
+csv_file = os.path.join(os.path.dirname(__file__), "../top3_22-23.csv")
 
 conn = psycopg2.connect(
-    host=host, port=port, database=database, user=user, password=password
+    host=host,
+    port=port,
+    database=database,
+    user=user,
+    password=password,
 )
 cursor = conn.cursor()
 
