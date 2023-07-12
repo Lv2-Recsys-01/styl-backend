@@ -22,6 +22,7 @@ const S = {
         overflow: hidden;
         border-radius: 12px;
         border: 3px double var(--graylilac);
+        cursor: pointer;
         img {
             position: absolute;
             top: 0;
@@ -94,7 +95,6 @@ function ImageGridView(props) {
             console.log(outfitsList, isLast);
 
             // 응답 데이터 처리
-            const outfit_id = 1;
             const newData = [...outfits];
             for (let i = 0; i < outfitsList.length; i++) {
                 const single_outfit = outfitsList[i];
@@ -103,9 +103,9 @@ function ImageGridView(props) {
                         {/* TODO: POST /items/journey/{outfit_id}/click
             이미지 클릭시,  */}
                         <img
-                            src={single_outfit.image_url}
+                            src={single_outfit.img_url}
                             alt={currentPage.current * PAGE_SIZE + i}
-                            onClick={() => goToDetailPage(outfit_id)}
+                            onClick={() => goToDetailPage(single_outfit.outfit_id)}
                         />
                         {/* TODO: outfit_id, 좋아요 상태 전달 */}
                         <HeartButton
@@ -132,6 +132,7 @@ function ImageGridView(props) {
         }
     }
     const goToDetailPage = (outfit_id) => {
+        console.log("outfit_id", outfit_id);
         navigate(`/detail/${outfit_id}`);
     };
     return (

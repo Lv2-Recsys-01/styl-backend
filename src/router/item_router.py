@@ -76,28 +76,62 @@ def show_journey_images(
     }
 
 
-@router.post("/journey/{outfit_id}/click")
-def user_click(
-    outfit_id: Annotated[int, Path()],
+@router.get("/collection")
+def show_collection_images(
+    page_size: Annotated[int, Query()],
+    offset: Annotated[int, Query()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
-    db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
-    if db_outfit is None:
-        raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+    # 비회원일때
+    if user_id is None and session_id is not None:
+        liked_list = (
+            db.query(Like)
+            .filter(
+                Like.session_id == session_id,
+                Like.is_deleted == bool(False),
+            )
+            .offset(offset)
+            .limit(page_size)
+            .all()
+        )
+    # 회원일때
+    else:
+        liked_list = (
+            db.query(Like)
+            .filter(
+                Like.user_id == user_id,
+                # Like.is_deleted == bool(False),
+            )
+            .offset(offset)
+            .limit(page_size)
+            .all()
+        )
 
-    new_click = Click(
-        session_id=session_id,
-        user_id=user_id,
-        outfit_id=outfit_id,
-        timestamp=datetime.now(timezone("Asia/Seoul")),
-    )
+    is_last = len(liked_list) < page_size
 
-    db.add(new_click)
-    db.commit()
+    if len(liked_list) == 0 or not liked_list:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="좋아요한 사진이 없습니다.",
+        )
 
-    return {"ok": True}
+    outfits_list = list()
+    for liked in liked_list:
+        liked_outfit = (
+            db.query(Outfit).filter(Outfit.outfit_id == liked.outfit_id).first()
+        )
+        outfit_out = OutfitOut(**liked_outfit.__dict__, is_liked=True)
+        outfits_list.append(outfit_out)
+
+    return {
+        "ok": True,
+        "outfits_list": outfits_list,
+        "page_size": page_size,
+        "offset": offset,
+        "is_last": is_last,
+    }
 
 
 @router.post("/journey/{outfit_id}/like")
@@ -149,67 +183,6 @@ def user_like(
         already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
         db.commit()
         return {"ok": True}
-
-
-@router.get("/collection")
-def show_collection_images(
-    page_size: Annotated[int, Query()],
-    offset: Annotated[int, Query()],
-    user_id: Annotated[int | None, Cookie()] = None,
-    session_id: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db),
-):
-    # 비회원일때
-    if user_id is None and session_id is not None:
-        outfit_ids_list = [
-            db.query(Like)
-            .filter(
-                Like.session_id == session_id,
-                Like.is_deleted == bool(False),
-            )
-            .offset(offset)
-            .limit(page_size)
-            .all()
-        ]
-    # 회원일때
-    else:
-        outfit_ids_list = [
-            db.query(Like)
-            .filter(
-                Like.user_id == user_id,
-                Like.is_deleted == bool(False),
-            )
-            .offset(offset)
-            .limit(page_size)
-            .all()
-        ]
-
-    is_last = len(outfit_ids_list) < page_size
-
-    print("outfit_ids_list", outfit_ids_list)
-    print(len(outfit_ids_list))
-
-    if not outfit_ids_list:
-        raise HTTPException(
-            status_code=status.HTTP_501_NOT_IMPLEMENTED,
-            detail="좋아요한 사진이 없습니다.",
-        )
-
-    outfits_list = list()
-    for outfit_id in outfit_ids_list:
-        outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id)
-        outfit_out = OutfitOut(**outfit.__dict__, is_liked=True)
-        outfits_list.append(outfit_out)
-
-    print("outfits_list", outfits_list)
-
-    return {
-        "ok": True,
-        "outfits_list": outfits_list,
-        "page_size": page_size,
-        "offset": offset,
-        "is_last": is_last,
-    }
 
 
 @router.get("/journey/{outfit_id}")
@@ -281,3 +254,27 @@ def show_single_image(
         "outfit": outfit_out,
         "similar_outfits_list": similar_outfits_list,
     }
+
+
+@router.post("/journey/{outfit_id}/click")
+def user_click(
+    outfit_id: Annotated[int, Path()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
+):
+    db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
+    if db_outfit is None:
+        raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+
+    new_click = Click(
+        session_id=session_id,
+        user_id=user_id,
+        outfit_id=outfit_id,
+        timestamp=datetime.now(timezone("Asia/Seoul")),
+    )
+
+    db.add(new_click)
+    db.commit()
+
+    return {"ok": True}
