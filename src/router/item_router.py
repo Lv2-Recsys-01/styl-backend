@@ -6,7 +6,7 @@ from pytz import timezone
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Click, Like, Outfit
+from ..models import Click, Like, Outfit, Similar
 from ..schema import OutfitBase, OutfitOut
 
 router = APIRouter(
@@ -153,12 +153,11 @@ def user_like(
 
 @router.get("/collection")
 def show_collection_images(
-    page_size: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    page_size: Annotated[int, Query()],
+    offset: Annotated[int, Query()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     # 비회원일때
     if user_id == guest_id:
@@ -217,19 +216,19 @@ def show_single_image(
 
     # 좋아요 눌렀는지 체크
     # 비회원
-    if user_id == guest_id:
+    if user_id is None and session_id is not None:
         user_like = db.query(Like).filter(
             Like.user_id == guest_id,
             Like.session_id == session_id,
             Like.outfit_id == outfit_id,
-            Like.is_deleted is False,
+            Like.is_deleted == bool(None),
         )
     # 회원
     else:
         user_like = db.query(Like).filter(
             Like.user_id == user_id,
             Like.outfit_id == outfit_id,
-            Like.is_deleted is False,
+            Like.is_deleted == bool(None),
         )
     # is_liked : user_like 존재하면 True, 아니면 False
     is_liked = user_like is not None
@@ -240,7 +239,9 @@ def show_single_image(
         raise HTTPException(status_code=500, detail="Similar outfits not found")
 
     similar_outfits_list = list()
-    for similar_outfit_id in similar_outfits:
+
+    # TODO: 이거 단일 개체라
+    for similar_outfit_id in similar_outfits.similar_outfits:
         similar_outfit = (
             db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
         )
@@ -255,14 +256,14 @@ def show_single_image(
                 Like.user_id == guest_id,
                 Like.session_id == session_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(None),
             )
         # 회원
         else:
             user_like = db.query(Like).filter(
                 Like.user_id == user_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(None),
             )
         # is_liked : user_like 존재하면 True, 아니면 False
         is_liked = user_like is not None
