@@ -63,6 +63,7 @@ function Login({ closeModal = () => {} }) {
         notification.success({
             message: "회원가입에 성공했어요!",
             description: "로그인 해주세요!",
+            duration: 2,
         });
     };
 
@@ -90,7 +91,6 @@ function Login({ closeModal = () => {} }) {
             })
             .catch((error) => {
                 console.error(error);
-                console.error(error.data);
                 clearInput();
                 const {
                     response: {
@@ -119,7 +119,6 @@ function Login({ closeModal = () => {} }) {
         axios
             .post("http://localhost:8000/users/signup", SignUpParams)
             .then((response) => {
-                // Response handling
                 console.log(response.data);
                 handleSignupSuccess();
                 setModalMode("login");
@@ -128,10 +127,15 @@ function Login({ closeModal = () => {} }) {
                 navigate("/");
             })
             .catch((error) => {
-                // Error handling
                 console.error(error);
                 clearInput();
-                setError("회원가입에 실패했어요");
+                const {
+                    response: {
+                        data: { detail },
+                    },
+                } = error;
+
+                setError(`회원가입에 실패했어요! ${detail ?? ""}`);
             });
 
         if (checkSignupIneligibility) {
@@ -162,7 +166,7 @@ function Login({ closeModal = () => {} }) {
                     />
                 </div>
                 <div className="box">
-                    <p className="guide">Password (4자리 숫자)</p>
+                    <p className="guide">Password</p>
                     <input
                         className="user_info"
                         type="password"

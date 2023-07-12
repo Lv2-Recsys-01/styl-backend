@@ -31,6 +31,7 @@ export function Header() {
             .post("http://localhost:8000/users/logout")
             .then((response) => {
                 setIsLoggedIn(false);
+                navigate("/");
                 console.log(response.data);
             })
             .catch((error) => {
