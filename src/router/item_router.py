@@ -61,7 +61,6 @@ def show_journey_images(
         # 각 outfit 마다 유저가 좋아요 눌렀는지 확인
         is_liked = outfit.outfit_id in likes_set
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
-        print("outfit_out", outfit_out)
         outfits_list.append(outfit_out)
 
     # total_cnt = 64400
@@ -114,7 +113,7 @@ def user_like(
     # 이전에 좋아요 누른적 있는지 확인
     # 비회원
     if user_id is None and session_id is not None:
-        already_like = (
+        already_like: Like = (
             db.query(Like)
             .filter(
                 Like.user_id == bool(None),
@@ -143,12 +142,12 @@ def user_like(
         )
         db.add(new_like)
         db.commit()
+        return {"ok": True}
     # 누른적 있으면 취소 여부 바꿔줌
     else:
-        already_like.is_delete = not bool(already_like.is_delete)
+        already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
         db.commit()
-
-    return {"ok": True}
+        return {"ok": True}
 
 
 @router.get("/collection")
@@ -283,6 +282,5 @@ def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
     db.commit()
 
     return {
-        "message": f"new outfit {new_outfit.outfit_id} \
-            from {new_outfit.img_url} uploaded"
+        "message": f"new outfit {new_outfit.outfit_id} \from {new_outfit.img_url} uploaded"
     }
