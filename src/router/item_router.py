@@ -283,5 +283,6 @@ def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
     db.commit()
 
     return {
-        "message": f"new outfit {new_outfit.outfit_id} from {new_outfit.img_url} uploaded"
+        "message": f"new outfit {new_outfit.outfit_id} \
+            from {new_outfit.img_url} uploaded"
     }
