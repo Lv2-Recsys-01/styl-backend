@@ -24,19 +24,24 @@ def show_journey_images(
     guest_id: int = 1,
 ):
     # 한 페이지에 표시할 전체 outfit
+<<<<<<< Updated upstream
     outfits = db.query(Outfit).offset(offset).limit(pagesize).all()
+=======
+    outfits = db.query(Outfit).offset(offset).limit(page_size).all()
+
+>>>>>>> Stashed changes
     # 마지막 페이지인지 확인
     is_last = len(outfits) < pagesize
 
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
-    if user_id == guest_id:
+    if user_id is None and session_id is not None:
         likes = (
             db.query(Like)
             .filter(
-                Like.user_id == guest_id,
                 Like.session_id == session_id,
-                Like.is_deleted is False,
+                Like.user_id == bool(None),
+                Like.is_deleted == bool(None),
             )
             .all()
         )
@@ -44,9 +49,13 @@ def show_journey_images(
     else:
         likes = (
             db.query(Like)
-            .filter(Like.user_id == user_id, Like.is_deleted is False)
+            .filter(
+                Like.user_id == user_id,
+                Like.is_deleted == bool(None),
+            )
             .all()
         )
+
     # 유저가 좋아요 누른 이미지의 id 집합 생성
     likes_set = {like.outfit_id for like in likes}
 
