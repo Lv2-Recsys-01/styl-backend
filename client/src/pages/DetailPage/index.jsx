@@ -1,12 +1,11 @@
 import { Layout, Space } from "antd";
 import "./index.css";
 import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
-import axios from "axios"
+import axios from "axios";
 import { useEffect } from "react";
-
 
 const { Header, Footer, Content } = Layout;
 
@@ -31,26 +30,26 @@ function DetailHeader() {
 function DetailCodi(props) {
     const navigate = useNavigate();
     const goMusinsa = () => {
-        navigate('/musinsa');
+        navigate("/musinsa");
     };
     const handleShareClick = () => {
         const currentURL = window.location.href;
         navigator.clipboard
             .writeText(currentURL)
             .then(() => {
-                console.log('URL copied to clipboard');
+                console.log("URL copied to clipboard");
                 notification.success({
-                    message: 'URL이 복사되었습니다!',
-                    description: '클립보드에 URL이 복사되었어요',
+                    message: "URL이 복사되었습니다!",
+                    description: "클립보드에 URL이 복사되었어요",
                     duration: 1,
                 });
             })
             .catch((error) => {
-                console.error('Failed to copy URL to clipboard:', error);
+                console.error("Failed to copy URL to clipboard:", error);
             });
     };
     return (
-        <div classname="body">
+        <div className="body">
             <img className="codi" src="sample_codi.png" alt="NoImg" />
             <p className="options">
                 <img className="musinsa" src="musinsa.png" alt="NoImg" onClick={goMusinsa} />
@@ -65,7 +64,7 @@ function SimilarItems() {
     const navigate = useNavigate();
     const goToDetailPage = (outfit_id) => {
         navigate(`/detail/${outfit_id}`);
-      };
+    };
     const outfit_id1 = 1;
     const outfit_id2 = 2;
     const outfit_id3 = 3;
@@ -82,26 +81,23 @@ function SimilarItems() {
     );
 }
 
-
-function DetailPage({ outfitId }) {
+function DetailPage() {
     //TODO: GET items/journey/{outfit_id}
     //유사 아이템, 메인 아이템 링크 걸기
+    const { outfit_id } = useParams();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/items/journey/", {
-                    params: {
-                        outfit_id: outfitId, // outfitId를 적절한 outfit_id 값으로 변경해주세요.
-                    },
-                });
+                const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
                 console.log(response.data); // 요청 결과 출력
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
         fetchData();
-    }, [outfitId]);
-    
+    }, []);
+
     return (
         <Space
             direction="vertical"
@@ -115,7 +111,7 @@ function DetailPage({ outfitId }) {
                     <DetailHeader />
                 </Header>
                 <Content className="detail-content">
-                    <DetailCodi detail_outfitId={outfitId}/>
+                    <DetailCodi detail_outfitId={outfit_id} />
                 </Content>
                 <Footer className="detail-footer">
                     <SimilarItems />

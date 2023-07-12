@@ -22,6 +22,7 @@ const S = {
         overflow: hidden;
         border-radius: 12px;
         border: 3px double var(--graylilac);
+        cursor: pointer;
         img {
             position: absolute;
             top: 0;
@@ -79,55 +80,60 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             const viewUrl =
-                props.view === "journey" ? "http://localhost:8000/items/journey" : "http://localhost:8000/collection";
+                props.view === "journey"
+                    ? "http://localhost:8000/items/journey"
+                    : "http://localhost:8000/items/collection";
             const viewParams = new URLSearchParams({
-                pagesize: PAGE_SIZE.toString(),
+                page_size: PAGE_SIZE.toString(),
                 offset: (currentPage.current * PAGE_SIZE).toString(),
             });
             const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
             //TODO: collection/response api에서
             //outfits_list를 통해 아래 데이터 처리,
             // is_last를 통해 fetch끝 지점 나타내기
-            const data = response.data;
-            console.log("data", data);
+            const { outfits_list: outfitsList, page_size, offset, is_last: isLast } = response.data;
+            console.log(outfitsList, isLast);
+
             // 응답 데이터 처리
-            const outfitsList = data.outfits_list;
-            const isLast = data.is_last;
-            console.log(1, outfitsList);
-            const outfit_id = 1;
             const newData = [...outfits];
-            for (let i = 0; i < PAGE_SIZE; i++) {
+            for (let i = 0; i < outfitsList.length; i++) {
+                const single_outfit = outfitsList[i];
                 newData.push(
                     <GridItem key={currentPage.current * PAGE_SIZE + i}>
                         {/* TODO: POST /items/journey/{outfit_id}/click
             이미지 클릭시,  */}
                         <img
-                            src="sample_codi.png"
+                            src={single_outfit.img_url}
                             alt={currentPage.current * PAGE_SIZE + i}
-                            onClick={() => goToDetailPage(outfit_id)}
+                            onClick={() => goToDetailPage(single_outfit.outfit_id)}
                         />
                         {/* TODO: outfit_id, 좋아요 상태 전달 */}
-                        <HeartButton className="heart-button" outfitId={outfit_id} likeState={false} />
+                        <HeartButton
+                            className="heart-button"
+                            outfitId={single_outfit.outfit_id}
+                            likeState={single_outfit.is_liked}
+                        />
                     </GridItem>,
                 );
             }
             setOutfits(newData);
             currentPage.current += 1;
         } catch (error) {
-            console.error(error);
-            if (error.code === "ERR_BAD_REQUEST") {
-                navigate("/journey");
-                notification.warning({
-                    message: "JOURNEY 페이지로 이동합니다.",
-                    description: "마음에 드는 코디에 하트를 눌러보세요!",
-                    duration: 3,
-                });
-            }
+            console.log(error);
+            // if (error.response.data.status === 501) {
+            //     navigate("/journey");
+            //     notification.warning({
+            //         message: "JOURNEY 페이지로 이동합니다.",
+            //         description: "마음에 드는 코디에 하트를 눌러보세요!",
+            //         duration: 3,
+            //     });
+            // }
         } finally {
             setIsLoading(false);
         }
     }
     const goToDetailPage = (outfit_id) => {
+        console.log("outfit_id", outfit_id);
         navigate(`/detail/${outfit_id}`);
     };
     return (
