@@ -102,11 +102,10 @@ def user_click(
 
 @router.post("/journey/{outfit_id}/like")
 def user_like(
-    outfit_id: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    outfit_id: Annotated[int, Path()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
@@ -114,16 +113,25 @@ def user_like(
 
     # 이전에 좋아요 누른적 있는지 확인
     # 비회원
-    if user_id == guest_id:
-        already_like = db.query(Like).filter(
-            Like.user_id == guest_id,
-            Like.session_id == session_id,
-            Like.outfit_id == outfit_id,
+    if user_id is None and session_id is not None:
+        already_like = (
+            db.query(Like)
+            .filter(
+                Like.user_id == bool(None),
+                Like.session_id == session_id,
+                Like.outfit_id == outfit_id,
+            )
+            .first()
         )
     # 회원
     else:
-        already_like = db.query(Like).filter(
-            Like.user_id == user_id, Like.outfit_id == outfit_id
+        already_like = (
+            db.query(Like)
+            .filter(
+                Like.user_id == user_id,
+                Like.outfit_id == outfit_id,
+            )
+            .first()
         )
     # 누른적 없으면 DB에 추가
     if not already_like:
@@ -132,13 +140,12 @@ def user_like(
             user_id=user_id,
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
-            is_deleted=False,
         )
         db.add(new_like)
         db.commit()
     # 누른적 있으면 취소 여부 바꿔줌
     else:
-        already_like.is_delete = ~already_like.is_delete
+        already_like.is_delete = not bool(already_like.is_delete)
         db.commit()
 
     return {"ok": True}
