@@ -71,7 +71,6 @@ def login(
         cur_session.user_id = int(login_user.user_id)  # type: ignore
 
     db.commit()
-    # db.refresh(cur_session)
 
     return {"user_id": login_user.user_id, "user_name": login_user.user_name}
 
@@ -95,7 +94,6 @@ def signup(
     db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
     db.add(db_user)
     db.commit()
-    # db.refresh(db_user)
 
     return {"ok": True, "user_name": db_user.user_name}
 

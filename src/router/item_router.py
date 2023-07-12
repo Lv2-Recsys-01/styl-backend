@@ -87,7 +87,6 @@ def user_click(
     )
     db.add(new_click)
     db.commit()
-    db.refresh(new_click)
 
     return {"ok": True}
 
@@ -128,7 +127,6 @@ def user_like(
         )
         db.add(new_like)
         db.commit()
-        db.refresh(new_like)
     # 누른적 있으면 취소 여부 바꿔줌
     else:
         already_like.is_delete = ~already_like.is_delete
@@ -268,7 +266,6 @@ def upload_outfit(outfit: OutfitBase, db: Session = Depends(get_db)):
     new_outfit = Outfit(img_url=outfit.img_url)
     db.add(new_outfit)
     db.commit()
-    db.refresh(new_outfit)
 
     return {
         "message": f"new outfit {new_outfit.outfit_id} from {new_outfit.img_url} uploaded"

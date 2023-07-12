@@ -36,7 +36,6 @@ def create_session_id_first_visit(
 
         db.add(user_session)
         db.commit()
-        db.refresh(user_session)
 
     return session_id
 
