@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Query
 from pytz import timezone
 from sqlalchemy.orm import Session
 
@@ -16,12 +17,12 @@ router = APIRouter(
 
 @router.get("/journey")
 def show_journey_images(
-    page_size: int,
-    offset: int,
-    user_id: int = Cookie(None),
-    session_id: str = Cookie(None),
+    page_size: Annotated[int, Query()],
+    offset: Annotated[int, Query()],
+    user_id: Annotated[int | None, Cookie()] = None,
+    session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-):
+) -> dict:
     # 한 페이지에 표시할 전체 outfit
     outfits = db.query(Outfit).offset(offset).limit(page_size).all()
 
@@ -55,10 +56,12 @@ def show_journey_images(
     likes_set = {like.outfit_id for like in likes}
 
     outfits_list = []
+
     for outfit in outfits:
         # 각 outfit 마다 유저가 좋아요 눌렀는지 확인
         is_liked = outfit.outfit_id in likes_set
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
+        print("outfit_out", outfit_out)
         outfits_list.append(outfit_out)
 
     # total_cnt = 64400
