@@ -5,19 +5,18 @@ import { Space } from "antd";
 import { NavLink, useNavigate } from "react-router-dom";
 import MoveToTop from "../MoveToTop";
 import MoveBottom from "../MoveBottom";
-import axios from 'axios';
-import { useCookies } from 'react-cookie';
-
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, SetUserName] = useState('guest');
+    const [userName, SetUserName] = useState("guest");
     const navigate = useNavigate();
 
-    const [cookies, setCookie] = useCookies('Cookies');
+    const [cookies, setCookie] = useCookies("Cookies");
 
     useEffect(() => {
-        if (cookies.user_id !==undefined) {
+        if (cookies.user_id !== undefined) {
             setIsLoggedIn(true);
             SetUserName(cookies.user_name);
         }
@@ -28,15 +27,15 @@ export function Header() {
     };
 
     const handleLogout = () => {
-        axios.post("http://localhost:8000/users/logout")
-                .then(response => {
+        axios
+            .post("http://localhost:8000/users/logout")
+            .then((response) => {
                 setIsLoggedIn(false);
-                const currentURL = window.location.pathname;
-                navigate(currentURL);
+                navigate("/");
                 console.log(response.data);
             })
-            .catch(error => {
-            console.error(error);
+            .catch((error) => {
+                console.error(error);
             });
     };
 
@@ -59,7 +58,7 @@ export function Footer() {
 }
 
 function Layout({ children, location }) {
-   const [isMainlPage, setIsMainPage] = useState(() => location.pathname === "/journey");
+    const [isMainlPage, setIsMainPage] = useState(() => location.pathname === "/journey");
     useEffect(() => {
         setIsMainPage(location.pathname === "/journey" || location.pathname === "/collections");
     }, [location]);

@@ -77,6 +77,7 @@ Base.metadata.create_all(bind=engine)
 class UserIn(BaseModel):
     username: str
     password: str
+
     # confirm_password : str
     @validator("username")
     def username_must_be_more_than_4(cls, v):
@@ -152,7 +153,6 @@ def signup(user: UserIn):
     db_user = User(username=user.username, password=user.password)
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)
 
     return {"id": db_user.id, "username": db_user.username}
 
@@ -177,7 +177,6 @@ def journey():
 
         db.add(db_user)
         db.commit()
-        db.refresh(db_user)
         return {"id": db_user.id, "timestamp": now}
 
 

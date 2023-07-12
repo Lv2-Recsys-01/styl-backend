@@ -61,16 +61,16 @@ class ClickBase(BaseModel):
 
 
 class OutfitOut(BaseModel):
-    outfit_id: int
-    img_url: str
-    gender: str
-    age: int
-    origin_url: str
-    reporter: str
-    tags: List[str]
-    brands: List[str]
-    region: str
-    occupation: str
-    style: str
-    date: datetime
-    is_liked: bool
+    outfit_id: int | None
+    img_url: str | None
+    gender: str | None
+    age: int | None
+    origin_url: str | None
+    reporter: str | None
+    tags: List[str] | None
+    brands: List[str] | None
+    region: str | None
+    occupation: str | None
+    style: str | None
+    date: datetime | None
+    is_liked: bool | None

@@ -55,7 +55,7 @@ class Like(Base):
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
-    is_deleted = Column(Boolean)
+    is_deleted = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")

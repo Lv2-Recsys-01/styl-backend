@@ -53,33 +53,26 @@ def login(
     if not pwd_context.verify(user_body.user_pwd, str(login_user.user_pwd)):
         raise HTTPException(status_code=500, detail="비밀번호 검증에 실패했습니다.")
 
-    response.set_cookie(key="user_id", value=str(login_user.user_id), httponly=True)
-    response.set_cookie(key="user_name", value=str(login_user.user_name), httponly=True)
+    response.set_cookie(key="user_id", value=str(login_user.user_id))
+    response.set_cookie(key="user_name", value=str(login_user.user_name))
+
+    # 비회원 세션의 Like에 user_id 삽입
+    likes = db.query(Like).filter(Like.session_id == session_id).all()
+    for like in likes:
+        like.user_id = int(login_user.user_id)  # type: ignore
+    db.commit()
+
+    # 현재 비회원 세션에 user_id 추가하기
+    cur_session: UserSession | None = (
+        db.query(UserSession).filter(UserSession.session_id == session_id).first()
+    )
+    if cur_session and cur_session.user_id is None:
+        # type: ignore
+        cur_session.user_id = int(login_user.user_id)  # type: ignore
+
+    db.commit()
 
     return {"user_id": login_user.user_id, "user_name": login_user.user_name}
-
-    # # 좋아요 병합
-    # merge_likes(session_id, guest_id, login_user.user_id, db)
-    # # 현재 비회원 세션 만료 표시
-    # cur_session = (
-    #     db.query(UserSession).filter(UserSession.session_id == session_id).first()
-    # )
-    # cur_session.expired_at = datetime.now(timezone("Asia/Seoul"))
-    # # 새 세션id 생성
-    # session_id = str(uuid.uuid4())
-    # # 새 세션 db 저장
-    # user_session = UserSession(
-    #     session_id=session_id,
-    #     user_id=login_user.user_id,
-    #     created_at=datetime.now(timezone("Asia/Seoul")),
-    #     expired_at=datetime.now(timezone("Asia/Seoul")),
-    # )
-    # db.add(user_session)
-    # db.commit()
-    # db.refresh(user_session)
-    # # 쿠키 생성
-
-    # return {"ok": True, "user_name": login_user.user_name}
 
 
 @router.post("/signup")
@@ -101,7 +94,6 @@ def signup(
     db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
     db.add(db_user)
     db.commit()
-    # db.refresh(db_user)
 
     return {"ok": True, "user_name": db_user.user_name}
 
