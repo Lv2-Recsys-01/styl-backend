@@ -160,13 +160,12 @@ def show_collection_images(
     db: Session = Depends(get_db),
 ):
     # 비회원일때
-    if user_id == guest_id:
+    if user_id is None and session_id is not None:
         outfit_ids_list = [
             db.query(Like)
             .filter(
-                Like.user_id == guest_id,
                 Like.session_id == session_id,
-                Like.is_deleted is False,
+                Like.is_deleted == bool(False),
             )
             .offset(offset)
             .limit(page_size)
@@ -176,7 +175,10 @@ def show_collection_images(
     else:
         outfit_ids_list = [
             db.query(Like)
-            .filter(Like.user_id == user_id, Like.is_deleted is False)
+            .filter(
+                Like.user_id == user_id,
+                Like.is_deleted == bool(False),
+            )
             .offset(offset)
             .limit(page_size)
             .all()
@@ -208,7 +210,6 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
-    guest_id: int = 1,
 ):
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
@@ -218,7 +219,6 @@ def show_single_image(
     # 비회원
     if user_id is None and session_id is not None:
         user_like = db.query(Like).filter(
-            Like.user_id == guest_id,
             Like.session_id == session_id,
             Like.outfit_id == outfit_id,
             Like.is_deleted == bool(None),
@@ -240,7 +240,6 @@ def show_single_image(
 
     similar_outfits_list = list()
 
-    # TODO: 이거 단일 개체라
     for similar_outfit_id in similar_outfits.similar_outfits:
         similar_outfit = (
             db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
@@ -251,9 +250,8 @@ def show_single_image(
             )
         # 좋아요 눌렀는지 체크
         # 비회원
-        if user_id == guest_id:
+        if user_id is None and session_id is not None:
             user_like = db.query(Like).filter(
-                Like.user_id == guest_id,
                 Like.session_id == session_id,
                 Like.outfit_id == similar_outfit_id,
                 Like.is_deleted == bool(None),
