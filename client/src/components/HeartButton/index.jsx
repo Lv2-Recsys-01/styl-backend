@@ -11,8 +11,7 @@ function HeartButton(props) {
     };
 
     const sendLikeRequest = () => {
-        // const outfitId = props.outfitId; // outfit_id 값을 가져와야 함
-        const outfitId = 87435;
+        const outfitId = props.outfitId; // outfit_id 값을 가져와야 함
 
         axios
             .post(`http://localhost:8000/items/journey/${outfitId}/like`)
