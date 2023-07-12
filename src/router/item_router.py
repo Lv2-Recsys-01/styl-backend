@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import Click, Like, Outfit, Similar
-from ..schema import OutfitBase, OutfitOut
+from ..schema import OutfitOut
 
 router = APIRouter(
     prefix="/items",
@@ -26,11 +26,10 @@ def show_journey_images(
     db: Session = Depends(get_db),
 ) -> dict:
     # 한 페이지에 표시할 전체 outfit
-
-    outfits = db.query(Outfit).offset(offset).limit(page_size).all()
-    # outfits = (
-    #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
-    # )
+    # outfits = db.query(Outfit).offset(offset).limit(page_size).all()
+    outfits = (
+        db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
+    )
 
     # 마지막 페이지인지 확인
     is_last = len(outfits) < page_size
@@ -43,7 +42,7 @@ def show_journey_images(
             .filter(
                 Like.session_id == session_id,
                 Like.user_id.is_(None),
-                Like.is_deleted == bool(None),
+                Like.is_deleted == bool(False),
             )
             .all()
         )
@@ -53,7 +52,7 @@ def show_journey_images(
             db.query(Like)
             .filter(
                 Like.user_id == user_id,
-                Like.is_deleted == bool(None),
+                Like.is_deleted == bool(False),
             )
             .all()
         )
@@ -68,9 +67,6 @@ def show_journey_images(
         is_liked = outfit.outfit_id in likes_set
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
         outfits_list.append(outfit_out)
-
-    # total_cnt = 64400
-    # total_page_count = total_cnt // page_size + (1 if total_cnt % page_size else 0)
 
     return {
         "ok": True,
@@ -200,40 +196,39 @@ def show_single_image(
 ):
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
-        raise HTTPException(status_code=500, detail="Outfit not found")
+        raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
 
     # 좋아요 눌렀는지 체크
     # 비회원
-    if user_id is None and session_id is not None:
+    if user_id is None:
         user_like = db.query(Like).filter(
             Like.session_id == session_id,
+            Like.user_id.is_(None),
             Like.outfit_id == outfit_id,
-            Like.is_deleted == bool(None),
-        )
+            Like.is_deleted == bool(False),
+        ).first()
     # 회원
     else:
         user_like = db.query(Like).filter(
             Like.user_id == user_id,
             Like.outfit_id == outfit_id,
-            Like.is_deleted == bool(None),
-        )
+            Like.is_deleted == bool(False),
+        ).first()
     # is_liked : user_like 존재하면 True, 아니면 False
     is_liked = user_like is not None
     outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
 
     similar_outfits = db.query(Similar).filter(Similar.outfit_id == outfit_id).first()
     if similar_outfits is None:
-        raise HTTPException(status_code=500, detail="Similar outfits not found")
+        raise HTTPException(status_code=500, detail="유사 코디 이미지가 존재하지 않습니다.")
 
     similar_outfits_list = list()
 
     for similar_outfit_id in similar_outfits.similar_outfits:
-        similar_outfit = (
-            db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
-        )
+        similar_outfit = db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
         if similar_outfit is None:
             raise HTTPException(
-                status_code=500, detail="Id for this similar outfit not found"
+                status_code=500, detail="해당 이미지는 존재하지 않습니다."
             )
         # 좋아요 눌렀는지 체크
         # 비회원
@@ -241,15 +236,15 @@ def show_single_image(
             user_like = db.query(Like).filter(
                 Like.session_id == session_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted == bool(None),
-            )
+                Like.is_deleted == bool(False),
+            ).first()
         # 회원
         else:
             user_like = db.query(Like).filter(
                 Like.user_id == user_id,
                 Like.outfit_id == similar_outfit_id,
-                Like.is_deleted == bool(None),
-            )
+                Like.is_deleted == bool(False),
+            ).first()
         # is_liked : user_like 존재하면 True, 아니면 False
         is_liked = user_like is not None
         similar_outfit_out = OutfitOut(**similar_outfit.__dict__, is_liked=is_liked)

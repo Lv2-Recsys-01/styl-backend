@@ -7,7 +7,6 @@ from fastapi import (APIRouter, Body, Cookie, Depends, HTTPException, Response,
 from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from pytz import timezone
-from sqlalchemy import Column, DateTime
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -47,7 +46,7 @@ def login(
     if login_user is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="존재하지 않는 아이디 입니다.",
+            detail="존재하지 않는 아이디입니다.",
         )
 
     if not pwd_context.verify(user_body.user_pwd, str(login_user.user_pwd)):
