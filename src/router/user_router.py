@@ -56,10 +56,29 @@ def login(
     response.set_cookie(key="user_id", value=str(login_user.user_id))
     response.set_cookie(key="user_name", value=str(login_user.user_name))
 
-    # 비회원 세션의 Like에 user_id 삽입
-    likes = db.query(Like).filter(Like.session_id == session_id).all()
-    for like in likes:
-        like.user_id = int(login_user.user_id)  # type: ignore
+    # 비회원 세션의 Like에 user_id 삽입 & 중복 제거
+    guest_likes = (
+        db.query(Like)
+        .filter(Like.user_id.is_(None), Like.session_id == session_id)
+        .all()
+    )
+
+    login_user_likes = (
+        db.query(Like)
+        .filter(Like.user_id == int(login_user.user_id))
+        .all()
+    )
+
+    login_user_likes_outfit_id = [like.outfit_id for like in login_user_likes]
+
+    update_likes = []
+    for like in guest_likes:
+        if like.outfit_id not in login_user_likes_outfit_id:
+            update_likes.append(like)
+
+    for like in update_likes:
+        like.user_id = int(login_user.user_id)
+
     db.commit()
 
     # 현재 비회원 세션에 user_id 추가하기
