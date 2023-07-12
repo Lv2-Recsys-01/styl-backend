@@ -43,6 +43,7 @@ function ImageGridView(props) {
     const totalPage = useRef(100);
     const [outfits, setOutfits] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetchStopped, setIsFetchStopped] = useState(false); 
     const navigate = useNavigate(); // useNavigate 훅 사용
     useLayoutEffect(() => {
         totalPage.current = 100;
@@ -58,8 +59,10 @@ function ImageGridView(props) {
             };
             observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting && !isLoading && currentPage.current < totalPage.current) {
-                        console.log("should fetch data");
+                    if (entry.isIntersecting && 
+                        !isLoading &&
+                        !isFetchStopped &&
+                        currentPage.current < totalPage.current) {
                         fetchDataWithDelay(DELAY);
                     }
                 });
@@ -88,26 +91,19 @@ function ImageGridView(props) {
                 offset: (currentPage.current * PAGE_SIZE).toString(),
             });
             const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
-            //TODO: collection/response api에서
-            //outfits_list를 통해 아래 데이터 처리,
-            // is_last를 통해 fetch끝 지점 나타내기
-            const { outfits_list: outfitsList, page_size, offset, is_last: isLast } = response.data;
-            console.log(outfitsList, isLast);
 
-            // 응답 데이터 처리
+            const { outfits_list: outfitsList, page_size, offset, is_last: isLast } = response.data;
+
             const newData = [...outfits];
             for (let i = 0; i < outfitsList.length; i++) {
                 const single_outfit = outfitsList[i];
                 newData.push(
                     <GridItem key={currentPage.current * PAGE_SIZE + i}>
-                        {/* TODO: POST /items/journey/{outfit_id}/click
-            이미지 클릭시,  */}
                         <img
                             src={single_outfit.img_url}
                             alt={currentPage.current * PAGE_SIZE + i}
                             onClick={() => goToDetailPage(single_outfit.outfit_id)}
                         />
-                        {/* TODO: outfit_id, 좋아요 상태 전달 */}
                         <HeartButton
                             className="heart-button"
                             outfitId={single_outfit.outfit_id}
@@ -118,6 +114,11 @@ function ImageGridView(props) {
             }
             setOutfits(newData);
             currentPage.current += 1;
+
+            if (isLast) {
+                setIsFetchStopped(true);
+                return;
+              }
         } catch (error) {
             console.log(error);
             if (error.response.request.status === 501) {
@@ -133,7 +134,6 @@ function ImageGridView(props) {
         }
     }
     const goToDetailPage = (outfit_id) => {
-        console.log("outfit_id", outfit_id);
         navigate(`/detail/${outfit_id}`);
     };
     return (
