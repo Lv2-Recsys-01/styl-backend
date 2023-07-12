@@ -75,8 +75,8 @@ async def handle_user_auth_logic(
     response = await call_next(request)
 
     # response examples
-    response.set_cookie("temp_cookie", "temp_cookie_value")
-    response.headers["X-Custom-Header"] = "Custom Value"
+    # response.set_cookie("temp_cookie", "temp_cookie_value")
+    # response.headers["X-Custom-Header"] = "Custom Value"
 
     return response
 
