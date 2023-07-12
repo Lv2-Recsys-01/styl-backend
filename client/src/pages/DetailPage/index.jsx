@@ -72,7 +72,7 @@ function DetailCodi() {
                             <img className="musinsa" src="musinsa.png" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton  
+                        <HeartButton 
                         outfitId={singleOutfit.outfit_id}
                         likeState={singleOutfit.is_liked}/>
                     </p>

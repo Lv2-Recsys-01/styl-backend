@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import axios from "axios";
+import styled from "styled-components";
+
+const HeartButtonWrapper = styled.div`
+  display: flex;
+  justify-content: right;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  font-size: 30px;
+  color: var(--vivamagenta);
+`;
 
 function HeartButton({ likeState, outfitId }) {
     const [isLiked, setIsLiked] = useState(likeState);
@@ -21,15 +31,16 @@ function HeartButton({ likeState, outfitId }) {
             });
     };
 
+
     return (
-        <div>
-            {isLiked ? (
-                <HeartFilled className="heart" onClick={handleToggleLike} />
-            ) : (
-                <HeartOutlined className="heart" onClick={handleToggleLike} />
-            )}
-        </div>
-    );
-}
+        <HeartButtonWrapper>
+          {isLiked ? (
+            <HeartFilled className="heart" onClick={handleToggleLike} />
+          ) : (
+            <HeartOutlined className="heart" onClick={handleToggleLike} />
+          )}
+        </HeartButtonWrapper>
+      );
+    }
 
 export default HeartButton;

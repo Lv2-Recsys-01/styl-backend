@@ -45,7 +45,7 @@
     align-items: center;
     justify-content: flex-end;
     height: 50px;
-    padding-inline: 60px;
+    padding-inline: 30px;
     line-height: 64px;
   }
 
@@ -62,7 +62,7 @@
 
   .detail .detail-content .heart{
     display:flex;
-    font-size:40px;
+    font-size:38px;
     color:var(--vivamagenta);
   }
 
