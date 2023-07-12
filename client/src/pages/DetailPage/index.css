@@ -12,30 +12,28 @@
   .detail .detail-header .back{
     text-align: left;
     font-size:40px;
-    color: var(--vivamagenta);
-    opacity: 0.9;
+    color: var(--paledogwood);
   }
 
   .detail .detail-header .close{
     text-align: right;
     font-size:40px;
-    color: var(--vivamagenta);
-    opacity: 0.9;
+    color: var(--paledogwood);
   }
 
   .detail .detail-content {
     text-align: center;
     width:100%;
     background-color: var(--background);
-    padding: 20px;
+    padding: 10px;
   }
 
 
   .detail .detail-content .codi{
     border-radius: 10px;
-    width:70%;
-    margin: 5px;
-    border: double 3px var(--vivamagenta);
+    width:85%;
+    margin: 10px;
+    border: double 4px var(--graylilac);
   }
 
   .detail .detail-content .options{
@@ -65,8 +63,7 @@
   }
 
   .detail .detail-footer {
-      background-color: var(--graylilac);
-      border-top: solid 1px var(--vivamagenta);
+      background-color: var(--paledogwood);
   }
 
   .detail .similar{

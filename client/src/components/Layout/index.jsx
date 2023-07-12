@@ -43,7 +43,7 @@ export function Header() {
         <div className="header">
             <div className="wrapper">
                 <Space direction="horizontal" className="options">
-                    <div className="user-name">{userName}</div>
+                    <div className="user-name">"Hello, {userName}"</div>
                     <NavLink to="/" className="login" onClick={isLoggedIn ? handleLogout : handleLogin}>
                         {isLoggedIn ? "Logout" : "Login"}
                     </NavLink>

@@ -25,6 +25,7 @@ const lightColor = {
     palekhaki: "#bfb092",
     paledogwood: "#edcdc2",
     pleinair: "#bfcad6",
+    steelblue: "#36618C",
     background: "rgba(256, 256, 256, 0.9)",
 };
 
