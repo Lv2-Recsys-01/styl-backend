@@ -31,7 +31,6 @@ function DetailCodi() {
     const { outfit_id } = useParams();
     const [singleOutfit, setSingleOutfit] = useState(null);
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -72,9 +71,7 @@ function DetailCodi() {
                             <img className="musinsa" src="musinsa.png" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton 
-                        outfitId={singleOutfit.outfit_id}
-                        likeState={singleOutfit.is_liked}/>
+                        <HeartButton outfitId={singleOutfit.outfit_id} likeState={singleOutfit.is_liked} />
                     </p>
                 </>
             )}
@@ -84,22 +81,22 @@ function DetailCodi() {
 
 function SimilarItems() {
     const { outfit_id } = useParams();
+    const navigate = useNavigate();
     const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            try{
+            try {
                 const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
-            }catch (error) {
+            } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
         fetchData();
     }, [outfit_id]);
 
-    const navigate = useNavigate();
     const goToDetailPage = (similarOutfitId) => {
         navigate(`/detail/${similarOutfitId}`);
     };
@@ -112,30 +109,36 @@ function SimilarItems() {
         const sim2_url = similarOutfitsList[1].img_url;
         const sim3 = similarOutfitsList[2].outfit_id;
         const sim3_url = similarOutfitsList[2].img_url;
-        console.log('sim1', sim1, typeof(sim1));
+        console.log("sim1", sim1, typeof sim1);
         return (
             <div>
                 <p className="description">Similar Style</p>
                 <Space direction="horizontal" className="similar">
-                    <img src={sim1_url} alt="NoImg" onClick={() => {
-                        goToDetailPage(sim1);
-                        axios.post("http://localhost:8000/items/journey/${sim1}/click")
-                          .catch((error) => {
-                            console.error(error);
-                          });
-                      }}
-                    />
-                    <img src={sim2_url} alt="NoImg" onClick={() => {
-                        axios.post("http://localhost:8000/items/journey/${sim2/click")
-                        .catch((error) => {
-                          console.error(error);
+                    <img
+                        src={sim1_url}
+                        alt="NoImg"
+                        onClick={() => {
+                            goToDetailPage(sim1);
+                            axios.post(`http://localhost:8000/items/journey/${sim1}/click`).catch((error) => {
+                                console.error(error);
                             });
                         }}
                     />
-                    <img src={sim3_url} alt="NoImg" onClick={() =>{
-                        axios.post("http://localhost:8000/items/journey/${sim3}/click")
-                        .catch((error) => {
-                          console.error(error);
+                    <img
+                        src={sim2_url}
+                        alt="NoImg"
+                        onClick={() => {
+                            axios.post(`http://localhost:8000/items/journey/${sim2}/click`).catch((error) => {
+                                console.error(error);
+                            });
+                        }}
+                    />
+                    <img
+                        src={sim3_url}
+                        alt="NoImg"
+                        onClick={() => {
+                            axios.post(`http://localhost:8000/items/journey/${sim3}/click`).catch((error) => {
+                                console.error(error);
                             });
                         }}
                     />
@@ -147,9 +150,7 @@ function SimilarItems() {
     return null;
 }
 
-
 function DetailPage() {
-
     return (
         <Space
             direction="vertical"

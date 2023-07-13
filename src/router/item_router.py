@@ -201,19 +201,27 @@ def show_single_image(
     # 좋아요 눌렀는지 체크
     # 비회원
     if user_id is None:
-        user_like = db.query(Like).filter(
-            Like.session_id == session_id,
-            Like.user_id.is_(None),
-            Like.outfit_id == outfit_id,
-            Like.is_deleted == bool(False),
-        ).first()
+        user_like = (
+            db.query(Like)
+            .filter(
+                Like.session_id == session_id,
+                Like.user_id.is_(None),
+                Like.outfit_id == outfit_id,
+                Like.is_deleted == bool(False),
+            )
+            .first()
+        )
     # 회원
     else:
-        user_like = db.query(Like).filter(
-            Like.user_id == user_id,
-            Like.outfit_id == outfit_id,
-            Like.is_deleted == bool(False),
-        ).first()
+        user_like = (
+            db.query(Like)
+            .filter(
+                Like.user_id == user_id,
+                Like.outfit_id == outfit_id,
+                Like.is_deleted == bool(False),
+            )
+            .first()
+        )
     # is_liked : user_like 존재하면 True, 아니면 False
     is_liked = user_like is not None
     outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
@@ -225,26 +233,34 @@ def show_single_image(
     similar_outfits_list = list()
 
     for similar_outfit_id in similar_outfits.similar_outfits:
-        similar_outfit = db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
+        similar_outfit = (
+            db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
+        )
         if similar_outfit is None:
-            raise HTTPException(
-                status_code=500, detail="해당 이미지는 존재하지 않습니다."
-            )
+            raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
         # 좋아요 눌렀는지 체크
         # 비회원
         if user_id is None and session_id is not None:
-            user_like = db.query(Like).filter(
-                Like.session_id == session_id,
-                Like.outfit_id == similar_outfit_id,
-                Like.is_deleted == bool(False),
-            ).first()
+            user_like = (
+                db.query(Like)
+                .filter(
+                    Like.session_id == session_id,
+                    Like.outfit_id == similar_outfit_id,
+                    Like.is_deleted == bool(False),
+                )
+                .first()
+            )
         # 회원
         else:
-            user_like = db.query(Like).filter(
-                Like.user_id == user_id,
-                Like.outfit_id == similar_outfit_id,
-                Like.is_deleted == bool(False),
-            ).first()
+            user_like = (
+                db.query(Like)
+                .filter(
+                    Like.user_id == user_id,
+                    Like.outfit_id == similar_outfit_id,
+                    Like.is_deleted == bool(False),
+                )
+                .first()
+            )
         # is_liked : user_like 존재하면 True, 아니면 False
         is_liked = user_like is not None
         similar_outfit_out = OutfitOut(**similar_outfit.__dict__, is_liked=is_liked)
@@ -265,6 +281,7 @@ def user_click(
     db: Session = Depends(get_db),
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
+
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
 
