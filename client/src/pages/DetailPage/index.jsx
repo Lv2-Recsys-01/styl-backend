@@ -28,21 +28,27 @@ function DetailHeader() {
 }
 
 function DetailCodi() {
-    const { outfit_id } = useParams();
+    const { front_outfit_id } = useParams();
     const [singleOutfit, setSingleOutfit] = useState(null);
+    const [detailOutfitId, setDetailOutfitId]= useState(front_outfit_id);
+    const [detailLikeState, setDetailLikeState] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
-                const singleOutfitData = response.data.outfit;
-                setSingleOutfit(singleOutfitData);
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            }
+          try {
+            const response = await axios.get(`http://localhost:8000/items/journey/${front_outfit_id}`);
+            const singleOutfitData = response.data.outfit;
+            setSingleOutfit(singleOutfitData);
+            setDetailOutfitId(singleOutfitData.outfit_id);
+            setDetailLikeState(singleOutfitData.is_liked);
+            console.log('1', singleOutfitData);
+          } catch (error) {
+            console.error("Failed to fetch data:", error);
+          }
         };
         fetchData();
-    }, [outfit_id]);
+      }, [front_outfit_id]);
+    console.log('??', detailOutfitId,detailLikeState);
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
@@ -71,7 +77,7 @@ function DetailCodi() {
                             <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton outfitId={singleOutfit.outfit_id} likeState={singleOutfit.is_liked} />
+                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState}/>
                     </p>
                 </>
             )}
@@ -80,14 +86,14 @@ function DetailCodi() {
 }
 
 function SimilarItems() {
-    const { outfit_id } = useParams();
+    const { front_outfit_id } = useParams();
     const navigate = useNavigate();
     const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/items/journey/${outfit_id}`);
+                const response = await axios.get(`http://localhost:8000/items/journey/${front_outfit_id}`);
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
             } catch (error) {
@@ -95,7 +101,7 @@ function SimilarItems() {
             }
         };
         fetchData();
-    }, [outfit_id]);
+    }, [front_outfit_id]);
 
     const goToDetailPage = (similarOutfitId) => {
         navigate(`/detail/${similarOutfitId}`);
@@ -109,7 +115,6 @@ function SimilarItems() {
         const sim2_url = similarOutfitsList[1].img_url;
         const sim3 = similarOutfitsList[2].outfit_id;
         const sim3_url = similarOutfitsList[2].img_url;
-        console.log("sim1", sim1, typeof sim1);
         return (
             <div>
                 <p className="description">Similar Style</p>
