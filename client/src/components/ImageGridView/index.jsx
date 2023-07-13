@@ -104,7 +104,7 @@ function ImageGridView(props) {
                             alt={currentPage.current * PAGE_SIZE + i}
                             onClick={() => {
                                 goToDetailPage(single_outfit.outfit_id);
-                                axios.post("http://localhost:8000/items/journey/${single_outfit.outfit_id}/click")
+                                axios.post(`http://localhost:8000/items/journey/${single_outfit.outfit_id}/click`)
                           .catch((error) => {
                             console.error(error);
                                 });
