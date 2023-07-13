@@ -62,7 +62,8 @@
 
   .detail .detail-content .heart{
     display:flex;
-    font-size:38px;
+    font-size:42px;
+    margin-top: 10px;
     color:var(--vivamagenta);
   }
 

@@ -38,7 +38,7 @@ def login(
     if user_id is not None:
         raise HTTPException(
             status_code=status.HTTP_302_FOUND,
-            detail="이미 로그인 되어 있습니다",
+            detail="이미 로그인 되어 있습니다.",
         )
 
     login_user = db.query(User).filter(User.user_name == user_body.user_name).first()
@@ -106,7 +106,7 @@ def signup(
 
     existed_user = db.query(User).filter(User.user_name == user_body.user_name).first()
     if existed_user:
-        raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다")
+        raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다.")
 
     hashed_password = pwd_context.hash(user_body.user_pwd)
     db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
