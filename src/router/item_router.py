@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 from typing import Annotated
 
@@ -222,17 +223,22 @@ def show_single_image(
             )
             .first()
         )
+
     # is_liked : user_like 존재하면 True, 아니면 False
     is_liked = user_like is not None
     outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
 
     similar_outfits = db.query(Similar).filter(Similar.outfit_id == outfit_id).first()
+
     if similar_outfits is None:
         raise HTTPException(status_code=500, detail="유사 코디 이미지가 존재하지 않습니다.")
 
+    sampled_k = 3
+    sampled_similar_outfits = random.sample(similar_outfits.similar_outfits, sampled_k)
+
     similar_outfits_list = list()
 
-    for similar_outfit_id in similar_outfits.similar_outfits:
+    for similar_outfit_id in sampled_similar_outfits:
         similar_outfit = (
             db.query(Outfit).filter(Outfit.outfit_id == similar_outfit_id).first()
         )
