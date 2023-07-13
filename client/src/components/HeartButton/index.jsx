@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import axios from "axios";
 import styled from "styled-components";
@@ -13,12 +13,16 @@ const HeartButtonWrapper = styled.div`
 `;
 
 function HeartButton({ likeState, outfitId }) {
-    const [isLiked, setIsLiked] = useState(likeState);
+  const [isLiked, setIsLiked] = useState(likeState);
+    
+    useEffect(() => {
+      setIsLiked(likeState);
+  }, [outfitId, likeState]);
 
-    const handleToggleLike = () => {
-        setIsLiked((prevIsLiked) => !prevIsLiked);
-        sendLikeRequest(); // 버튼을 누를 때마다 API 호출
-    };
+  const handleToggleLike = () => {
+    setIsLiked((prevIsLiked) => !prevIsLiked);
+    sendLikeRequest();
+  };
 
     const sendLikeRequest = () => {
         axios

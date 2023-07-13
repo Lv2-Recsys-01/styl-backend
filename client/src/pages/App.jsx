@@ -23,7 +23,7 @@ function App() {
                     <Route path="/" element={<EntryPage />} />
                     <Route path="/journey" element={<Journey />} />
                     <Route path="/collections" element={<MyPage />} />
-                    <Route path="/detail/:outfit_id" element={<DetailPageWrapper />} />
+                    <Route path="/detail/:front_outfit_id" element={<DetailPageWrapper />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Route>
             </Routes>
@@ -32,16 +32,16 @@ function App() {
 }
 
 function DetailPageWrapper() {
-    const { outfit_id } = useParams();
+    const { front_outfit_id } = useParams();
 
-    const isNumeric = /^\d+$/.test(outfit_id);
+    const isNumeric = /^\d+$/.test(front_outfit_id);
 
     if (!isNumeric) {
 
         return <NotFoundPage />;
     }
 
-    return <DetailPage outfitId={parseInt(outfit_id)} />;
+    return <DetailPage outfitId={parseInt(front_outfit_id)} />;
 }
 
 export default App;

@@ -141,8 +141,8 @@ function ImageGridView(props) {
             setIsLoading(false);
         }
     }
-    const goToDetailPage = (outfit_id) => {
-        navigate(`/detail/${outfit_id}`);
+    const goToDetailPage = (front_outfit_id) => {
+        navigate(`/detail/${front_outfit_id}`);
     };
     return (
         <div className="custom-wrapper">
