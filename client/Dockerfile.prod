@@ -11,8 +11,7 @@ RUN npm install --silent
 
 COPY . ./
 
-CMD ["npm", "run", "build"]
-
+RUN npm run build
 
 FROM nginx:alpine as release
 
