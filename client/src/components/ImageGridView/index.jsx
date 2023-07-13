@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
-import "./imagegridview.css";
 import axios from "axios";
 import { notification } from "antd";
 
