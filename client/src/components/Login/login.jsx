@@ -162,7 +162,7 @@ function Login({ closeModal = () => {} }) {
                         placeholder="ID"
                         value={id}
                         onChange={handleIdChange}
-                        maxLength={20}
+                        maxLength={12}
                     />
                 </div>
                 <div className="box">
