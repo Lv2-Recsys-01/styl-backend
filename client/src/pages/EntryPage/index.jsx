@@ -2,6 +2,7 @@ import React from "react";
 import Login from "../../components/Login/login";
 import "./index.css";
 import { Row, Col } from "antd";
+import { styleAxios } from "../../utils";
 
 function EntryBackground() {
     return (
