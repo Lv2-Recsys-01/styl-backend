@@ -5,8 +5,8 @@ import { Space } from "antd";
 import { NavLink, useNavigate } from "react-router-dom";
 import MoveToTop from "../MoveToTop";
 import MoveBottom from "../MoveBottom";
-import axios from "axios";
 import { useCookies } from "react-cookie";
+import { styleAxios } from "../../utils";
 
 export function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,8 +27,8 @@ export function Header() {
     };
 
     const handleLogout = () => {
-        axios
-            .post("http://localhost:8000/users/logout")
+        styleAxios
+            .post("/users/logout")
             .then((response) => {
                 setIsLoggedIn(false);
                 navigate("/");

@@ -1,21 +1,7 @@
-version: "3.1"
+# - ./client/build:/usr/share/nginx/html:consistent
+version: "3"
 
 services:
-    client:
-        image: nginx:latest
-        container_name: styl-front
-        platform: "linux/amd64"
-        working_dir: /app
-        expose:
-            - "3000"
-        ports:
-            - "3000:80"
-        environment:
-            PORT: 3000
-        volumes:
-            - ./client/build:/usr/share/nginx/html:consistent
-        depends_on:
-            - app
     app:
         container_name: styl-app
         platform: "linux/amd64"
@@ -26,30 +12,25 @@ services:
             - "8000:8000"
         environment:
             PORT: 8000
+        env_file:
+            - ./.env
+            - ./.env.prod
         volumes:
             - .:/app:consistent
         build:
             context: .
             dockerfile: Dockerfile
         command:
-            [
-                "uvicorn",
-                "src.main:app",
-                "--host",
-                "0.0.0.0",
-                "--port",
-                "8000",
-                "--reload",
-            ]
+            ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
         depends_on:
             psql:
                 condition: service_healthy
     psql:
         image: postgres:latest
         container_name: postgres
-        # restart: always
+        restart: always
         ports:
-            - "5432:5432"
+            - "6000:5432"
         environment:
             POSTGRES_USER: "postgres"
             POSTGRES_PASSWORD: "password"
@@ -59,52 +40,27 @@ services:
             - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
-            interval: 1s
-            timeout: 5s
-            retries: 5
-# version: "3"
-
-# services:
-#     app:
-#         # meta data
-#         container_name: styl-app
-#         platform: "linux/amd64"
-#         working_dir: /app
-#         # port forwarding
-#         expose:
-#             - "8000"
-#         ports:
-#             - "8000:8000"
-#         environment:
-#             PORT: 8000
-#         # volumes
-#         volumes:
-#             - .:/app:consistent
-#         # containre
-#         build:
-#             context: .
-#             dockerfile: Dockerfile
-#         command: [
-#                 "uvicorn",
-#                 "src.main:app",
-#                 "--host",
-#                 "0.0.0.0",
-#                 "--port",
-#                 "8000",
-#                 "--reload", # this for hot-reload in dev
-#             ] # override Dockerfile CMD
-#         depends_on:
-#             - psql
-#     psql:
-#             image: postgres:latest
-#             container_name: postgres
-#             restart: always
-#             ports:
-#                 - "5432:5432"
-#             environment:
-#                 POSTGRES_USER: "postgres"
-#                 POSTGRES_PASSWORD: "password"
-#                 PGDATA: /data/postgres
-#             volumes:
-#                 - ./db/:/data/postgres
-#                 - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+            interval: 5s
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+    client:
+        container_name: styl-front
+        platform: "linux/amd64"
+        working_dir: /app
+        build:
+            context: ./client
+            dockerfile: Dockerfile.dev
+        expose:
+            - "3000"
+        ports:
+            - "3000:3000"
+        environment:
+            PORT: 3000
+        env_file:
+            - ./.env
+            - ./.env.prod
+        volumes:
+            - ./client/src:/app/src:consistent
+        depends_on:
+            - app
