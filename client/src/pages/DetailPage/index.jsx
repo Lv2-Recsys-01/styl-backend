@@ -68,7 +68,7 @@ function DetailCodi() {
                     <img className="codi" src={singleOutfit.img_url} alt="NoImg" />
                     <p className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="musinsa.png" alt="NoImg" />
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={singleOutfit.outfit_id} likeState={singleOutfit.is_liked} />
@@ -118,28 +118,24 @@ function SimilarItems() {
                         src={sim1_url}
                         alt="NoImg"
                         onClick={() => {
+                            axios.post(`http://localhost:8000/items/journey/${sim1}/click`);
                             goToDetailPage(sim1);
-                            axios.post(`http://localhost:8000/items/journey/${sim1}/click`).catch((error) => {
-                                console.error(error);
-                            });
                         }}
                     />
                     <img
                         src={sim2_url}
                         alt="NoImg"
                         onClick={() => {
-                            axios.post(`http://localhost:8000/items/journey/${sim2}/click`).catch((error) => {
-                                console.error(error);
-                            });
+                            axios.post(`http://localhost:8000/items/journey/${sim2}/click`);
+                            goToDetailPage(sim2);
                         }}
                     />
                     <img
                         src={sim3_url}
                         alt="NoImg"
                         onClick={() => {
-                            axios.post(`http://localhost:8000/items/journey/${sim3}/click`).catch((error) => {
-                                console.error(error);
-                            });
+                            axios.post(`http://localhost:8000/items/journey/${sim3}/click`);
+                            goToDetailPage(sim3);
                         }}
                     />
                 </Space>
