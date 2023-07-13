@@ -45,22 +45,20 @@ services:
             retries: 3
             start_period: 30s
     client:
+        image: nginx:latest
         container_name: styl-front
         platform: "linux/amd64"
         working_dir: /app
-        build:
-            context: ./client
-            dockerfile: Dockerfile.dev
         expose:
-            - "3000"
+            - "80"
         ports:
-            - "3000:3000"
+            - "80:80"
         environment:
-            PORT: 3000
+            PORT: 80
         env_file:
             - ./.env
             - ./.env.prod
         volumes:
-            - ./client/src:/app/src:consistent
+            - ./client/build:/usr/share/nginx/html:consistent
         depends_on:
             - app
