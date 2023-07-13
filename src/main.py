@@ -1,3 +1,4 @@
+import os
 import pprint
 import uuid
 from datetime import datetime
@@ -49,14 +50,29 @@ app = FastAPI(
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+IS_PROD = os.getenv("ENV") == "production"
+AWS_PUBLIC_IP = os.getenv("AWS_PUBLIC_IP")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+origins = (
+    [
+        f"http://{AWS_PUBLIC_IP}",
+        f"http://{AWS_PUBLIC_IP}:3000",
+        f"http://{AWS_PUBLIC_IP}:8000",
+        f"https://{AWS_PUBLIC_IP}",
+        f"https://{AWS_PUBLIC_IP}:3000",
+        f"https://{AWS_PUBLIC_IP}:8000",
+    ]
+    if IS_PROD
+    else [
         "http://localhost",
         "http://localhost:3000",
         "http://localhost:8000",
-    ],
+    ]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
     allow_origin_regex="https://.*\.ngrok\-free\.app",
     allow_credentials=True,  # True인 경우 allow_origins을 ['*'] 로 설정할 수 없음.
     allow_methods=["*"],

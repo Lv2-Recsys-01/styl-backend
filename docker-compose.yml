@@ -11,6 +11,9 @@ services:
             - "8000:8000"
         environment:
             PORT: 8000
+        env_file:
+            - ./.env
+            - ./.env.local
         volumes:
             - .:/app:consistent
         build:
@@ -61,6 +64,9 @@ services:
             - "3000:3000"
         environment:
             PORT: 3000
+        env_file:
+            - ./.env
+            - ./.env.local
         volumes:
             - ./client/src:/app/src:consistent
         depends_on:
