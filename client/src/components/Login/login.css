@@ -13,14 +13,13 @@
 }
 
 .background {
-    background-color: var(--graylilac);
+    background-color: var(--background);
     width: 80%;
     max-width: 480px;
     min-width: 320px;
     padding: 25px;
     border-radius: 10px;
     border: 1px double var(--vivamagenta);
-    opacity: 0.85;
 }
 
 .title {

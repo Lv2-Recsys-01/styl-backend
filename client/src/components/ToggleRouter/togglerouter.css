@@ -12,22 +12,22 @@
     border-radius: 10px;
     font-weight: 600;
     margin:10px;
-    background-color: var(--graylilac);
+    background-color: var(--paledogwood);
     color:var(--vivamagenta);
     font-size:16px;
     cursor: pointer;
   }
   .route-btn-journey {
-    background-color: var(--graylilac);
+    background-color: var(--paledogwood);
     color:var(--vivamagenta);
   }
 
   .route-btn-collection{
-    background-color: var(--graylilac);
+    background-color: var(--paledogwood);
     color:var(--vivamagenta);
   }
 
   .route-btn.active {
     background-color: var(--vivamagenta);
-    color: var(--graylilac);
+    color: var(--paledogwood);
   }
