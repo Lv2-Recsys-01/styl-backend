@@ -10,8 +10,8 @@
     position: relative;
     overflow: hidden;
     border-radius: 12px;
-    border: 2px solid var(--vivamagenta);
-    background-color: var(--graylilac);
+    border: 3px double var(--graylilac);
+    background-color: var(--paledogwood);
     animation: skeleton-animation 3s infinite;
   }
 

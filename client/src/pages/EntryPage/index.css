@@ -35,6 +35,7 @@
     width: 80%;
     object-fit: cover;
     border-radius: 10px;
+    border: 4px double var(--graylilac);
     margin: 20px;
     margin-bottom: 0;
     animation: backMoveUp 8s infinite;
@@ -44,6 +45,7 @@
     width: 80%;
     object-fit: cover;
     border-radius: 10px;
+    border: 4px double var(--graylilac);
     margin: 20px;
     margin-bottom: 0;
     animation: backMoveDown 8s infinite;
