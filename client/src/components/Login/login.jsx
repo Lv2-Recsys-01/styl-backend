@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import "./login.css";
 import { NavLink, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { notification } from "antd";
+import { styleAxios } from "../../utils";
 
 Modal.setAppElement("#root");
 
@@ -82,8 +82,8 @@ function Login({ closeModal = () => {} }) {
             user_pwd: password,
         };
 
-        axios
-            .post("http://localhost:8000/users/login", LoginParams)
+        styleAxios
+            .post("/users/login", LoginParams)
             .then((response) => {
                 console.log(response);
                 console.log(response.data);
@@ -116,8 +116,8 @@ function Login({ closeModal = () => {} }) {
             confirm_pwd: confirm,
         };
 
-        axios
-            .post("http://localhost:8000/users/signup", SignUpParams)
+        styleAxios
+            .post("/users/signup", SignUpParams)
             .then((response) => {
                 console.log(response.data);
                 handleSignupSuccess();

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
-import axios from "axios";
 import { notification } from "antd";
+import { styleAxios } from "../../utils";
 const PAGE_SIZE = 10;
 const DELAY = 1000;
 const S = {
@@ -83,15 +83,12 @@ function ImageGridView(props) {
     }
     async function fetchData() {
         try {
-            const viewUrl =
-                props.view === "journey"
-                    ? "http://localhost:8000/items/journey"
-                    : "http://localhost:8000/items/collection";
+            const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
                 offset: (currentPage.current * PAGE_SIZE).toString(),
             });
-            const response = await axios.get(`${viewUrl}?${viewParams.toString()}`);
+            const response = await styleAxios.get(`${viewUrl}?${viewParams.toString()}`);
 
             const { outfits_list: outfitsList, page_size, offset, is_last: isLast } = response.data;
 
@@ -105,11 +102,9 @@ function ImageGridView(props) {
                             alt={currentPage.current * PAGE_SIZE + i}
                             onClick={() => {
                                 goToDetailPage(single_outfit.outfit_id);
-                                axios
-                                    .post(`http://localhost:8000/items/journey/${single_outfit.outfit_id}/click`)
-                                    .catch((error) => {
-                                        console.error(error);
-                                    });
+                                styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click`).catch((error) => {
+                                    console.error(error);
+                                });
                             }}
                         />
                         <HeartButton

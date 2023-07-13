@@ -4,8 +4,8 @@ import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined } from "@ant-design/
 import { useNavigate, useParams } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { styleAxios } from "../../utils";
 
 const { Header, Footer, Content } = Layout;
 
@@ -30,25 +30,25 @@ function DetailHeader() {
 function DetailCodi() {
     const { front_outfit_id } = useParams();
     const [singleOutfit, setSingleOutfit] = useState(null);
-    const [detailOutfitId, setDetailOutfitId]= useState(front_outfit_id);
+    const [detailOutfitId, setDetailOutfitId] = useState(front_outfit_id);
     const [detailLikeState, setDetailLikeState] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            const response = await axios.get(`http://localhost:8000/items/journey/${front_outfit_id}`);
-            const singleOutfitData = response.data.outfit;
-            setSingleOutfit(singleOutfitData);
-            setDetailOutfitId(singleOutfitData.outfit_id);
-            setDetailLikeState(singleOutfitData.is_liked);
-            console.log('1', singleOutfitData);
-          } catch (error) {
-            console.error("Failed to fetch data:", error);
-          }
+            try {
+                const response = await styleAxios.get(`/items/journey/${front_outfit_id}`);
+                const singleOutfitData = response.data.outfit;
+                setSingleOutfit(singleOutfitData);
+                setDetailOutfitId(singleOutfitData.outfit_id);
+                setDetailLikeState(singleOutfitData.is_liked);
+                console.log("1", singleOutfitData);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
         };
         fetchData();
-      }, [front_outfit_id]);
-    console.log('??', detailOutfitId,detailLikeState);
+    }, [front_outfit_id]);
+    console.log("??", detailOutfitId, detailLikeState);
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
@@ -77,7 +77,7 @@ function DetailCodi() {
                             <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState}/>
+                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
                     </p>
                 </>
             )}
@@ -93,7 +93,7 @@ function SimilarItems() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/items/journey/${front_outfit_id}`);
+                const response = await styleAxios.get(`/items/journey/${front_outfit_id}`);
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
             } catch (error) {
@@ -123,7 +123,7 @@ function SimilarItems() {
                         src={sim1_url}
                         alt="NoImg"
                         onClick={() => {
-                            axios.post(`http://localhost:8000/items/journey/${sim1}/click`);
+                            styleAxios.post(`/items/journey/${sim1}/click`);
                             goToDetailPage(sim1);
                         }}
                     />
@@ -131,7 +131,7 @@ function SimilarItems() {
                         src={sim2_url}
                         alt="NoImg"
                         onClick={() => {
-                            axios.post(`http://localhost:8000/items/journey/${sim2}/click`);
+                            styleAxios.post(`/items/journey/${sim2}/click`);
                             goToDetailPage(sim2);
                         }}
                     />
@@ -139,7 +139,7 @@ function SimilarItems() {
                         src={sim3_url}
                         alt="NoImg"
                         onClick={() => {
-                            axios.post(`http://localhost:8000/items/journey/${sim3}/click`);
+                            styleAxios.post(`/items/journey/${sim3}/click`);
                             goToDetailPage(sim3);
                         }}
                     />

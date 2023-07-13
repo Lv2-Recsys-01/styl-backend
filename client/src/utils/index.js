@@ -9,7 +9,7 @@ const delayPromise = (n, expectedData) => {
 };
 
 const styleAxios = axios.create({
-    baseURL: process.env.REACT_ENV === "production" ? "http://localhost:8000" : "http:http://43.202.97.64:8000",
+    baseURL: process.env.REACT_ENV === "production" ? "http://43.202.97.64:8000" : "http://localhost:8000",
     timeout: 2500,
     withCredentials: true,
 });
