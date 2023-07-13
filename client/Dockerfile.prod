@@ -1,0 +1,28 @@
+FROM node:18-slim as checkout
+
+WORKDIR /app
+
+
+ENV PATH /app/node_modules/.bin:$PATH
+ENV NODE_ENV production
+
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm install --silent
+
+COPY . ./
+
+CMD ["npm", "run", "build"]
+
+
+FROM nginx:alpine as release
+
+WORKDIR /app
+
+COPY --from=checkout /app/build /usr/share/nginx/html
+
+ENV PORT 80
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
