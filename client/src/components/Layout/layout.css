@@ -11,15 +11,16 @@
 
 .header {
   position: fixed;
-  top: 0;
+  top: 10px;
   width: 100%;
   max-width: 500px;
   height:105px;
-  background-color: var(--background);
+  background-color: var(--paledogwood);
   z-index: 999;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   border:3px solid var(--lilacgray);
+  opacity: 0.9;
 }
 
 .header .wrapper .options{

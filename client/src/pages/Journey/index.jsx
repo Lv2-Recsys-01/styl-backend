@@ -1,9 +1,10 @@
 import React from "react";
 import ImageGridView from "../../components/ImageGridView";
+import "./journey.css"
 
 function Journey() {
     return (
-        <div>
+        <div className="journey-header">
             <ImageGridView view={'journey'}/>
         </div>
     );
