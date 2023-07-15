@@ -7,7 +7,7 @@ function ToggleRouter() {
     const location = useLocation();
 
     const onRouteBtnClick = (route) => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "instant" });
         navigate(`/${route}`);
     };
 
