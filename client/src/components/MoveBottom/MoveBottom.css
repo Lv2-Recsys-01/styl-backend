@@ -1,11 +1,10 @@
 .scroll-to-bottom-button {
   position: fixed;
-  bottom: 50px;
+  bottom: 40px;
   width: 100%;
   max-width: 500px;
   animation: moveDown 2s infinite;
   display: flex;
-  justify-content: center;
   margin-left: auto;
   margin-right: auto;
 }
@@ -14,12 +13,16 @@
   0% {
     transform: translateY(0%);
   }
+  50% {
+    transform: translateY(-25%);
+  }
   100% {
-    transform: translateY(70%);
+    transform: translateY(0%);
   }
 }
 
 .bottom-arrow {
-  color: var(--vivamagenta);
-  font-size: 30px;
+  color: var(--steelblue);
+  font-size: 35px;
+  margin-left:40px;
 }

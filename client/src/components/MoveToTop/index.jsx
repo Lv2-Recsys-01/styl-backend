@@ -1,5 +1,5 @@
 import React from "react";
-import { UpCircleOutlined } from "@ant-design/icons";
+import { CaretUpFilled } from "@ant-design/icons";
 import "./MoveToTop.css";
 
 class MoveToTop extends React.Component {
@@ -10,7 +10,7 @@ class MoveToTop extends React.Component {
     render() {
         return (
             <div className="scroll-to-top-button">
-                <UpCircleOutlined className="top-arrow" onClick={this.handleScrollToTop} />
+                <CaretUpFilled className="top-arrow" onClick={this.handleScrollToTop} />
             </div>
         );
     }

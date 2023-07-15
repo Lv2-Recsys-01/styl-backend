@@ -10,18 +10,18 @@
 
   @keyframes moveUp {
     0% {
-      transform: translateY(25%);
+      transform: translateY(0%);
     }
     50% {
-      transform: translateY(50%);
+      transform: translateY(25%);
     }
     100% {
-      transform: translateY(25%);
+      transform: translateY(0%);
     }
   }
 
   .top-arrow {
-    font-size: 30px;
+    font-size: 35px;
     color: var(--vivamagenta);
     margin-right: auto;
     margin-left:40px;
