@@ -17,11 +17,12 @@ export function Header() {
     const [cookies, setCookie] = useCookies("Cookies");
 
     useEffect(() => {
+        console.log('cookie!')
         if (cookies.user_id !== undefined) {
             setIsLoggedIn(true);
             SetUserName(cookies.user_name);
         }
-    }, []);
+    }, [isLoggedIn]);
 
     const handleLogin = () => {
         navigate("/");
