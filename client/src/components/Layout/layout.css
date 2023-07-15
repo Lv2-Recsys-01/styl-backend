@@ -11,15 +11,15 @@
 
 .header {
   position: fixed;
-  top: 10px;
+  top: 0px;;
   width: 100%;
   max-width: 500px;
-  height:105px;
+  height:83px;
   background-color: var(--paledogwood);
   z-index: 999;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  border:3px solid var(--lilacgray);
+  border-bottom:3px solid var(--lilacgray);
   opacity: 0.9;
 }
 
@@ -28,7 +28,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 20px;
+    height: 0px;
     line-height: 64px;
     margin:10px;
     margin-top:20px;
