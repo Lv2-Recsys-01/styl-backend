@@ -6,6 +6,7 @@ import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import { useEffect, useState } from "react";
 import { styleAxios } from "../../utils";
+import NotFoundPage from "../NotFoundPage";
 
 const { Header, Footer, Content } = Layout;
 
@@ -32,6 +33,7 @@ function DetailCodi() {
     const [singleOutfit, setSingleOutfit] = useState(null);
     const [detailOutfitId, setDetailOutfitId] = useState(front_outfit_id);
     const [detailLikeState, setDetailLikeState] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,10 +45,20 @@ function DetailCodi() {
                 setDetailLikeState(singleOutfitData.is_liked);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
-            }
-        };
-        fetchData();
-    }, [front_outfit_id]);
+                setFetchError(true);
+                notification.error({
+                message: "존재하지 않는 코디입니다.",
+                description: "뒤로 돌아가 주세요!",
+                duration: 2,
+        });
+      }
+    };
+    fetchData();
+  }, [front_outfit_id]);
+
+  if (fetchError) {
+    return <NotFoundPage />;
+  }
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
@@ -101,6 +113,7 @@ function SimilarItems() {
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
             } catch (error) {
+
                 console.error("Failed to fetch data:", error);
             }
         };
