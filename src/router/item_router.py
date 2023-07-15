@@ -96,7 +96,7 @@ def show_collection_images(
                 Like.is_deleted == bool(False),
             )
             .offset(offset)
-            .limit(page_size)
+            .limit(page_size+1)
             .all()
         )
     # 회원일때
@@ -108,12 +108,13 @@ def show_collection_images(
                 Like.is_deleted == bool(False),
             )
             .offset(offset)
-            .limit(page_size)
+            .limit(page_size+1)
             .all()
         )
-
-    is_last = len(liked_list) < page_size
-
+    is_last = len(liked_list) <= page_size
+    if len(liked_list) == page_size+1:
+        liked_list.pop()
+    
     if len(liked_list) == 0 or not liked_list:
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED,
