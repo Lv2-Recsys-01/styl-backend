@@ -85,7 +85,6 @@ function Login({ closeModal = () => {} }) {
         styleAxios
             .post("/users/login", LoginParams)
             .then((response) => {
-                console.log(response);
                 console.log(response.data);
                 navigate("/journey");
             })

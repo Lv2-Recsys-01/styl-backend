@@ -41,14 +41,12 @@ function DetailCodi() {
                 setSingleOutfit(singleOutfitData);
                 setDetailOutfitId(singleOutfitData.outfit_id);
                 setDetailLikeState(singleOutfitData.is_liked);
-                console.log("1", singleOutfitData);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
         fetchData();
     }, [front_outfit_id]);
-    console.log("??", detailOutfitId, detailLikeState);
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
@@ -72,13 +70,13 @@ function DetailCodi() {
             {singleOutfit && (
                 <>
                     <img className="codi" src={singleOutfit.img_url} alt="NoImg" />
-                    <p className="options">
+                    <div className="options">
                         <a href={singleOutfit.origin_url}>
                             <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
-                    </p>
+                    </div>
                 </>
             )}
         </div>
