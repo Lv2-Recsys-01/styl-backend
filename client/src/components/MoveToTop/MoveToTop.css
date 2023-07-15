@@ -1,13 +1,3 @@
-.scroll-to-top-button {
-    position: fixed;
-    bottom: 80px;
-    width: 100%;
-    max-width: 500px;
-    animation: moveUp 2s infinite;
-    display: flex;
-    justify-content: center;
-  }
-
   @keyframes moveUp {
     0% {
       transform: translateY(0%);
@@ -21,8 +11,10 @@
   }
 
   .top-arrow {
+    position: fixed;
+    bottom: 80px;
+    left:40px;
+    animation: moveUp 2s infinite;
     font-size: 35px;
     color: var(--vivamagenta);
-    margin-right: auto;
-    margin-left:40px;
   }

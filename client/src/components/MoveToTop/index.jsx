@@ -9,9 +9,7 @@ class MoveToTop extends React.Component {
 
     render() {
         return (
-            <div className="scroll-to-top-button">
                 <CaretUpFilled className="top-arrow" onClick={this.handleScrollToTop} />
-            </div>
         );
     }
 }

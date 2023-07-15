@@ -9,9 +9,7 @@ class MoveBottom extends React.Component {
     
     render() {
         return (
-            <div className="scroll-to-bottom-button">
                 <CaretDownFilled className="bottom-arrow" onClick={this.handleScrollToBottom}/>
-            </div>
         );
     }
 }

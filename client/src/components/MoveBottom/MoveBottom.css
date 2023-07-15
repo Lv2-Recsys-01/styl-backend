@@ -1,14 +1,3 @@
-.scroll-to-bottom-button {
-  position: fixed;
-  bottom: 40px;
-  width: 100%;
-  max-width: 500px;
-  animation: moveDown 2s infinite;
-  display: flex;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 @keyframes moveDown {
   0% {
     transform: translateY(0%);
@@ -22,7 +11,10 @@
 }
 
 .bottom-arrow {
-  color: var(--steelblue);
+  position: fixed;
+  bottom: 40px;
+  left:40px;
+  animation: moveDown 2s infinite;
   font-size: 35px;
-  margin-left:40px;
+  color: var(--steelblue);
 }
