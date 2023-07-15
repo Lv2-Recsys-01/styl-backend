@@ -75,7 +75,6 @@ function Login({ closeModal = () => {} }) {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        console.log(`login => ID: ${id}, Password: ${password}`);
 
         const LoginParams = {
             user_name: id,

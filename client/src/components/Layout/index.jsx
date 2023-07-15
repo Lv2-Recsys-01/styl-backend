@@ -21,9 +21,10 @@ export function Header() {
             setIsLoggedIn(true);
             SetUserName(cookies.user_name);
         }
-    }, [isLoggedIn]);
+    }, [isLoggedIn, cookies]);
 
     const handleLogin = () => {
+        setIsLoggedIn(false);
         navigate("/");
     };
 

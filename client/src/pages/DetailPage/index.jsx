@@ -69,10 +69,16 @@ function DetailCodi() {
         <div className="body">
             {singleOutfit && (
                 <>
-                    <img className="codi" src={singleOutfit.img_url} alt="NoImg" />
+                    <img className="codi" src={singleOutfit.img_url} 
+                    alt="NoImg"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                      }} 
+                    />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg"/>
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
@@ -120,6 +126,10 @@ function SimilarItems() {
                     <img
                         src={sim1_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim1}/click`);
                             goToDetailPage(sim1);
@@ -128,6 +138,10 @@ function SimilarItems() {
                     <img
                         src={sim2_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim2}/click`);
                             goToDetailPage(sim2);
@@ -136,6 +150,10 @@ function SimilarItems() {
                     <img
                         src={sim3_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim3}/click`);
                             goToDetailPage(sim3);

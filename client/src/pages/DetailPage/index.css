@@ -5,22 +5,19 @@
     height: 50px;
     line-height: 64px;
     padding: 40px;
-    padding-top: 40px;
+    padding-top: 50px;
     padding-bottom: 10px;
     background-color: var(--background);
-    /* border-bottom: dashed 3px var(--graylilac); */
   }
 
   .detail .detail-header .back{
     text-align: left;
-    margin-left:15px;
     font-size:30px;
     color: var(--paledogwood);
   }
 
   .detail .detail-header .close{
     text-align: right;
-    margin-right:15px;
     font-size:30px;
     color: var(--paledogwood);
   }
