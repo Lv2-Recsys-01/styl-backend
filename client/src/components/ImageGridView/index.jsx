@@ -141,6 +141,7 @@ function ImageGridView(props) {
         }
     }
     const goToDetailPage = (front_outfit_id) => {
+        window.scrollTo({ top: 0, behavior: "instant" });
         navigate(`/detail/${front_outfit_id}`);
     };
     return (
