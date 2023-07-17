@@ -14,7 +14,7 @@ export function Header() {
     const [userName, SetUserName] = useState("guest");
     const navigate = useNavigate();
 
-    const [cookies, setCookie] = useCookies("Cookies");
+    const [cookies, _] = useCookies("Cookies");
 
     useEffect(() => {
         if (cookies.user_id !== undefined) {
