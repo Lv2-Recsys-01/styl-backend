@@ -157,6 +157,8 @@ dist
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 db/
+dev_db/
+prod_db/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

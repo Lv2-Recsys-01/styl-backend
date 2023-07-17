@@ -81,7 +81,7 @@ function DetailCodi() {
         <div className="body">
             {singleOutfit && (
                 <>
-                    <img className="codi" src={singleOutfit.img_url} 
+                    <img className="codi" src={singleOutfit.img_url}
                     alt="NoImg"
                     onError={(e) => {
                         e.target.onerror = null;

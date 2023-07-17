@@ -2,7 +2,6 @@ import React from "react";
 import Login from "../../components/Login/login";
 import "./index.css";
 import { Row, Col } from "antd";
-import { styleAxios } from "../../utils";
 
 function EntryBackground() {
     return (
@@ -12,6 +11,7 @@ function EntryBackground() {
                     <img
                         className="up"
                         src="https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/2023female/91725.jpg"
+                        alt="NoImg"
                     />
                 </Col>
                 <Col span={12}>

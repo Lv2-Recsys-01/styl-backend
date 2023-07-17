@@ -24,7 +24,7 @@ function App() {
                     <Route path="/journey" element={<Journey />} />
                     <Route path="/collections" element={<MyPage />} />
                     <Route path="/detail/:front_outfit_id" element={<DetailPageWrapper />} />
-                    <Route path="*" element={<NotFoundPage />} />
+                    {/* <Route path="*" element={<NotFoundPage />} /> */}
                 </Route>
             </Routes>
         </BrowserRouter>
@@ -37,7 +37,6 @@ function DetailPageWrapper() {
     const isNumeric = /^\d+$/.test(front_outfit_id);
 
     if (!isNumeric) {
-
         return <NotFoundPage />;
     }
 

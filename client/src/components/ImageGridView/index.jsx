@@ -90,7 +90,7 @@ function ImageGridView(props) {
             });
             const response = await styleAxios.get(`${viewUrl}?${viewParams.toString()}`);
 
-            const { outfits_list: outfitsList, page_size, offset, is_last: isLast } = response.data;
+            const { outfits_list: outfitsList, is_last: isLast } = response.data;
 
             const newData = [...outfits];
             for (let i = 0; i < outfitsList.length; i++) {
@@ -102,8 +102,9 @@ function ImageGridView(props) {
                             alt={currentPage.current * PAGE_SIZE + i}
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                              }}
+                                e.target.src =
+                                    "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                            }}
                             onClick={() => {
                                 goToDetailPage(single_outfit.outfit_id);
                                 styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click`).catch((error) => {
