@@ -5,6 +5,7 @@ services:
     app:
         container_name: styl-app-prod
         platform: "linux/amd64"
+        restart: always
         working_dir: /app
         expose:
             - "8000"
@@ -47,6 +48,7 @@ services:
     client:
         container_name: styl-front-prod
         platform: "linux/amd64"
+        restart: always
         working_dir: /app
         expose:
             - "80"
