@@ -65,7 +65,6 @@ class Click(Base):
     user_id = Column(Integer, ForeignKey("user.user_id"))
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
-    # duration_secondes = Column(Integer)
 
     user = relationship("User", back_populates="clicks")
     outfit = relationship("Outfit", back_populates="clicks")

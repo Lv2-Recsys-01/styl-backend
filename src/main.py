@@ -16,7 +16,7 @@ from .router import item_router, user_router
 
 print = pprint.pprint
 
-Base.metadata.drop_all(bind=engine)
+# Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 
@@ -38,7 +38,7 @@ def create_session_id_first_visit(
 
         db.add(user_session)
         db.commit()
-
+        # print(user_session)
     return session_id
 
 

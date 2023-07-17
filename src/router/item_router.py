@@ -17,7 +17,7 @@ router = APIRouter(
     tags=["items"],
 )
 
-def update_last_action_time(user_id: int | None,
+async def update_last_action_time(user_id: int | None,
                             session_id: str,
                             db: Session):
     if user_id is None:
@@ -32,8 +32,18 @@ def update_last_action_time(user_id: int | None,
         ).first()
     
     user.expired_at = datetime.now(timezone("Asia/Seoul"))
-    
+
     db.commit()
+    
+    
+async def log_view_image(user_id: int | None, session_id: str, outfits_list: list, view_type: str):
+    if user_id is None:
+        user_id = 0
+    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
+    with open("view_image_log.txt", "a") as log_file:
+        for outfit_out in outfits_list:
+            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type}"
+            log_file.write(log_entry)
 
 
 @router.get("/journey")
@@ -91,8 +101,13 @@ def show_journey_images(
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
-                              db=db)    
-
+                              db=db)
+    background_tasks.add_task(log_view_image,
+                              user_id=user_id,
+                              session_id=session_id,
+                              outfits_list=outfits_list,
+                              view_type="journey")
+    
     return {
         "ok": True,
         "outfits_list": outfits_list,
@@ -318,7 +333,13 @@ def show_single_image(
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
-                              db=db)  
+                              db=db)
+    
+    background_tasks.add_task(log_view_image,
+                              user_id=user_id,
+                              session_id=session_id,
+                              outfits_list=similar_outfits_list,
+                              view_type="similar")
 
     return {
         "ok": True,
@@ -329,6 +350,7 @@ def show_single_image(
 
 @router.post("/journey/{outfit_id}/click")
 def user_click(
+    background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
@@ -348,5 +370,10 @@ def user_click(
 
     db.add(new_click)
     db.commit()
+    
+    background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)
 
     return {"ok": True}
