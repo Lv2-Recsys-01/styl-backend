@@ -26,11 +26,31 @@ def show_journey_images(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
+
     # 한 페이지에 표시할 전체 outfit
-    # outfits = db.query(Outfit).offset(offset).limit(page_size).all()
-    outfits = (
-        db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
+    # outfits = (
+    #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
+    # )
+
+
+    f_outfits = (
+        db.query(Outfit)
+        .filter(Outfit.gender == 'F')
+        .order_by(func.random())
+        .limit(page_size // 2)
+        .all()
     )
+
+    m_outfits = (
+        db.query(Outfit)
+        .filter(Outfit.gender == 'M')
+        .order_by(func.random())
+        .limit(page_size // 2)
+        .all()
+    )
+
+    outfits = f_outfits + m_outfits
+    random.shuffle(outfits)
 
     # 마지막 페이지인지 확인
     is_last = len(outfits) < page_size
