@@ -14,16 +14,11 @@ class User(Base):
     user_id = Column(Integer, primary_key=True, index=True)
     user_name = Column(String, unique=True, index=True)
     user_pwd = Column(String)
+    signup_time = Column(DateTime)
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
     session = relationship("UserSession", back_populates="user")
-
-    def verify_password(self, plain_password):
-        return pwd_context.verify(plain_password, self.login_pwd)
-
-    def hash_password(self, plain_password):
-        self.login_pwd = pwd_context.hash(plain_password)
 
 
 class Outfit(Base):

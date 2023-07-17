@@ -109,7 +109,9 @@ def signup(
         raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다.")
 
     hashed_password = pwd_context.hash(user_body.user_pwd)
-    db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
+    db_user = User(user_name=user_body.user_name,
+                   user_pwd=hashed_password,
+                   signup_time=datetime.now(timezone("Asia/Seoul")))
     db.add(db_user)
     db.commit()
 
