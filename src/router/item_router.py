@@ -53,7 +53,10 @@ def show_journey_images(
     random.shuffle(outfits)
 
     # 마지막 페이지인지 확인
-    is_last = len(outfits) < page_size
+    if page_size % 2 ==1:
+        is_last = len(outfits) < page_size-1
+    else:
+        is_last = len(outfits) < page_size
 
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
