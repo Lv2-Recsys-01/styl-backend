@@ -47,50 +47,54 @@ function DetailCodi() {
                 console.error("Failed to fetch data:", error);
                 setFetchError(true);
                 notification.error({
-                message: "존재하지 않는 코디입니다.",
-                description: "뒤로 돌아가 주세요!",
-                duration: 2,
-        });
-      }
-    };
-    fetchData();
-  }, [front_outfit_id]);
+                    message: "존재하지 않는 코디입니다.",
+                    description: "뒤로 돌아가 주세요!",
+                    duration: 2,
+                });
+            }
+        };
+        fetchData();
+    }, [front_outfit_id]);
 
-  if (fetchError) {
-    return <NotFoundPage />;
-  }
+    if (fetchError) {
+        return <NotFoundPage />;
+    }
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
-        navigator.clipboard
-            .writeText(currentURL)
-            .then(() => {
+
+        try {
+            navigator.clipboard.writeText(""); // clear
+            navigator.clipboard.writeText(currentURL).then(() => {
                 console.log("URL copied to clipboard");
                 notification.success({
                     message: "URL이 복사되었습니다!",
                     description: "클립보드에 URL이 복사되었어요",
                     duration: 1,
                 });
-            })
-            .catch((error) => {
-                console.error("Failed to copy URL to clipboard:", error);
             });
+        } catch (error) {
+            console.error("Failed to copy URL to clipboard:", error);
+        }
     };
 
     return (
         <div className="body">
             {singleOutfit && (
                 <>
-                    <img className="codi" src={singleOutfit.img_url}
-                    alt="NoImg"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                      }}
+                    <img
+                        className="codi"
+                        src={singleOutfit.img_url}
+                        alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src =
+                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                        }}
                     />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg"/>
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
@@ -113,7 +117,6 @@ function SimilarItems() {
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
             } catch (error) {
-
                 console.error("Failed to fetch data:", error);
             }
         };
@@ -141,8 +144,9 @@ function SimilarItems() {
                         alt="NoImg"
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                          }}
+                            e.target.src =
+                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                        }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim1}/click`);
                             goToDetailPage(sim1);
@@ -153,8 +157,9 @@ function SimilarItems() {
                         alt="NoImg"
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                          }}
+                            e.target.src =
+                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                        }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim2}/click`);
                             goToDetailPage(sim2);
@@ -165,8 +170,9 @@ function SimilarItems() {
                         alt="NoImg"
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                          }}
+                            e.target.src =
+                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                        }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim3}/click`);
                             goToDetailPage(sim3);
