@@ -27,7 +27,7 @@ const GlobalStyle = createGlobalStyle`
         --pleinair: ${(props) => props.theme.lightColor.pleinair};
         --steelblue: ${(props) => props.theme.lightColor.steelblue};
         --background: ${(props) => props.theme.lightColor.background};
-        
+
 
         /* adaptive gray lightmode */
         --adaptiveGray50: #f9fafb;
