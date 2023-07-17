@@ -1,3 +1,4 @@
+# checkout phase
 FROM node:18-slim as checkout
 
 WORKDIR /app
@@ -13,10 +14,12 @@ COPY . ./
 
 RUN npm run build
 
+# build phase
 FROM nginx:alpine as release
 
 WORKDIR /app
 
+COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY --from=checkout /app/build /usr/share/nginx/html
 
 ENV PORT 80
