@@ -3,7 +3,7 @@ version: "3"
 
 services:
     app:
-        container_name: styl-app
+        container_name: styl-app-prod
         platform: "linux/amd64"
         working_dir: /app
         expose:
@@ -27,7 +27,7 @@ services:
                 condition: service_healthy
     psql:
         image: postgres:latest
-        container_name: postgres
+        container_name: postgres-prod
         restart: always
         ports:
             - "6000:5432"
@@ -45,7 +45,7 @@ services:
             retries: 3
             start_period: 30s
     client:
-        container_name: styl-front
+        container_name: styl-front-prod
         platform: "linux/amd64"
         working_dir: /app
         expose:

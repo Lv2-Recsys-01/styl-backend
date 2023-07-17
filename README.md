@@ -19,7 +19,8 @@ docker compose up
 docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못하면.
 
 # 프로덕션 빌드
-docker compose -f docker-compose.prod.yaml up
+docker compose -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.prod.yaml build --no-cache
 ```
 
 # GET /healthz
