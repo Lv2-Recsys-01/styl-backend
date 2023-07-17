@@ -58,6 +58,8 @@ if IS_PROD and (AWS_PUBLIC_IP is None):
 
 origins = (
     [
+        "http://stylesjourney.com/",
+        "https://stylesjourney.com/",
         f"http://{AWS_PUBLIC_IP}",
         f"http://{AWS_PUBLIC_IP}:3000",
         f"http://{AWS_PUBLIC_IP}:8000",
