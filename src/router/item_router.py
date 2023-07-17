@@ -2,14 +2,14 @@ import random
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import (APIRouter, Cookie, Depends, HTTPException, Path, Query,
+from fastapi import (APIRouter, BackgroundTasks, Cookie, Depends, HTTPException, Path, Query,
                      status)
 from pytz import timezone
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Click, Like, Outfit, Similar
+from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
 
 router = APIRouter(
@@ -17,9 +17,28 @@ router = APIRouter(
     tags=["items"],
 )
 
+def update_last_action_time(user_id: int | None,
+                            session_id: str,
+                            db: Session):
+    if user_id is None:
+        user = db.query(UserSession).filter(
+            UserSession.session_id == session_id,
+            UserSession.user_id.is_(None),
+        ).first()
+    else:
+        user = db.query(UserSession).filter(
+            UserSession.session_id == session_id,
+            UserSession.user_id == user_id,
+        ).first()
+    
+    user.expired_at = datetime.now(timezone("Asia/Seoul"))
+    
+    db.commit()
+
 
 @router.get("/journey")
 def show_journey_images(
+    background_tasks: BackgroundTasks,
     page_size: Annotated[int, Query()],
     offset: Annotated[int, Query()],
     user_id: Annotated[int | None, Cookie()] = None,
@@ -68,6 +87,11 @@ def show_journey_images(
         is_liked = outfit.outfit_id in likes_set
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
         outfits_list.append(outfit_out)
+    
+    background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)    
 
     return {
         "ok": True,
@@ -80,6 +104,7 @@ def show_journey_images(
 
 @router.get("/collection")
 def show_collection_images(
+    background_tasks: BackgroundTasks,
     page_size: Annotated[int, Query()],
     offset: Annotated[int, Query()],
     user_id: Annotated[int | None, Cookie()] = None,
@@ -128,6 +153,11 @@ def show_collection_images(
         )
         outfit_out = OutfitOut(**liked_outfit.__dict__, is_liked=True)
         outfits_list.append(outfit_out)
+        
+    background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)  
 
     return {
         "ok": True,
@@ -140,6 +170,7 @@ def show_collection_images(
 
 @router.post("/journey/{outfit_id}/like")
 def user_like(
+    background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
@@ -181,16 +212,27 @@ def user_like(
         )
         db.add(new_like)
         db.commit()
+        background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)
+        
         return {"ok": True}
     # 누른적 있으면 취소 여부 바꿔줌
     else:
         already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
         db.commit()
+        background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)  
+        
         return {"ok": True}
 
 
 @router.get("/journey/{outfit_id}")
 def show_single_image(
+    background_tasks: BackgroundTasks,
     outfit_id: int,
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
@@ -272,6 +314,11 @@ def show_single_image(
         is_liked = user_like is not None
         similar_outfit_out = OutfitOut(**similar_outfit.__dict__, is_liked=is_liked)
         similar_outfits_list.append(similar_outfit_out)
+        
+    background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)  
 
     return {
         "ok": True,

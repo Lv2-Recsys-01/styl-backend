@@ -90,6 +90,7 @@ class UserSession(Base):
     session_id = Column(String, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     created_at = Column(DateTime)
+    login_at = Column(DateTime, default=None)
     expired_at = Column(DateTime, default=None)
 
     user = relationship("User", back_populates="session")

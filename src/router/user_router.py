@@ -87,7 +87,8 @@ def login(
     if cur_session and cur_session.user_id is None:
         # type: ignore
         cur_session.user_id = int(login_user.user_id)  # type: ignore
-
+        cur_session.login_at = datetime.now(timezone("Asia/Seoul"))
+    print(cur_session.login_at)
     db.commit()
 
     return {"user_id": login_user.user_id, "user_name": login_user.user_name}
