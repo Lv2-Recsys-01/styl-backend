@@ -1,11 +1,10 @@
 import React from "react";
-import ToggleRouter from "../../components/ToggleRouter";
 import ImageGridView from "../../components/ImageGridView";
+import "./journey.css"
 
 function Journey() {
     return (
-        <div>
-            <ToggleRouter />
+        <div className="journey-header">
             <ImageGridView view={'journey'}/>
         </div>
     );

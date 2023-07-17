@@ -100,6 +100,10 @@ function ImageGridView(props) {
                         <img
                             src={single_outfit.img_url}
                             alt={currentPage.current * PAGE_SIZE + i}
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                              }}
                             onClick={() => {
                                 goToDetailPage(single_outfit.outfit_id);
                                 styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click`).catch((error) => {
@@ -137,6 +141,7 @@ function ImageGridView(props) {
         }
     }
     const goToDetailPage = (front_outfit_id) => {
+        window.scrollTo({ top: 0, behavior: "instant" });
         navigate(`/detail/${front_outfit_id}`);
     };
     return (

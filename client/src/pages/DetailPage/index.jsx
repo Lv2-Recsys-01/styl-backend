@@ -6,6 +6,7 @@ import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import { useEffect, useState } from "react";
 import { styleAxios } from "../../utils";
+import NotFoundPage from "../NotFoundPage";
 
 const { Header, Footer, Content } = Layout;
 
@@ -32,6 +33,7 @@ function DetailCodi() {
     const [singleOutfit, setSingleOutfit] = useState(null);
     const [detailOutfitId, setDetailOutfitId] = useState(front_outfit_id);
     const [detailLikeState, setDetailLikeState] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,14 +43,22 @@ function DetailCodi() {
                 setSingleOutfit(singleOutfitData);
                 setDetailOutfitId(singleOutfitData.outfit_id);
                 setDetailLikeState(singleOutfitData.is_liked);
-                console.log("1", singleOutfitData);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
-            }
-        };
-        fetchData();
-    }, [front_outfit_id]);
-    console.log("??", detailOutfitId, detailLikeState);
+                setFetchError(true);
+                notification.error({
+                message: "존재하지 않는 코디입니다.",
+                description: "뒤로 돌아가 주세요!",
+                duration: 2,
+        });
+      }
+    };
+    fetchData();
+  }, [front_outfit_id]);
+
+  if (fetchError) {
+    return <NotFoundPage />;
+  }
 
     const handleShareClick = () => {
         const currentURL = window.location.href;
@@ -71,14 +81,20 @@ function DetailCodi() {
         <div className="body">
             {singleOutfit && (
                 <>
-                    <img className="codi" src={singleOutfit.img_url} alt="NoImg" />
-                    <p className="options">
+                    <img className="codi" src={singleOutfit.img_url} 
+                    alt="NoImg"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                      }} 
+                    />
+                    <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg"/>
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
-                    </p>
+                    </div>
                 </>
             )}
         </div>
@@ -97,6 +113,7 @@ function SimilarItems() {
                 const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
             } catch (error) {
+
                 console.error("Failed to fetch data:", error);
             }
         };
@@ -122,6 +139,10 @@ function SimilarItems() {
                     <img
                         src={sim1_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim1}/click`);
                             goToDetailPage(sim1);
@@ -130,6 +151,10 @@ function SimilarItems() {
                     <img
                         src={sim2_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim2}/click`);
                             goToDetailPage(sim2);
@@ -138,6 +163,10 @@ function SimilarItems() {
                     <img
                         src={sim3_url}
                         alt="NoImg"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                          }}
                         onClick={() => {
                             styleAxios.post(`/items/journey/${sim3}/click`);
                             goToDetailPage(sim3);

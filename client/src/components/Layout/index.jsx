@@ -7,6 +7,7 @@ import MoveToTop from "../MoveToTop";
 import MoveBottom from "../MoveBottom";
 import { useCookies } from "react-cookie";
 import { styleAxios } from "../../utils";
+import ToggleRouter from "../../components/ToggleRouter";
 
 export function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,9 +21,10 @@ export function Header() {
             setIsLoggedIn(true);
             SetUserName(cookies.user_name);
         }
-    }, []);
+    }, [isLoggedIn, cookies]);
 
     const handleLogin = () => {
+        setIsLoggedIn(false);
         navigate("/");
     };
 
@@ -48,6 +50,7 @@ export function Header() {
                         {isLoggedIn ? "Logout" : "Login"}
                     </NavLink>
                 </Space>
+                <ToggleRouter />
             </div>
         </div>
     );

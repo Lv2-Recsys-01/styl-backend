@@ -75,7 +75,6 @@ function Login({ closeModal = () => {} }) {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        console.log(`login => ID: ${id}, Password: ${password}`);
 
         const LoginParams = {
             user_name: id,
@@ -85,7 +84,6 @@ function Login({ closeModal = () => {} }) {
         styleAxios
             .post("/users/login", LoginParams)
             .then((response) => {
-                console.log(response);
                 console.log(response.data);
                 navigate("/journey");
             })
