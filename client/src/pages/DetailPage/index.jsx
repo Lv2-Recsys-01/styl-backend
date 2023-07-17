@@ -81,12 +81,12 @@ function DetailCodi() {
         <div className="body">
             {singleOutfit && (
                 <>
-                    <img className="codi" src={singleOutfit.img_url} 
+                    <img className="codi" src={singleOutfit.img_url}
                     alt="NoImg"
                     onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                      }} 
+                      }}
                     />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>

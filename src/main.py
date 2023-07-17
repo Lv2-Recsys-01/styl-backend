@@ -53,6 +53,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 IS_PROD = os.getenv("ENV") == "production"
 AWS_PUBLIC_IP = os.getenv("AWS_PUBLIC_IP")
 
+if IS_PROD and (AWS_PUBLIC_IP is None):
+    raise ValueError("AWS_PUBLIC_IP must be set when in production")
+
 origins = (
     [
         f"http://{AWS_PUBLIC_IP}",
@@ -98,8 +101,16 @@ async def handle_user_auth_logic(
 
 
 @app.get("/healthz")
-def ping_poing():
-    return {"ping": "pong!"}
+def ping_pong():
+    import urllib.request
+
+    url = "http://checkip.amazonaws.com"
+    response = urllib.request.urlopen(url)
+    data = response.read()
+
+    return {
+        "ping": f"pong!, IS_PROD: {IS_PROD}, public ip is {str(data.strip(), 'utf-8')}"
+    }
 
 
 @app.get("/drop_all")
