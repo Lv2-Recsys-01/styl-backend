@@ -22,7 +22,7 @@ function withRouter(Component) {
         useEffect(() => {
             window.scrollTo({ top: 0, behavior: "instant" });
             const checkAuth = async () => {
-                const res = await styleAxios.get("/healthz");
+                const res = await styleAxios.get("/api/healthz");
                 console.log(res);
             };
 
