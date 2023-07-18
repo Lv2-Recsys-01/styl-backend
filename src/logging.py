@@ -63,3 +63,46 @@ async def log_click_image(user_id: int | None,
     with open(file_path, "a") as log_file:
         log_entry = f"{session_id},{user_id},{outfit_id},{timestamp},{click_type}\n"
         log_file.write(log_entry)
+
+
+# 1. 그냥 같은 api로 만들고 click/click_type 주면 아래 두개 합칠 수 있음
+# 2. 동시에 여러 사람들이 한 파일에 접근하면?
+# 3. 파일 확장자 txt, csv, json?
+async def log_click_share(session_id: str,
+                          user_id: int | None,
+                          timestamp: str,
+                          outfit_id: int):
+
+    os.makedirs(name="./logging", exist_ok=True)
+    file_path = "./logging/click_share_log.txt"
+
+    if user_id is None:
+        user_id = 0
+
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as log_file:
+            log_file.write("session_id, user_id, outfit_id, timestamp\n")
+    
+    with open(file_path, "a") as log_file:
+        log_entry = f"{session_id},{user_id},{outfit_id}, {timestamp}\n"
+        log_file.write(log_entry)
+
+
+async def log_click_musinsa(session_id: str,
+                            user_id: int | None,
+                            timestamp: str,
+                            outfit_id: int):
+
+    os.makedirs(name="./logging", exist_ok=True)
+    file_path = "./logging/click_musinsa_log.txt"
+
+    if user_id is None:
+        user_id = 0
+
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as log_file:
+            log_file.write("session_id, user_id, outfit_id, timestamp\n")
+    
+    with open(file_path, "a") as log_file:
+        log_entry = f"{session_id},{user_id},{outfit_id}, {timestamp}\n"
+        log_file.write(log_entry)
