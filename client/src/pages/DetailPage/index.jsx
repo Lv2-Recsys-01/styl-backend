@@ -28,57 +28,7 @@ function DetailHeader() {
     );
 }
 
-function DetailCodi() {
-    const { front_outfit_id } = useParams();
-    const [singleOutfit, setSingleOutfit] = useState(null);
-    const [detailOutfitId, setDetailOutfitId] = useState(front_outfit_id);
-    const [detailLikeState, setDetailLikeState] = useState(false);
-    const [fetchError, setFetchError] = useState(false);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await styleAxios.get(`/items/journey/${front_outfit_id}`);
-                const singleOutfitData = response.data.outfit;
-                setSingleOutfit(singleOutfitData);
-                setDetailOutfitId(singleOutfitData.outfit_id);
-                setDetailLikeState(singleOutfitData.is_liked);
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-                setFetchError(true);
-                notification.error({
-                    message: "존재하지 않는 코디입니다.",
-                    description: "뒤로 돌아가 주세요!",
-                    duration: 2,
-                });
-            }
-        };
-        fetchData();
-    }, [front_outfit_id]);
-
-    if (fetchError) {
-        return <NotFoundPage />;
-    }
-
-    const handleShareClick = () => {
-        const currentURL = window.location.href;
-
-        try {
-            navigator.clipboard.writeText(""); // clear
-            navigator.clipboard.writeText(currentURL).then(() => {
-                console.log("URL copied to clipboard");
-                notification.success({
-                    message: "URL이 복사되었습니다!",
-                    description: "클립보드에 URL이 복사되었어요",
-                    duration: 1,
-                });
-            });
-            styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/share`);
-        } catch (error) {
-            console.error("Failed to copy URL to clipboard:", error);
-        }
-    };
-
+function DetailCodi({ singleOutfit, detailOutfitId, detailLikeState, handleShareClick }) {
     return (
         <div className="body">
             {singleOutfit && (
@@ -95,13 +45,17 @@ function DetailCodi() {
                     />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" 
-                            onClick={() => {
-                                styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/musinsa`);
-                            }}/>
+                            <img
+                                className="musinsa"
+                                src="https://www.musinsa.com/favicon.ico"
+                                alt="NoImg"
+                                onClick={() => {
+                                    styleAxios.post(`/items/journey/${detailOutfitId}/musinsa-share/musinsa`);
+                                }}
+                            />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} likeType="detail"/>
+                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} likeType="detail" />
                     </div>
                 </>
             )}
@@ -109,79 +63,29 @@ function DetailCodi() {
     );
 }
 
-function SimilarItems() {
-    const { front_outfit_id } = useParams();
-    const navigate = useNavigate();
-    const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await styleAxios.get(`/items/journey/${front_outfit_id}`);
-                const fetchedSimilarOutfitsList = response.data.similar_outfits_list;
-                setSimilarOutfitsList(fetchedSimilarOutfitsList);
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            }
-        };
-        fetchData();
-    }, [front_outfit_id]);
-
-    const goToDetailPage = (similarOutfitId) => {
-        navigate(`/detail/${similarOutfitId}`);
-    };
-
-    // SimilarItems 컴포넌트가 렌더링될 때 similarOutfitsList가 존재할 경우에만 실행되도록 조건문 추가
+function SimilarItems({ similarOutfitsList, goToDetailPage }) {
     if (similarOutfitsList.length > 0) {
-        const sim1 = similarOutfitsList[0].outfit_id;
-        const sim1_url = similarOutfitsList[0].img_url;
-        const sim2 = similarOutfitsList[1].outfit_id;
-        const sim2_url = similarOutfitsList[1].img_url;
-        const sim3 = similarOutfitsList[2].outfit_id;
-        const sim3_url = similarOutfitsList[2].img_url;
+        const slicedSimilarOutfits = similarOutfitsList.slice(0, 3);
         return (
             <div>
                 <p className="description">Similar Style</p>
                 <Space direction="horizontal" className="similar">
-                    <img
-                        src={sim1_url}
-                        alt="NoImg"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                        }}
-                        onClick={() => {
-                            styleAxios.post(`/items/journey/${sim1}/click/similar`);
-                            goToDetailPage(sim1);
-                        }}
-                    />
-                    <img
-                        src={sim2_url}
-                        alt="NoImg"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                        }}
-                        onClick={() => {
-                            styleAxios.post(`/items/journey/${sim2}/click/similar`);
-                            goToDetailPage(sim2);
-                        }}
-                    />
-                    <img
-                        src={sim3_url}
-                        alt="NoImg"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                                "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                        }}
-                        onClick={() => {
-                            styleAxios.post(`/items/journey/${sim3}/click/similar`);
-                            goToDetailPage(sim3);
-                        }}
-                    />
+                    {slicedSimilarOutfits.map((similarOutfit) => (
+                        <img
+                            key={similarOutfit.outfit_id}
+                            src={similarOutfit.img_url}
+                            alt="NoImg"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src =
+                                    "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                            }}
+                            onClick={() => {
+                                styleAxios.post(`/items/journey/${similarOutfit.outfit_id}/click/similar`);
+                                goToDetailPage(similarOutfit.outfit_id);
+                            }}
+                        />
+                    ))}
                 </Space>
             </div>
         );
@@ -191,6 +95,68 @@ function SimilarItems() {
 }
 
 function DetailPage() {
+    const { front_outfit_id } = useParams();
+    const [singleOutfit, setSingleOutfit] = useState(null);
+    const [detailOutfitId, setDetailOutfitId] = useState(front_outfit_id);
+    const [detailLikeState, setDetailLikeState] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
+    const [similarOutfitsList, setSimilarOutfitsList] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await styleAxios.get(`/items/journey/${front_outfit_id}`);
+                const responseData = response.data;
+                const singleOutfitData = responseData.outfit;
+                const fetchedSimilarOutfitsList = responseData.similar_outfits_list;
+
+                setSingleOutfit(singleOutfitData);
+                setDetailOutfitId(singleOutfitData.outfit_id);
+                setDetailLikeState(singleOutfitData.is_liked);
+                setSimilarOutfitsList(fetchedSimilarOutfitsList);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+                setFetchError(true);
+                notification.error({
+                    message: "존재하지 않는 코디입니다.",
+                    description: "뒤로 돌아가 주세요!",
+                    duration: 2,
+                });
+            }
+        };
+
+        fetchData();
+    }, [front_outfit_id]);
+
+    const handleShareClick = () => {
+        const currentURL = window.location.href;
+
+        try {
+            navigator.clipboard.writeText(""); // clear
+            navigator.clipboard.writeText(currentURL).then(() => {
+                console.log("URL copied to clipboard");
+                notification.success({
+                    message: "URL이 복사되었습니다!",
+                    description: "클립보드에 URL이 복사되었어요",
+                    duration: 1,
+                });
+            });
+            styleAxios.post(`/items/journey/${detailOutfitId}/musinsa-share/share`);
+        } catch (error) {
+            console.error("Failed to copy URL to clipboard:", error);
+        }
+    };
+
+    const goToDetailPage = (similarOutfitId) => {
+        navigate(`/detail/${similarOutfitId}`);
+    };
+
+    if (fetchError) {
+        return <NotFoundPage />;
+    }
+
     return (
         <Space
             direction="vertical"
@@ -204,10 +170,15 @@ function DetailPage() {
                     <DetailHeader />
                 </Header>
                 <Content className="detail-content">
-                    <DetailCodi />
+                    <DetailCodi
+                        singleOutfit={singleOutfit}
+                        detailOutfitId={detailOutfitId}
+                        detailLikeState={detailLikeState}
+                        handleShareClick={handleShareClick}
+                    />
                 </Content>
                 <Footer className="detail-footer">
-                    <SimilarItems />
+                    <SimilarItems similarOutfitsList={similarOutfitsList} goToDetailPage={goToDetailPage} />
                 </Footer>
             </Layout>
         </Space>
