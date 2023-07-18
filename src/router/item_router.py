@@ -62,16 +62,14 @@ def show_journey_images(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
-
     # 한 페이지에 표시할 전체 outfit
     # outfits = (
     #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
     # )
 
-
     f_outfits = (
         db.query(Outfit)
-        .filter(Outfit.gender == 'F')
+        .filter(Outfit.gender == "F")
         .order_by(func.random())
         .limit(page_size // 2)
         .all()
@@ -79,7 +77,7 @@ def show_journey_images(
 
     m_outfits = (
         db.query(Outfit)
-        .filter(Outfit.gender == 'M')
+        .filter(Outfit.gender == "M")
         .order_by(func.random())
         .limit(page_size - (page_size // 2))
         .all()
@@ -163,7 +161,7 @@ def show_collection_images(
                 Like.is_deleted == bool(False),
             )
             .offset(offset)
-            .limit(page_size+1)
+            .limit(page_size + 1)
             .all()
         )
     # 회원일때
@@ -175,11 +173,11 @@ def show_collection_images(
                 Like.is_deleted == bool(False),
             )
             .offset(offset)
-            .limit(page_size+1)
+            .limit(page_size + 1)
             .all()
         )
     is_last = len(liked_list) <= page_size
-    if len(liked_list) == page_size+1:
+    if len(liked_list) == page_size + 1:
         liked_list.pop()
 
     if len(liked_list) == 0 or not liked_list:
