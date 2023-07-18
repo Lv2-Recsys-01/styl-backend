@@ -63,18 +63,16 @@ def login(
     )
 
     login_user_likes = (
-        db.query(Like).filter(Like.user_id == int(login_user.user_id)).all()
+        db.query(Like)
+        .filter(Like.user_id == login_user.user_id)
+        .all()
     )
 
-    login_user_likes_outfit_id = [like.outfit_id for like in login_user_likes]
+    login_user_likes_outfit_id = {like.outfit_id for like in login_user_likes}
 
-    update_likes = []
     for like in guest_likes:
         if like.outfit_id not in login_user_likes_outfit_id:
-            update_likes.append(like)
-
-    for like in update_likes:
-        like.user_id = int(login_user.user_id)
+            like.user_id = login_user.user_id
 
     db.commit()
 
@@ -85,10 +83,11 @@ def login(
     if cur_session and cur_session.user_id is None:
         # type: ignore
         cur_session.user_id = int(login_user.user_id)  # type: ignore
+        cur_session.login_at = datetime.now(timezone("Asia/Seoul")) #type: ignore
 
     db.commit()
-
-    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
+    
+    return {"ok": True, "user_id": login_user.user_id, "user_name": login_user.user_name}
 
 
 @router.post("/signup")
@@ -107,7 +106,9 @@ def signup(
         raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다.")
 
     hashed_password = pwd_context.hash(user_body.user_pwd)
-    db_user = User(user_name=user_body.user_name, user_pwd=hashed_password)
+    db_user = User(user_name=user_body.user_name,
+                   user_pwd=hashed_password,
+                   signup_time=datetime.now(timezone("Asia/Seoul")))
     db.add(db_user)
     db.commit()
 

@@ -14,16 +14,11 @@ class User(Base):
     user_id = Column(Integer, primary_key=True, index=True)
     user_name = Column(String, unique=True, index=True)
     user_pwd = Column(String)
+    signup_time = Column(DateTime)
 
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
     session = relationship("UserSession", back_populates="user")
-
-    def verify_password(self, plain_password):
-        return pwd_context.verify(plain_password, self.login_pwd)
-
-    def hash_password(self, plain_password):
-        self.login_pwd = pwd_context.hash(plain_password)
 
 
 class Outfit(Base):
@@ -55,13 +50,16 @@ class Like(Base):
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
+    like_type = Column(String, default="unknown")
     is_deleted = Column(Boolean, default=False)
+    as_guest = Column(Boolean)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
     session = relationship("UserSession", back_populates="likes")
 
 
+# Not using
 class Click(Base):
     __tablename__ = "click"
 
@@ -69,8 +67,8 @@ class Click(Base):
     session_id = Column(String, ForeignKey("session.session_id"))
     user_id = Column(Integer, ForeignKey("user.user_id"))
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    click_type = Column(String)
     timestamp = Column(DateTime, nullable=False)
-    # duration_secondes = Column(Integer)
 
     user = relationship("User", back_populates="clicks")
     outfit = relationship("Outfit", back_populates="clicks")
@@ -95,6 +93,7 @@ class UserSession(Base):
     session_id = Column(String, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     created_at = Column(DateTime)
+    login_at = Column(DateTime, default=None)
     expired_at = Column(DateTime, default=None)
 
     user = relationship("User", back_populates="session")
