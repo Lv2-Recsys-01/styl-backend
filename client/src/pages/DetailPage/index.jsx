@@ -97,7 +97,7 @@ function DetailCodi() {
                             <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
+                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} likeType="detail"/>
                     </div>
                 </>
             )}

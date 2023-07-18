@@ -116,6 +116,7 @@ function ImageGridView(props) {
                             className="heart-button"
                             outfitId={single_outfit.outfit_id}
                             likeState={single_outfit.is_liked}
+                            likeType="journey"
                         />
                     </GridItem>,
                 );
