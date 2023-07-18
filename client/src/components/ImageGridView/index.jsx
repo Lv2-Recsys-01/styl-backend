@@ -75,14 +75,13 @@ function ImageGridView(props) {
         };
     }, [isLoading, fetchDataWithDelay]);
     async function fetchDataWithDelay(delay) {
-        setIsLoading(true);
         const remainingDelay = Math.max(delay, 0);
         await fetchData();
         await new Promise((resolve) => setTimeout(resolve, remainingDelay));
-        setIsLoading(false);
     }
     async function fetchData() {
         try {
+            setIsLoading(true);
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
