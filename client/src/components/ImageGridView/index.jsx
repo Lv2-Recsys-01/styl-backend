@@ -77,8 +77,8 @@ function ImageGridView(props) {
     async function fetchDataWithDelay(delay) {
         setIsLoading(true);
         const remainingDelay = Math.max(delay, 0);
-        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
         await fetchData();
+        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
         setIsLoading(false);
     }
     async function fetchData() {
