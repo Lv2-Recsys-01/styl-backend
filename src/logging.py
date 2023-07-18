@@ -28,17 +28,16 @@ async def log_view_image(user_id: int | None,
                          session_id: str,
                          outfits_list: list,
                          view_type: str):
+    logs_dir = "./logging"
+    os.makedirs(logs_dir, exist_ok=True)
+    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
+    os.makedirs(date_dir, exist_ok=True)
+    file_path = os.path.join(date_dir, "view_image_log.txt")
+    
     if user_id is None:
         user_id = 0
     timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-    logs_dir = "./logging"
-    os.makedirs(logs_dir, exist_ok=True)
-
-    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
-    os.makedirs(date_dir, exist_ok=True)
-
-    file_path = os.path.join(date_dir, "view_image_log.txt")
-
+    
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
             log_file.write("session_id,user_id,outfit_id,timestamp,view_type\n")
@@ -53,16 +52,15 @@ async def log_click_image(user_id: int | None,
                          session_id: str,
                          outfit_id: int,
                          click_type: str | None = None):
+    logs_dir = "./logging"
+    os.makedirs(logs_dir, exist_ok=True)
+    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
+    os.makedirs(date_dir, exist_ok=True)
+    file_path = os.path.join(date_dir, "click_image_log.txt")
+    
     if user_id is None:
         user_id = 0
     timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-    logs_dir = "./logging"
-    os.makedirs(logs_dir, exist_ok=True)
-
-    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
-    os.makedirs(date_dir, exist_ok=True)
-
-    file_path = "./logging/click_image_log.txt"
 
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
