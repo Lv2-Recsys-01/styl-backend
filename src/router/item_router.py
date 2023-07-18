@@ -221,7 +221,7 @@ def user_like(
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
             like_type=like_type,
-            as_guest=bool(user_id)            
+            as_login=bool(user_id)            
         )
         db.add(new_like)
         db.commit()
