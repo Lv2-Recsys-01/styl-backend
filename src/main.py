@@ -60,6 +60,8 @@ origins = (
     [
         "http://stylesjourney.com",
         "https://stylesjourney.com",
+        "http://style-lb-535275160.ap-northeast-2.elb.amazonaws.com"
+        "https://style-lb-535275160.ap-northeast-2.elb.amazonaws.com"
         f"http://{AWS_PUBLIC_IP}",
         f"http://{AWS_PUBLIC_IP}:3000",
         f"http://{AWS_PUBLIC_IP}:8000",
@@ -102,7 +104,7 @@ async def handle_user_auth_logic(
     return response
 
 
-@app.get("/healthz")
+@app.get("/api/healthz")
 def ping_pong():
     import urllib.request
 
@@ -115,7 +117,7 @@ def ping_pong():
     }
 
 
-@app.get("/drop_all")
+@app.get("/api/drop_all")
 def drop_all_db():
     Base.metadata.drop_all(bind=engine)
     return {"drop": "all"}

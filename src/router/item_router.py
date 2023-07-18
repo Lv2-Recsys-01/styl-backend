@@ -14,7 +14,7 @@ from ..schema import OutfitOut
 from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share_musinsa
 
 router = APIRouter(
-    prefix="/items",
+    prefix="/api/items",
     tags=["items"],
 )
 
