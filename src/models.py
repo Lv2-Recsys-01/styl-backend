@@ -52,7 +52,7 @@ class Like(Base):
     timestamp = Column(DateTime, nullable=False)
     like_type = Column(String, default="unknown")
     is_deleted = Column(Boolean, default=False)
-    as_guest = Column(Boolean)
+    as_login = Column(Boolean)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")

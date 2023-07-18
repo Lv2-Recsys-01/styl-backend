@@ -6,7 +6,6 @@ import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import { styleAxios } from "../../utils";
 const PAGE_SIZE = 10;
-const DELAY = 1000;
 const S = {
     GridWrapper: styled.div`
         display: grid;
@@ -64,7 +63,7 @@ function ImageGridView(props) {
                         !isFetchStopped &&
                         currentPage.current < totalPage.current
                     ) {
-                        fetchDataWithDelay(DELAY);
+                        fetchData();
                     }
                 });
             }, options);
@@ -73,16 +72,13 @@ function ImageGridView(props) {
         return () => {
             observer.disconnect();
         };
-    }, [isLoading, fetchDataWithDelay]);
-    async function fetchDataWithDelay(delay) {
-        setIsLoading(true);
-        const remainingDelay = Math.max(delay, 0);
-        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
-        await fetchData();
-        setIsLoading(false);
-    }
+    }, [isLoading]);
+
     async function fetchData() {
         try {
+            setIsLoading(true); 
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
@@ -139,7 +135,7 @@ function ImageGridView(props) {
                     duration: 3,
                 });
             }
-        } finally {
+        } finally{
             setIsLoading(false);
         }
     }
