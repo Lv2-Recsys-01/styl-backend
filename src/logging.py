@@ -75,17 +75,16 @@ async def log_click_share_musinsa(session_id: str,
                                   user_id: int | None,
                                   outfit_id: int,
                                   click_type: str):
+    logs_dir = "./logging"
+    os.makedirs(logs_dir, exist_ok=True)
+    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
+    os.makedirs(date_dir, exist_ok=True)
+    file_path = os.path.join(date_dir, "click_share_musinsa_log.txt")
+    
     if user_id is None:
         user_id = 0
     timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-    logs_dir = "./logging"
-    os.makedirs(logs_dir, exist_ok=True)
 
-    date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
-    os.makedirs(date_dir, exist_ok=True)
-    
-    file_path = "./logging/click_share_musinsa_log.txt"
-    
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
             log_file.write("session_id,user_id,outfit_id,timestamp,click_type\n")
