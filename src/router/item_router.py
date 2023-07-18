@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
-from ..logging import log_click_image, log_view_image, update_last_action_time
+from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share, log_click_musinsa
 
 router = APIRouter(
     prefix="/items",
@@ -384,3 +384,40 @@ def user_click(
                             )
 
     return {"ok": True}
+
+
+@router.post("/journey/{outfit_id}/share")
+async def click_share(
+    outfit_id: Annotated[int, Path()],
+    background_tasks: BackgroundTasks,
+    session_id: Annotated[str | None, Cookie()] = None,
+    user_id: Annotated[int | None, Cookie()] = None,
+):
+    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
+
+    background_tasks.add_task(log_click_share, 
+                              session_id = session_id,
+                              user_id = user_id,
+                              timestamp = timestamp,
+                              outfit_id = outfit_id)
+
+    return {"ok": True}
+
+
+@router.post("/journey/{outfit_id}/musinsa")
+async def click_musinsa(
+    outfit_id: Annotated[int, Path()],
+    background_tasks: BackgroundTasks,
+    session_id: Annotated[str | None, Cookie()] = None,
+    user_id: Annotated[int | None, Cookie()] = None,
+):
+    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
+
+    background_tasks.add_task(log_click_musinsa, 
+                              session_id = session_id,
+                              user_id = user_id,
+                              timestamp = timestamp,
+                              outfit_id = outfit_id)
+
+    return {"ok": True}
+  
