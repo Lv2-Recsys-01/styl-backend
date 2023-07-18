@@ -1,4 +1,5 @@
 import random
+import os
 from datetime import datetime
 from typing import Annotated
 
@@ -40,9 +41,15 @@ async def log_view_image(user_id: int | None, session_id: str, outfits_list: lis
     if user_id is None:
         user_id = 0
     timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-    with open("view_image_log.txt", "a") as log_file:
+    file_path = "./view_image_log.txt"
+
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as log_file:
+            log_file.write("session_id,user_id,outfit_id,timestampe,viewtype\n")
+            
+    with open("./view_image_log.txt", "a") as log_file:
         for outfit_out in outfits_list:
-            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type}"
+            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type}\n"
             log_file.write(log_entry)
 
 
@@ -74,7 +81,7 @@ def show_journey_images(
         db.query(Outfit)
         .filter(Outfit.gender == 'M')
         .order_by(func.random())
-        .limit(page_size // 2)
+        .limit(page_size - (page_size // 2))
         .all()
     )
 
@@ -82,10 +89,7 @@ def show_journey_images(
     random.shuffle(outfits)
 
     # 마지막 페이지인지 확인
-    if page_size % 2 ==1:
-        is_last = len(outfits) < page_size-1
-    else:
-        is_last = len(outfits) < page_size
+    is_last = len(outfits) < page_size
 
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
@@ -185,7 +189,7 @@ def show_collection_images(
         )
 
     outfits_list = list()
-    for liked in liked_list:
+    for liked in liked_list[::-1]:
         liked_outfit = (
             db.query(Outfit).filter(Outfit.outfit_id == liked.outfit_id).first()
         )
