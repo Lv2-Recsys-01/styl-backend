@@ -59,6 +59,7 @@ class Like(Base):
     session = relationship("UserSession", back_populates="likes")
 
 
+# Not using
 class Click(Base):
     __tablename__ = "click"
 

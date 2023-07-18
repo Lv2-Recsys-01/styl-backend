@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
-from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share, log_click_musinsa
+from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share_musinsa
 
 router = APIRouter(
     prefix="/items",
@@ -27,7 +27,7 @@ def show_journey_images(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
-    # 한 페이지에 표시할 전체 outfit
+    # 남/여 구분 x
     # outfits = (
     #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
     # )
@@ -174,12 +174,12 @@ def show_collection_images(
     }
 
 
-@router.post("/journey/{outfit_id}/like")
-# @router.post("/journey/{outfit_id}/like/{like_type}")
+@router.post("/journey/{outfit_id}/like/{like_type}")
+# like_type: ['journey', 'detail']
 def user_like(
     background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
-    # like_type: Annotated[str, Path()],
+    like_type: Annotated[str, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
@@ -187,6 +187,9 @@ def user_like(
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
+    
+    if like_type not in ['journey', 'detail']:
+        like_type = 'unknown'
 
     # 이전에 좋아요 누른적 있는지 확인
     # 비회원
@@ -217,7 +220,7 @@ def user_like(
             user_id=user_id,
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
-            # like_type=like_type,
+            like_type=like_type,
             as_guest=bool(user_id)            
         )
         db.add(new_like)
@@ -232,7 +235,7 @@ def user_like(
     else:
         already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
         already_like.timestamp = datetime.now(timezone("Asia/Seoul")) # type: ignore
-        # already_like.like_tyep = like_type
+        already_like.like_type = like_type
         db.commit()
         background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
@@ -345,31 +348,22 @@ def show_single_image(
     }
 
 
-@router.post("/journey/{outfit_id}/click")
-# @router.post("/journey/{outfit_id}/click/{click_type}")
+@router.post("/journey/{outfit_id}/click/{click_type}")
+# click_type: ['journey', 'collection', 'similar']
 def user_click(
     background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
-    # click_type: Annotated[str | None, Path()],
+    click_type: Annotated[str | None, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
-
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
-
-    # new_click = Click(
-    #     session_id=session_id,
-    #     user_id=user_id,
-    #     outfit_id=outfit_id,
-    #     click_type=click_type,
-    #     timestamp=datetime.now(timezone("Asia/Seoul")),
-    # )
-
-    # db.add(new_click)
-    # db.commit()
+    
+    if click_type not in ["journey", "collection", "similar"]:
+        click_type = "unknown"
     
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
@@ -380,44 +374,35 @@ def user_click(
                               user_id=user_id,
                               session_id=session_id,
                               outfit_id=outfit_id,
-                            #   click_type=click_type,
+                              click_type=click_type,
                             )
 
     return {"ok": True}
 
 
-@router.post("/journey/{outfit_id}/share")
-async def click_share(
+@router.post("/journey/{outfit_id}/musinsa-share/{click_type}")
+# click_type: ['musinsa', 'share']
+def click_share_musinsa(
     outfit_id: Annotated[int, Path()],
+    click_type: Annotated[str, Path()],
     background_tasks: BackgroundTasks,
     session_id: Annotated[str | None, Cookie()] = None,
     user_id: Annotated[int | None, Cookie()] = None,
+    db: Session = Depends(get_db),
 ):
-    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-
-    background_tasks.add_task(log_click_share, 
+    if click_type not in ["share", "musinsa"]:
+        click_type = "unknown"
+        
+    background_tasks.add_task(update_last_action_time,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db)
+    
+    background_tasks.add_task(log_click_share_musinsa, 
                               session_id = session_id,
                               user_id = user_id,
-                              timestamp = timestamp,
-                              outfit_id = outfit_id)
-
-    return {"ok": True}
-
-
-@router.post("/journey/{outfit_id}/musinsa")
-async def click_musinsa(
-    outfit_id: Annotated[int, Path()],
-    background_tasks: BackgroundTasks,
-    session_id: Annotated[str | None, Cookie()] = None,
-    user_id: Annotated[int | None, Cookie()] = None,
-):
-    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-
-    background_tasks.add_task(log_click_musinsa, 
-                              session_id = session_id,
-                              user_id = user_id,
-                              timestamp = timestamp,
-                              outfit_id = outfit_id)
+                              outfit_id = outfit_id,
+                              click_type=click_type)
 
     return {"ok": True}
   
