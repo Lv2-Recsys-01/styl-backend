@@ -87,7 +87,8 @@ def login(
 
     db.commit()
     # print("login_at", str(cur_session.login_at))
-    return {"user_id": login_user.user_id, "user_name": login_user.user_name}
+    
+    return {"ok": True, "user_id": login_user.user_id, "user_name": login_user.user_name}
 
 
 @router.post("/signup")
