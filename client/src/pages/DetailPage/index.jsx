@@ -73,6 +73,7 @@ function DetailCodi() {
                     duration: 1,
                 });
             });
+            styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/share`);
         } catch (error) {
             console.error("Failed to copy URL to clipboard:", error);
         }
@@ -94,10 +95,13 @@ function DetailCodi() {
                     />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" 
+                            onClick={() => {
+                                styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/musinsa`);
+                            }}/>
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
-                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} />
+                        <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} likeType="detail"/>
                     </div>
                 </>
             )}
@@ -148,7 +152,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim1}/click`);
+                            styleAxios.post(`/items/journey/${sim1}/click/similar`);
                             goToDetailPage(sim1);
                         }}
                     />
@@ -161,7 +165,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim2}/click`);
+                            styleAxios.post(`/items/journey/${sim2}/click/similar`);
                             goToDetailPage(sim2);
                         }}
                     />
@@ -174,7 +178,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim3}/click`);
+                            styleAxios.post(`/items/journey/${sim3}/click/similar`);
                             goToDetailPage(sim3);
                         }}
                     />

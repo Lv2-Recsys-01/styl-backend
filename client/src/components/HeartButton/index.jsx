@@ -12,7 +12,7 @@ const HeartButtonWrapper = styled.div`
     color: var(--vivamagenta);
 `;
 
-function HeartButton({ likeState, outfitId }) {
+function HeartButton({ likeState, outfitId, likeType }) {
     const [isLiked, setIsLiked] = useState(likeState);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ function HeartButton({ likeState, outfitId }) {
 
     const sendLikeRequest = () => {
         styleAxios
-            .post(`/items/journey/${outfitId}/like`)
+            .post(`/items/journey/${outfitId}/like/${likeType}`)
             .then((response) => {
                 console.log(response.data); // API 응답 데이터 처리
             })

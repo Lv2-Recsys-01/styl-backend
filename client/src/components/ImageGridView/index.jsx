@@ -84,6 +84,7 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
+            const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
                 offset: (currentPage.current * PAGE_SIZE).toString(),
@@ -107,7 +108,7 @@ function ImageGridView(props) {
                             }}
                             onClick={() => {
                                 goToDetailPage(single_outfit.outfit_id);
-                                styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click`).catch((error) => {
+                                styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click/${clickType}`).catch((error) => {
                                     console.error(error);
                                 });
                             }}
@@ -116,6 +117,7 @@ function ImageGridView(props) {
                             className="heart-button"
                             outfitId={single_outfit.outfit_id}
                             likeState={single_outfit.is_liked}
+                            likeType="journey"
                         />
                     </GridItem>,
                 );
