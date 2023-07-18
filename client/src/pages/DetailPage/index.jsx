@@ -148,7 +148,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim1}/click`);
+                            styleAxios.post(`/items/journey/${sim1}/click/similar`);
                             goToDetailPage(sim1);
                         }}
                     />
@@ -161,7 +161,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim2}/click`);
+                            styleAxios.post(`/items/journey/${sim2}/click/similar`);
                             goToDetailPage(sim2);
                         }}
                     />
@@ -174,7 +174,7 @@ function SimilarItems() {
                                 "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
                         }}
                         onClick={() => {
-                            styleAxios.post(`/items/journey/${sim3}/click`);
+                            styleAxios.post(`/items/journey/${sim3}/click/similar`);
                             goToDetailPage(sim3);
                         }}
                     />
