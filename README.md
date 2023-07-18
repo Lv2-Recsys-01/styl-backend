@@ -23,6 +23,18 @@ docker compose -f docker-compose.prod.yaml up -d
 docker compose -f docker-compose.prod.yaml build --no-cache
 ```
 
+```bash
+docker run -it --rm --name certbot \
+            -v "/etc/letsencrypt:/etc/letsencrypt" \
+            -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
+            certbot/certbot \
+            certonly \
+            --webroot \
+            -w /var/lib/letsencrypt \
+            -d stylesjourney.com \
+            --agree-tos
+```
+
 # GET /healthz
 
 목적 : sys. health check.
