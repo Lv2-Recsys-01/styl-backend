@@ -50,7 +50,9 @@ class Like(Base):
     user_id = Column(Integer, ForeignKey("user.user_id"), default=None)
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
     timestamp = Column(DateTime, nullable=False)
+    like_type = Column(String, default="unknown")
     is_deleted = Column(Boolean, default=False)
+    as_guest = Column(Boolean)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
@@ -64,6 +66,7 @@ class Click(Base):
     session_id = Column(String, ForeignKey("session.session_id"))
     user_id = Column(Integer, ForeignKey("user.user_id"))
     outfit_id = Column(Integer, ForeignKey("outfit.outfit_id"))
+    click_type = Column(String)
     timestamp = Column(DateTime, nullable=False)
 
     user = relationship("User", back_populates="clicks")

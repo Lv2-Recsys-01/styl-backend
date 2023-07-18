@@ -1,0 +1,4 @@
+session_id,user_id,outfit_id,timestamp,click_type
+902fc62f-aa81-4fef-be19-268241d14307,0,89666,23-07-18 11:36:13,unknown
+902fc62f-aa81-4fef-be19-268241d14307,0,80796,23-07-18 11:36:18,unknown
+902fc62f-aa81-4fef-be19-268241d14307,1,90742,23-07-18 11:36:34,unknown

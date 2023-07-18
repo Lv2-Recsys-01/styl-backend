@@ -1,5 +1,4 @@
 import random
-import os
 from datetime import datetime
 from typing import Annotated
 
@@ -12,46 +11,12 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
+from ..logging import log_click_image, log_view_image, update_last_action_time
 
 router = APIRouter(
     prefix="/items",
     tags=["items"],
 )
-
-async def update_last_action_time(user_id: int | None,
-                            session_id: str,
-                            db: Session):
-    if user_id is None:
-        user = db.query(UserSession).filter(
-            UserSession.session_id == session_id,
-            UserSession.user_id.is_(None),
-        ).first()
-    else:
-        user = db.query(UserSession).filter(
-            UserSession.session_id == session_id,
-            UserSession.user_id == user_id,
-        ).first()
-    
-    user.expired_at = datetime.now(timezone("Asia/Seoul"))
-
-    db.commit()
-    
-    
-async def log_view_image(user_id: int | None, session_id: str, outfits_list: list, view_type: str):
-    if user_id is None:
-        user_id = 0
-    timestamp = str(datetime.now(timezone("Asia/Seoul")).strftime("%y-%m-%d %H:%M:%S"))
-    file_path = "./view_image_log.txt"
-
-    if not os.path.exists(file_path):
-        with open(file_path, "w") as log_file:
-            log_file.write("session_id,user_id,outfit_id,timestamp,viewtype\n")
-            
-    with open("./view_image_log.txt", "a") as log_file:
-        for outfit_out in outfits_list:
-            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type}\n"
-            log_file.write(log_entry)
-
 
 @router.get("/journey")
 def show_journey_images(
@@ -127,6 +92,7 @@ def show_journey_images(
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
+    
     background_tasks.add_task(log_view_image,
                               user_id=user_id,
                               session_id=session_id,
@@ -209,9 +175,11 @@ def show_collection_images(
 
 
 @router.post("/journey/{outfit_id}/like")
+# @router.post("/journey/{outfit_id}/like/{like_type}")
 def user_like(
     background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
+    # like_type: Annotated[str, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
@@ -249,6 +217,8 @@ def user_like(
             user_id=user_id,
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
+            # like_type=like_type,
+            as_guest=bool(user_id)            
         )
         db.add(new_like)
         db.commit()
@@ -258,9 +228,11 @@ def user_like(
                               db=db)
         
         return {"ok": True}
-    # 누른적 있으면 취소 여부 바꿔줌
+    # 누른적 있으면 업데이트
     else:
         already_like.is_deleted = not bool(already_like.is_deleted)  # type: ignore
+        already_like.timestamp = datetime.now(timezone("Asia/Seoul")) # type: ignore
+        # already_like.like_tyep = like_type
         db.commit()
         background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
@@ -374,9 +346,11 @@ def show_single_image(
 
 
 @router.post("/journey/{outfit_id}/click")
+# @router.post("/journey/{outfit_id}/click/{click_type}")
 def user_click(
     background_tasks: BackgroundTasks,
     outfit_id: Annotated[int, Path()],
+    # click_type: Annotated[str | None, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
@@ -386,19 +360,27 @@ def user_click(
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
 
-    new_click = Click(
-        session_id=session_id,
-        user_id=user_id,
-        outfit_id=outfit_id,
-        timestamp=datetime.now(timezone("Asia/Seoul")),
-    )
+    # new_click = Click(
+    #     session_id=session_id,
+    #     user_id=user_id,
+    #     outfit_id=outfit_id,
+    #     click_type=click_type,
+    #     timestamp=datetime.now(timezone("Asia/Seoul")),
+    # )
 
-    db.add(new_click)
-    db.commit()
+    # db.add(new_click)
+    # db.commit()
     
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
+    
+    background_tasks.add_task(log_click_image,
+                              user_id=user_id,
+                              session_id=session_id,
+                              outfit_id=outfit_id,
+                            #   click_type=click_type,
+                            )
 
     return {"ok": True}

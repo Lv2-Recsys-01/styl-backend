@@ -86,7 +86,6 @@ def login(
         cur_session.login_at = datetime.now(timezone("Asia/Seoul")) #type: ignore
 
     db.commit()
-    # print("login_at", str(cur_session.login_at))
     
     return {"ok": True, "user_id": login_user.user_id, "user_name": login_user.user_name}
 
