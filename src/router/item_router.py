@@ -13,7 +13,7 @@ from ..models import Click, Like, Outfit, Similar
 from ..schema import OutfitOut
 
 router = APIRouter(
-    prefix="/items",
+    prefix="/api/items",
     tags=["items"],
 )
 

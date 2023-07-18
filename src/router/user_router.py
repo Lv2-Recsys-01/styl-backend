@@ -14,7 +14,7 @@ from ..models import Like, User, UserSession
 from ..schema import UserBase, UserSignUp
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"],
 )
 
@@ -63,9 +63,7 @@ def login(
     )
 
     login_user_likes = (
-        db.query(Like)
-        .filter(Like.user_id == int(login_user.user_id))
-        .all()
+        db.query(Like).filter(Like.user_id == int(login_user.user_id)).all()
     )
 
     login_user_likes_outfit_id = [like.outfit_id for like in login_user_likes]
