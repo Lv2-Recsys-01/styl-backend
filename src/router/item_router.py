@@ -45,7 +45,7 @@ async def log_view_image(user_id: int | None, session_id: str, outfits_list: lis
 
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
-            log_file.write("session_id,user_id,outfit_id,timestampe,viewtype\n")
+            log_file.write("session_id,user_id,outfit_id,timestamp,viewtype\n")
             
     with open("./view_image_log.txt", "a") as log_file:
         for outfit_out in outfits_list:
