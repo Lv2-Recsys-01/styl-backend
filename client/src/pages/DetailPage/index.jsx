@@ -73,6 +73,7 @@ function DetailCodi() {
                     duration: 1,
                 });
             });
+            styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/share`);
         } catch (error) {
             console.error("Failed to copy URL to clipboard:", error);
         }
@@ -94,7 +95,10 @@ function DetailCodi() {
                     />
                     <div className="options">
                         <a href={singleOutfit.origin_url}>
-                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" />
+                            <img className="musinsa" src="https://www.musinsa.com/favicon.ico" alt="NoImg" 
+                            onClick={() => {
+                                styleAxios.post(`/items/journey/${front_outfit_id}/musinsa-share/musinsa`);
+                            }}/>
                         </a>
                         <ShareAltOutlined className="share" onClick={handleShareClick} />
                         <HeartButton outfitId={detailOutfitId} likeState={detailLikeState} likeType="detail"/>
