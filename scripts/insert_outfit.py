@@ -20,7 +20,7 @@ conn = psycopg2.connect(
 )
 
 
-csv_file = os.path.join(os.path.dirname(__file__), "../meta_22-23.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../meta_21-23.csv")
 
 cursor = conn.cursor()
 
