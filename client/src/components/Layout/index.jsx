@@ -61,23 +61,26 @@ export function Footer() {
 }
 
 function Layout({ children, location }) {
-    const [isMainlPage, setIsMainPage] = useState(() => location.pathname === "/journey");
+    const [isMainlPage, setIsMainPage] = useState(
+        () => location.pathname === "/journey" || location.pathname === "/collections",
+    );
+
     useEffect(() => {
         setIsMainPage(location.pathname === "/journey" || location.pathname === "/collections");
-    }, [location]);
+    }, [location.pathname]);
 
     return (
         <div className="global-container">
-            {!isMainlPage ? (
-                <div>{children}</div>
-            ) : (
-                <>
-                    <Header />
-                    {children}
-                    <MoveBottom />
-                    <MoveToTop />
-                </>
-            )}
+            <>
+                {isMainlPage && <Header />}
+                {children}
+                {isMainlPage && (
+                    <>
+                        <MoveBottom />
+                        <MoveToTop />
+                    </>
+                )}
+            </>
         </div>
     );
 }
