@@ -6,9 +6,11 @@ from typing import Annotated
 
 from fastapi import Cookie, Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from passlib.context import CryptContext
 from pytz import timezone
 from sqlalchemy.orm import Session
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .database import Base, engine, get_db
 from .models import UserSession
@@ -100,6 +102,19 @@ async def handle_user_auth_logic(
     # response examples
     # response.set_cookie("temp_cookie", "temp_cookie_value")
     # response.headers["X-Custom-Header"] = "Custom Value"
+
+    return response
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(_, exc):
+    response = JSONResponse(
+        content={"detail": str(exc.detail)}, status_code=exc.status_code
+    )
+
+    response.delete_cookie("session_id")
+    response.delete_cookie("user_id")
+    response.delete_cookie("user_name")
 
     return response
 

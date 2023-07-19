@@ -2,16 +2,17 @@ import random
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import (APIRouter, BackgroundTasks, Cookie, Depends, HTTPException, Path, Query,
-                     status)
+from fastapi import (APIRouter, BackgroundTasks, Cookie, Depends,
+                     HTTPException, Path, Query, status)
 from pytz import timezone
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..database import get_db
+from ..logging import (log_click_image, log_click_share_musinsa,
+                       log_view_image, update_last_action_time)
 from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
-from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share_musinsa
 
 router = APIRouter(
     prefix="/api/items",
@@ -87,18 +88,18 @@ def show_journey_images(
         is_liked = outfit.outfit_id in likes_set
         outfit_out = OutfitOut(**outfit.__dict__, is_liked=is_liked)
         outfits_list.append(outfit_out)
-    
+
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-    
+
     background_tasks.add_task(log_view_image,
                               user_id=user_id,
                               session_id=session_id,
                               outfits_list=outfits_list,
                               view_type="journey")
-    
+
     return {
         "ok": True,
         "outfits_list": outfits_list,
@@ -159,11 +160,11 @@ def show_collection_images(
         )
         outfit_out = OutfitOut(**liked_outfit.__dict__, is_liked=True)
         outfits_list.append(outfit_out)
-        
+
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
-                              db=db)  
+                              db=db)
 
     return {
         "ok": True,
@@ -187,7 +188,7 @@ def user_like(
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
-    
+
     if like_type not in ['journey', 'detail']:
         like_type = 'unknown'
 
@@ -221,7 +222,7 @@ def user_like(
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
             like_type=like_type,
-            as_login=bool(user_id)            
+            as_login=bool(user_id)
         )
         db.add(new_like)
         db.commit()
@@ -229,7 +230,7 @@ def user_like(
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-        
+
         return {"ok": True}
     # 누른적 있으면 업데이트
     else:
@@ -240,8 +241,8 @@ def user_like(
         background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
-                              db=db)  
-        
+                              db=db)
+
         return {"ok": True}
 
 
@@ -329,12 +330,12 @@ def show_single_image(
         is_liked = user_like is not None
         similar_outfit_out = OutfitOut(**similar_outfit.__dict__, is_liked=is_liked)
         similar_outfits_list.append(similar_outfit_out)
-        
+
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-    
+
     background_tasks.add_task(log_view_image,
                               user_id=user_id,
                               session_id=session_id,
@@ -361,15 +362,15 @@ def user_click(
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
-    
+
     if click_type not in ["journey", "collection", "similar"]:
         click_type = "unknown"
-    
+
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-    
+
     background_tasks.add_task(log_click_image,
                               user_id=user_id,
                               session_id=session_id,
@@ -392,17 +393,17 @@ def click_share_musinsa(
 ):
     if click_type not in ["share", "musinsa"]:
         click_type = "unknown"
-        
+
     background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-    
-    background_tasks.add_task(log_click_share_musinsa, 
+
+    background_tasks.add_task(log_click_share_musinsa,
                               session_id = session_id,
                               user_id = user_id,
                               outfit_id = outfit_id,
                               click_type=click_type)
 
     return {"ok": True}
-  
+

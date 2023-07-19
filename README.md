@@ -18,8 +18,11 @@ docker run -it -p 8000:8000 stylback
 docker compose up
 docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못하면.
 docker compose restart client # client만 재시작(nginx 설정을 자주 바꾸게 됨.)
+docker compose logs -f # 모든 로그 보기
+watch -n 1 docker compose logs -f # 모든 로그 보기
+docker compose logs -f app # app만 로그 보기
 
-# 프로덕션 빌드
+# 프로덕션
 docker compose -f docker-compose.prod.yaml up -d
 docker compose -f docker-compose.prod.yaml restart client
 docker compose -f docker-compose.prod.yaml build --no-cache
