@@ -34,7 +34,7 @@
     border-radius: 10px;
     width: 75%;
     margin: 10px;
-    border: double 4px var(--graylilac);
+    border: solid 4px var(--subcolor);
   }
 
   .detail .detail-content .options{
@@ -61,7 +61,7 @@
     display:flex;
     font-size:35px;
     margin-top: 10px;
-    color:var(--vivamagenta);
+    color:var(--pointcolor);
   }
 
   .detail .detail-footer {
@@ -80,7 +80,7 @@
     font-family: 'Noto Serif KR', serif;
     font-weight: 600;
     text-align: left;
-    color:var(--vivamagenta);
+    color:var(--pointcolor);
   }
 
   .detail .similar img {
@@ -90,5 +90,5 @@
     height:100%;
     border-radius: 10px;
     cursor: pointer;
-    border: double 2px var(--vivamagenta);
+    border: solid 2px var(--pointcolor);
   }

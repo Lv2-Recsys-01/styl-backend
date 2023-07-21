@@ -19,7 +19,7 @@ const S = {
         padding-top: 162%; /* 황금비 1.618의 근사값. 가로 대비 세로의 높이 */
         overflow: hidden;
         border-radius: 12px;
-        border: 3px double var(--graylilac);
+        border: 2px solid var(--subcolor);
         cursor: pointer;
         img {
             position: absolute;
@@ -28,7 +28,7 @@ const S = {
             width: 100%;
             height: 85%;
             object-fit: cover;
-            border-bottom: 2px dashed var(--graylilac);
+            border-bottom: 1px solid var(--subcolor);
         }
     `,
 };
