@@ -97,7 +97,7 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             setIsLoading(true); 
-            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
 
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";
