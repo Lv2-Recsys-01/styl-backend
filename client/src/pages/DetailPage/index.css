@@ -34,7 +34,7 @@
     border-radius: 10px;
     width: 75%;
     margin: 10px;
-    border: solid 2px var(--subcolor);
+    border: solid 1px var(--pointcolor);
   }
 
   .detail .detail-content .options{
@@ -81,7 +81,7 @@
     font-family: 'Noto Serif KR', serif;
     font-weight: 600;
     text-align: left;
-    color:var(--pointcolor);
+    color:var(--steelblue);
   }
 
   .detail .similar img {
@@ -92,5 +92,5 @@
     height: auto; */
     border-radius: 10px;
     cursor: pointer;
-    border: solid 2px var(--subcolor);
+    border: solid 1.5px var(--steelblue);
   }

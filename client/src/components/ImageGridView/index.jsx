@@ -20,7 +20,7 @@ const S = {
         padding-top: 162%; /* 황금비 1.618의 근사값. 가로 대비 세로의 높이 */
         overflow: hidden;
         border-radius: 12px;
-        border: 2px solid var(--subcolor);
+        border: 1px solid var(--subcolor);
         cursor: pointer;
         img {
             position: absolute;
@@ -97,7 +97,7 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             setIsLoading(true); 
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 5000));
 
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";

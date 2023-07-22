@@ -33,6 +33,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color:var(--pointcolor);
-    font-size: 25px;
+    font-size: 15px;
     font-weight: 600;
   }

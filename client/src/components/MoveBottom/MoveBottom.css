@@ -16,6 +16,8 @@
   bottom: 40px;
   left:20px;
   font-weight: 600;
+  border-radius: 6px;
+  background-color: var(--background);
 }
 
 .bottom-arrow {
