@@ -1,4 +1,4 @@
-@keyframes moveDown {
+/* @keyframes moveDown {
   0% {
     transform: translateY(0%);
   }
@@ -8,13 +8,14 @@
   100% {
     transform: translateY(0%);
   }
-}
+} */
 
 .bottom-arrow {
   position: fixed;
   bottom: 40px;
   left:40px;
-  animation: moveDown 2s infinite;
-  font-size: 35px;
-  color: var(--steelblue);
+  /* animation: moveDown 2s infinite; */
+  font-size: 15px;
+  color: var(--pointcolor);
+  cursor: pointer;
 }

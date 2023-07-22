@@ -34,7 +34,7 @@
     border-radius: 10px;
     width: 75%;
     margin: 10px;
-    border: solid 4px var(--subcolor);
+    border: solid 2px var(--subcolor);
   }
 
   .detail .detail-content .options{
@@ -65,15 +65,16 @@
   }
 
   .detail .detail-footer {
-      background-color: var(--paledogwood);
+      background-color: var(--background);
       border-radius: 12px;
       padding:30px;
   }
 
   .detail .similar{
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     width:100%;
+    justify-content: space-between;
   }
 
   .detail .detail-footer .description{
@@ -84,11 +85,12 @@
   }
 
   .detail .similar img {
-    min-width: 80px;
     max-width:150px;
     width: 100%;
-    height:100%;
+    height:auto;
+    /* width: calc(33.33% - 10px); 10px는 이미지 간의 간격입니다.
+    height: auto; */
     border-radius: 10px;
     cursor: pointer;
-    border: solid 2px var(--pointcolor);
+    border: solid 2px var(--subcolor);
   }

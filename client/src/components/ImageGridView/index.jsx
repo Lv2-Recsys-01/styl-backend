@@ -4,6 +4,7 @@ import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
+import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
 const PAGE_SIZE = 10;
 const S = {
@@ -74,6 +75,25 @@ function ImageGridView(props) {
         };
     }, [isLoading]);
 
+    const handleShareClick = (outfit) => {
+        const DetailUrl = 'stylesjourney.com/detail/';
+        const newUrl = `${DetailUrl}${outfit}`;
+        try {
+            navigator.clipboard.writeText("");
+            navigator.clipboard.writeText(newUrl).then(() => {
+                console.log("URL copied to clipboard");
+                notification.success({
+                    message: "URL이 복사되었습니다!",
+                    description: "클립보드에 URL이 복사되었어요",
+                    duration: 1,
+                });
+            });
+            styleAxios.post(`/items/journey/${outfit}/musinsa-share/share`);
+        } catch (error) {
+            console.error("Failed to copy URL to clipboard:", error);
+        }
+    };
+    
     async function fetchData() {
         try {
             setIsLoading(true); 
@@ -109,12 +129,21 @@ function ImageGridView(props) {
                                 });
                             }}
                         />
-                        <HeartButton
-                            className="heart-button"
-                            outfitId={single_outfit.outfit_id}
-                            likeState={single_outfit.is_liked}
-                            likeType="journey"
-                        />
+                        <div className="journey-option" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <ShareAltOutlined
+                                className="journey-share"
+                                style={{ fontSize: "25px" }}
+                                onClick={() => handleShareClick(single_outfit.outfit_id)}
+                            />
+
+                            <HeartButton
+                                className="heart-button"
+                                outfitId={single_outfit.outfit_id}
+                                likeState={single_outfit.is_liked}
+                                likeType="journey"
+                            />
+                        </div>
+
                     </GridItem>,
                 );
             }

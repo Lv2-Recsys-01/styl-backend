@@ -27,7 +27,7 @@ const lightColor = {
     background: "rgba(256, 256, 256, 0.9)",
     headerbackground: "rgba(256, 256, 256, 0)",
     pointcolor: "#be3455",
-    subcolor: "#d4cacd",
+    subcolor: "#edcdc2",
 };
 
 const darkColor = {

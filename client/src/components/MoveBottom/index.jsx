@@ -1,5 +1,5 @@
 import React from "react";
-import { CaretDownFilled } from "@ant-design/icons";
+import { SyncOutlined } from "@ant-design/icons";
 import "./MoveBottom.css";
 
 class MoveBottom extends React.Component {
@@ -9,7 +9,7 @@ class MoveBottom extends React.Component {
 
     render() {
         return (
-                <CaretDownFilled className="bottom-arrow" onClick={this.handleScrollToBottom}/>
+                <SyncOutlined spin className="bottom-arrow" onClick={this.handleScrollToBottom} />
         );
     }
 }
