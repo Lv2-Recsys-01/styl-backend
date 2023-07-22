@@ -129,19 +129,28 @@ function ImageGridView(props) {
                                 });
                             }}
                         />
-                        <div className="journey-option" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div 
+                            className="journey-option"
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end", // Right-align the children
+                                alignItems: "center", // Center the content vertically
+                            }}
+                            >
                             <ShareAltOutlined
                                 className="journey-share"
-                                style={{ fontSize: "25px" }}
+                                style={{ fontSize: "25px", marginRight: "12px", marginBottom:"10px" }}
                                 onClick={() => handleShareClick(single_outfit.outfit_id)}
                             />
-
-                            <HeartButton
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <HeartButton
                                 className="heart-button"
                                 outfitId={single_outfit.outfit_id}
                                 likeState={single_outfit.is_liked}
                                 likeType="journey"
-                            />
+                                />
+                            </div>
+
                         </div>
 
                     </GridItem>,
