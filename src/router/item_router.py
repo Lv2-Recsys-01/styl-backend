@@ -18,18 +18,19 @@ router = APIRouter(
     tags=["items"],
 )
 
-def get_recommendation(db: Session, likes: list, page_size: int):
+def get_recommendation(db: Session, likes: list | None, page_size: int):
     outfits = list()
     cand = list()
-    for like in likes:
-        outfit_id = like.outfit_id
-        style_id = db.query(Outfit).filter(Outfit.outfit_id==outfit_id).first().style_id # type: ignore
-        cand.append(style_id)
-    
-    recs = random.sample(cand, min(8, len(cand)))
-    for style_id in recs:
-        outfit = db.query(Outfit).filter(Outfit.style_id==style_id).order_by(func.random()).first()
-        outfits.append(outfit)
+    if likes:
+        for like in likes:
+            outfit_id = like.outfit_id
+            style_id = db.query(Outfit).filter(Outfit.outfit_id==outfit_id).first().style_id # type: ignore
+            cand.append(style_id)
+        # 최대 8개 추천
+        recs = random.sample(cand, min(8, len(cand)))
+        for style_id in recs:
+            outfit = db.query(Outfit).filter(Outfit.style_id==style_id).order_by(func.random()).first()
+            outfits.append(outfit)
     
     if len(outfits) < page_size:
         n = page_size - len(outfits)
