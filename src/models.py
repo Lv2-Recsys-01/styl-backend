@@ -36,6 +36,7 @@ class Outfit(Base):
     occupation = Column(String)
     style = Column(String)
     date = Column(DateTime, nullable=False)
+    style_id = Column(Integer)
 
     likes = relationship("Like", back_populates="outfit")
     clicks = relationship("Click", back_populates="outfit")

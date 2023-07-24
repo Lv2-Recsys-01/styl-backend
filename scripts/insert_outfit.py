@@ -20,7 +20,7 @@ conn = psycopg2.connect(
 )
 
 
-csv_file = os.path.join(os.path.dirname(__file__), "../meta_21-23.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../new_meta_21-23.csv")
 
 cursor = conn.cursor()
 
@@ -41,6 +41,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     occupation_index = headers.index("occupation")
     style_index = headers.index("style")
     date_index = headers.index("date")
+    style_id_index = headers.index("style_id")
 
     for row in reader:
         outfit_id = int(row[outfit_id_index])
@@ -61,7 +62,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )
 
-        query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, "date") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, date, style_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
 
         values = (
             outfit_id,
@@ -76,6 +77,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             occupation,
             row[style_index],
             row[date_index],
+            row[style_index]
         )
 
         cursor.execute(query, values)

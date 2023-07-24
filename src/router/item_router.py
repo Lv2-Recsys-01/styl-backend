@@ -18,6 +18,45 @@ router = APIRouter(
     tags=["items"],
 )
 
+def get_recommendation(db: Session, likes: list, page_size: int):
+    outfits = list()
+    cand = list()
+    for like in likes:
+        outfit_id = like.outfit_id
+        style_id = db.query(Outfit).filter(Outfit.outfit_id==outfit_id).first().style_id # type: ignore
+        cand.append(style_id)
+    
+    recs = random.sample(cand, min(8, len(cand)))
+    for style_id in recs:
+        outfit = db.query(Outfit).filter(Outfit.style_id==style_id).order_by(func.random()).first()
+        outfits.append(outfit)
+    
+    if len(outfits) < page_size:
+        n = page_size - len(outfits)
+        
+        f_outfits = (
+        db.query(Outfit)
+        .filter(Outfit.gender == "F")
+        .order_by(func.random())
+        .limit(n // 2)
+        .all()
+    )
+        m_outfits = (
+            db.query(Outfit)
+            .filter(Outfit.gender == "M")
+            .order_by(func.random())
+            .limit(n - (n // 2))
+            .all()
+        )
+        
+        outfits += f_outfits + m_outfits
+        
+    return outfits
+        
+    
+        
+        
+
 @router.get("/journey")
 def show_journey_images(
     background_tasks: BackgroundTasks,
@@ -27,33 +66,6 @@ def show_journey_images(
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ) -> dict:
-    # 남/여 구분 x
-    # outfits = (
-    #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
-    # )
-
-    f_outfits = (
-        db.query(Outfit)
-        .filter(Outfit.gender == "F")
-        .order_by(func.random())
-        .limit(page_size // 2)
-        .all()
-    )
-
-    m_outfits = (
-        db.query(Outfit)
-        .filter(Outfit.gender == "M")
-        .order_by(func.random())
-        .limit(page_size - (page_size // 2))
-        .all()
-    )
-
-    outfits = f_outfits + m_outfits
-    random.shuffle(outfits)
-
-    # 마지막 페이지인지 확인
-    is_last = len(outfits) < page_size
-
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
     if user_id is None and session_id is not None:
@@ -76,6 +88,11 @@ def show_journey_images(
             )
             .all()
         )
+    
+    outfits = get_recommendation(db, likes, page_size)
+
+    # 마지막 페이지인지 확인
+    is_last = len(outfits) < page_size
 
     # 유저가 좋아요 누른 이미지의 id 집합 생성
     likes_set = {like.outfit_id for like in likes}
