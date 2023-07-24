@@ -19,7 +19,7 @@
     min-width: 320px;
     padding: 25px;
     border-radius: 10px;
-    border: 1px double var(--vivamagenta);
+    border: 1px solid var(--pointcolor);
 }
 
 .title {
@@ -46,7 +46,7 @@
     width: 100%;
     height: 50px;
     border-radius: 10px;
-    border-color: var(--vivamagenta);
+    border-color: var(--pointcolor);
 }
 
 .box .guide{
@@ -54,13 +54,13 @@
 }
 
 .box button {
-    background-color: var(--vivamagenta);
+    background-color: var(--pointcolor);
     padding: 15px;
     border-radius: 10px;
     width: 100%;
     height:60px;
     font-weight: 600;
-    border-color: var(--vivamagenta);
+    border-color: var(--pointcolor);
     cursor: pointer;
 }
 
@@ -76,7 +76,7 @@
     margin-top: 50px;
     margin-bottom: 50px;
     font-size: 20px;
-    color: var(--vivamagenta);
+    color: var(--pointcolor);
     text-align: center;
     text-decoration: underline;
     font-weight: 600;

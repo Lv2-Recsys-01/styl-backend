@@ -1,4 +1,4 @@
-  @keyframes moveUp {
+  /* @keyframes moveUp {
     0% {
       transform: translateY(0%);
     }
@@ -8,13 +8,14 @@
     100% {
       transform: translateY(0%);
     }
-  }
+  } */
 
   .top-arrow {
     position: fixed;
     bottom: 80px;
     left:40px;
-    animation: moveUp 2s infinite;
-    font-size: 35px;
-    color: var(--vivamagenta);
+    /* animation: moveUp 2s infinite; */
+    font-size: 10px;
+    color: var(--black);
+    cursor: pointer;
   }
