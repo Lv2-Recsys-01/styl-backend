@@ -37,7 +37,7 @@ class Outfit(Base):
     style = Column(String)
     date = Column(DateTime, nullable=False)
     # for style category 
-    default = Column(Integer)
+    no_season = Column(Integer)
     season_1 = Column(Integer)
     season_2 = Column(Integer)
 
