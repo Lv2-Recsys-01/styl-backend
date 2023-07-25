@@ -15,7 +15,7 @@
 .background {
     background-color: var(--background);
     width: 80%;
-    max-width: 480px;
+    max-width: 400px;
     min-width: 320px;
     padding: 25px;
     border-radius: 10px;

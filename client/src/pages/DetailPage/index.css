@@ -36,6 +36,7 @@
     border-radius: 15px;
     width: 80%;
     margin: 10px;
+    border:1px solid var(--background);
   }
 
   .detail .detail-content .options{
@@ -69,7 +70,6 @@
       background-color: var(--steelblue);
       border-radius: 12px;
       padding:30px;
-      height:270px;
   }
 
   .detail .similar{
@@ -81,6 +81,7 @@
   .detail .detail-footer .description{
     font-family: 'Noto Serif KR', serif;
     font-weight: 600;
+    font-size: 16px;
     text-align: left;
     color:var(--background);
   }
@@ -89,6 +90,6 @@
     max-width:150px;
     width: 100%;
     height:auto;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
   }

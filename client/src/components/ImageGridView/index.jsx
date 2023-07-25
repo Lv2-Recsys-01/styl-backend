@@ -49,11 +49,11 @@ function ImageGridView(props) {
     const navigate = useNavigate(); // useNavigate 훅 사용
     const popuptext = props.view === "journey" ? (
         <>
-          하트를 눌러, 당신의 스타일을 찾아보세요<HeartFilled className='popheart' />
+          <HeartFilled className='popheart' />하트를 눌러, 당신의 스타일을 찾아보세요<HeartFilled className='popheart' />
         </>
       ) : (
         <>
-          코디를 클릭해, 유사한 코디를 확인하세요! <SkinFilled className='popmore' />
+          <SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' />
         </>
       );
     const loadingText = props.view === "journey" ? "AI가 당신을 위한 코디를 추천하고 있습니다.." : "Loading...";
