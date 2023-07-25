@@ -44,6 +44,7 @@ function ImageGridView(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchStopped, setIsFetchStopped] = useState(false);
     const navigate = useNavigate(); // useNavigate 훅 사용
+    const loadingText = props.view === "journey" ? "AI가 당신을 위한 코디를 추천하고 있습니다.." : "Loading...";
     useLayoutEffect(() => {
         totalPage.current = 100;
     }, []);
@@ -98,7 +99,6 @@ function ImageGridView(props) {
         try {
             setIsLoading(true); 
             await new Promise((resolve) => setTimeout(resolve, 1000));
-
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
@@ -184,7 +184,7 @@ function ImageGridView(props) {
     return (
         <div className="custom-wrapper">
             <S.GridWrapper>{outfits}</S.GridWrapper>
-            {currentPage.current > 0 && isLoading && <Skeleton />}
+            {currentPage.current > 0 && isLoading && <Skeleton text = {loadingText} />}
             <div ref={gridViewWrapperBottomDomRef} />
         </div>
     );
