@@ -18,30 +18,72 @@ router = APIRouter(
     tags=["items"],
 )
 
-def get_recommendation(db: Session, likes: list | None, page_size: int) -> list:
+# def get_recommendation(db: Session, likes: list | None, page_size: int) -> list:
+#     outfits = list()
+#     cand = list()
+#     if likes:
+#         for like in likes:
+#             outfit_id = like.outfit_id
+#             style_id = db.query(Outfit).filter(Outfit.outfit_id==outfit_id).first().style_id # type: ignore
+#             cand.append(style_id)
+#         # 최대 8개 추천
+#         recs = random.sample(cand, min(8, len(cand)))
+#         for style_id in recs:
+#             outfit = db.query(Outfit).filter(Outfit.style_id==style_id).order_by(func.random()).first()
+#             outfits.append(outfit)
+    
+#     if len(outfits) < page_size:
+#         n = page_size - len(outfits)
+        
+#         f_outfits = (
+#         db.query(Outfit)
+#         .filter(Outfit.gender == "F")
+#         .order_by(func.random())
+#         .limit(n // 2)
+#         .all()
+#     )
+#         m_outfits = (
+#             db.query(Outfit)
+#             .filter(Outfit.gender == "M")
+#             .order_by(func.random())
+#             .limit(n - (n // 2))
+#             .all()
+#         )
+#         outfits += f_outfits + m_outfits
+    
+#     random.shuffle(outfits)
+
+#     return outfits
+
+def get_recommendation(db: Session, likes: list | None, page_size: int, style_type: str) -> list:
+    if style_type not in ['default, season_1, season_2']:
+        style_type = 'default'
+    
     outfits = list()
     cand = list()
     if likes:
         for like in likes:
             outfit_id = like.outfit_id
-            style_id = db.query(Outfit).filter(Outfit.outfit_id==outfit_id).first().style_id # type: ignore
-            cand.append(style_id)
+            outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()  # type: ignore
+            if outfit:
+                style_id = getattr(outfit, f"{style_type}")
         # 최대 8개 추천
         recs = random.sample(cand, min(8, len(cand)))
         for style_id in recs:
-            outfit = db.query(Outfit).filter(Outfit.style_id==style_id).order_by(func.random()).first()
-            outfits.append(outfit)
-    
+            outfit = db.query(Outfit).filter(getattr(Outfit, f"{style_type}") == style_id).order_by(func.random()).first()
+            if outfit:
+                outfits.append(outfit)
+
     if len(outfits) < page_size:
         n = page_size - len(outfits)
         
         f_outfits = (
-        db.query(Outfit)
-        .filter(Outfit.gender == "F")
-        .order_by(func.random())
-        .limit(n // 2)
-        .all()
-    )
+            db.query(Outfit)
+            .filter(Outfit.gender == "F")
+            .order_by(func.random())
+            .limit(n // 2)
+            .all()
+        )
         m_outfits = (
             db.query(Outfit)
             .filter(Outfit.gender == "M")
@@ -54,6 +96,7 @@ def get_recommendation(db: Session, likes: list | None, page_size: int) -> list:
     random.shuffle(outfits)
 
     return outfits
+
       
 
 @router.get("/journey")
@@ -88,7 +131,7 @@ def show_journey_images(
             .all()
         )
     
-    outfits = get_recommendation(db, likes, page_size)
+    outfits = get_recommendation(db, likes, page_size, style_type='default')
 
     # 마지막 페이지인지 확인
     is_last = len(outfits) < page_size
