@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./skeleton.css";
 
-function SkeletonCodi() {
+function SkeletonCodi(props) {
   useEffect(() => {
     document.documentElement.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -12,10 +12,10 @@ function SkeletonCodi() {
   return (
     <div className="skeleton-wrapper">
       <div className="skeleton-rectangle">
-        <span className="loading-text">AI가 당신을 위한 코디를 추천하고 있습니다..</span>
+        <span className="loading-text">{props.text}</span>
       </div>
       <div className="skeleton-rectangle">
-        <span className="loading-text">AI가 당신을 위한 코디를 추천하고 있습니다..</span>
+        <span className="loading-text">{props.text}</span>
       </div>
     </div>
   );
