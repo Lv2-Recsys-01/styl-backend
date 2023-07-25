@@ -13,8 +13,8 @@
     right: 10px; 
     transform: translateX(-50%);
     background-color: var(--background);
-    padding: 5px;
-    width: 230px;
+    padding: 10px;
+    width: 280px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     border: solid 1px var(--pointcolor);
@@ -27,6 +27,8 @@
     cursor: pointer;
     margin-bottom: 5px;
     font-size: 15px;
+    color: var(--steelblue);
+    opacity: 0.7;
   }
   
   .popup-text {
@@ -34,7 +36,9 @@
     font-size: 13px;
   }
   
-  .bulb {
+  .popheart {
     color: var(--pointcolor);
   }
-  
+  .popmore{
+    color:var(--steelblue)
+  }
