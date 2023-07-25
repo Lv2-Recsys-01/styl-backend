@@ -20,6 +20,7 @@
     padding: 25px;
     border-radius: 10px;
     border: 1px solid var(--pointcolor);
+    opacity: 0.85;
 }
 
 .title {
@@ -76,9 +77,14 @@
     margin-top: 50px;
     margin-bottom: 50px;
     font-size: 20px;
-    color: var(--pointcolor);
+    color: var(--steelblue);
     text-align: center;
     text-decoration: underline;
     font-weight: 600;
     cursor: pointer;
+}
+
+.guest{
+    color: var(--pointcolor);
+    text-decoration: underline;
 }
