@@ -20,7 +20,7 @@ conn = psycopg2.connect(
 )
 
 
-csv_file = os.path.join(os.path.dirname(__file__), "../new_meta_21-23.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../new_meta_22-23.csv")
 
 cursor = conn.cursor()
 
@@ -77,7 +77,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             occupation,
             row[style_index],
             row[date_index],
-            row[style_index]
+            row[style_id_index]
         )
 
         cursor.execute(query, values)

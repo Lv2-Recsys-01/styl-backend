@@ -18,7 +18,7 @@ router = APIRouter(
     tags=["items"],
 )
 
-def get_recommendation(db: Session, likes: list | None, page_size: int):
+def get_recommendation(db: Session, likes: list | None, page_size: int) -> list:
     outfits = list()
     cand = list()
     if likes:
@@ -49,14 +49,12 @@ def get_recommendation(db: Session, likes: list | None, page_size: int):
             .limit(n - (n // 2))
             .all()
         )
-        
         outfits += f_outfits + m_outfits
-        
-    return outfits
-        
     
-        
-        
+    random.shuffle(outfits)
+
+    return outfits
+      
 
 @router.get("/journey")
 def show_journey_images(
