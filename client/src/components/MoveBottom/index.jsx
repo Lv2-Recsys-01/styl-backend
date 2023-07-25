@@ -1,5 +1,5 @@
 import React from "react";
-import { CaretDownFilled } from "@ant-design/icons";
+import { ArrowDownOutlined} from "@ant-design/icons";
 import "./MoveBottom.css";
 
 class MoveBottom extends React.Component {
@@ -9,7 +9,10 @@ class MoveBottom extends React.Component {
 
     render() {
         return (
-                <CaretDownFilled className="bottom-arrow" onClick={this.handleScrollToBottom}/>
+            <div className="bottom-arrow-container">
+                <span className="bottom-arrow-text">나만의 스타일 찾기</span>
+                <ArrowDownOutlined className="bottom-arrow" onClick={this.handleScrollToBottom}/>
+            </div>
         );
     }
 }

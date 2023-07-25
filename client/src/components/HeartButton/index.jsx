@@ -9,7 +9,7 @@ const HeartButtonWrapper = styled.div`
     margin-right: 10px;
     margin-bottom: 10px;
     font-size: 30px;
-    color: var(--vivamagenta);
+    color: var(--pointcolor);
 `;
 
 function HeartButton({ likeState, outfitId, likeType }) {
