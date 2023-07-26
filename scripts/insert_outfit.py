@@ -66,10 +66,11 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )
 
+        # 15개
         query = f'INSERT INTO outfit (outfit_id, img_url, origin_url, \
         gender, age, reporter, tags, brands, region, occupation, style, date, season, \
         cat_base, cat_gpt) \
-                VALUES ({"%s" * 15})'
+                VALUES ({"%s," * 14} %s)'
 
         values = (
             outfit_id,

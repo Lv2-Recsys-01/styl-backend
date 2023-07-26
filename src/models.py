@@ -37,10 +37,9 @@ class Outfit(Base):
     style = Column(String)
     date = Column(DateTime, nullable=False)
     season = Column(String)
-    # for style category 
-    no_season = Column(Integer)
-    season_1 = Column(Integer)
-    season_2 = Column(Integer)
+    # for category 
+    cat_base = Column(Integer)
+    cat_gpt = Column(Integer)
 
     likes = relationship("Like", back_populates="outfit")
     clicks = relationship("Click", back_populates="outfit")
