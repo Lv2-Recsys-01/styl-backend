@@ -31,7 +31,7 @@ def show_journey_images(
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
-    rec_type: str = 'content'
+    rec_type: str = 'mab'
 ) -> dict:
     if rec_type not in ['content', 'mab']:
         rec_type = 'content'
@@ -57,11 +57,11 @@ def show_journey_images(
             )
             .all()
         )
-    
+    # mab 추천에 사용하지 않더라도 알파 베타 일단 업데이트    
+    mab_model = get_mab_model(user_id, session_id, db)
     if rec_type == 'content':
         outfits = get_recommendation(db, likes, page_size)
     else:
-        mab_model = get_mab_model(user_id, session_id, db)
         outfits = get_mab_recommendation(mab_model, user_id, session_id, db)
 
     # 마지막 페이지인지 확인
@@ -270,8 +270,12 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
+    sim_type: str = 'gpt',
     n_samples: int = 3
 ):
+    if sim_type not in ['gpt', 'kkma']:
+        sim_type = 'gpt'
+        
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
@@ -310,7 +314,7 @@ def show_single_image(
     if similar_outfits is None:
         raise HTTPException(status_code=500, detail="유사 코디 이미지가 존재하지 않습니다.")
 
-    sampled_similar_outfits = random.sample(similar_outfits.similar_outfits, n_samples)
+    sampled_similar_outfits = random.sample(getattr(similar_outfits, f"{sim_type}"), n_samples)
 
     similar_outfits_list = list()
 

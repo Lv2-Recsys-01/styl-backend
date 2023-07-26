@@ -34,9 +34,9 @@ class MultiArmedBandit(object):
     
     
 def get_mab_model(user_id: int | None,
-                            session_id: str,
-                            db: Session):
-    n_unique_tags = 1021 # 이거 하드코딩 안하고 가능??
+                  session_id: str,
+                  db: Session):
+    n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
     all_outfit = db.query(Outfit).all()
     outfit_id_list = np.array([outfit.outfit_id for outfit in all_outfit])
     outfit_tag_list = [np.array(outfit.tags) for outfit in all_outfit]
