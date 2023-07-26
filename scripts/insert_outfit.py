@@ -20,7 +20,8 @@ conn = psycopg2.connect(
 )
 
 
-csv_file = os.path.join(os.path.dirname(__file__), "../season_new_meta_22-23.csv")
+# csv_file = os.path.join(os.path.dirname(__file__), "../season_new_meta_22-23.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../mab_meta.csv")
 
 cursor = conn.cursor()
 
@@ -60,7 +61,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
 
         age = int(row[age_index]) if row[age_index] != "연령미상" else None
         occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
-        tags = ast.literal_eval(row[tags_index])
+        tags = list(ast.literal_eval(row[tags_index]))
         brands = (
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )

@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 from sqlalchemy import (ARRAY, CHAR, Boolean, Column, DateTime, ForeignKey,
-                        Integer, String)
+                        Integer, Float, String)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -30,7 +30,7 @@ class Outfit(Base):
     age = Column(Integer)
     origin_url = Column(String)
     reporter = Column(String)
-    tags = Column(ARRAY(String))
+    tags = Column(ARRAY(Integer))
     brands = Column(ARRAY(String))
     region = Column(String)
     occupation = Column(String)
@@ -103,3 +103,13 @@ class UserSession(Base):
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")
     clicks = relationship("Click", back_populates="session")
+    
+class MAB(Base):
+    __tablename__ = 'mab'
+    
+    mab_id = Column(Integer, primary_key=True)
+    session_id = Column(String, ForeignKey("session.session_id"), index=True)
+    user_id = Column(Integer, ForeignKey("user.user_id"), index=True, default=None)
+    alpha = Column(ARRAY(Float))
+    beta = Column(ARRAY(Float))
+    
