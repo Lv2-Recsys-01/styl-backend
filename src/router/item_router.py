@@ -62,7 +62,13 @@ def show_journey_images(
     if rec_type == 'content':
         outfits = get_recommendation(db, likes, page_size)
     else:
-        outfits = get_mab_recommendation(mab_model, user_id, session_id, db)
+        cand_outfits = get_recommendation(db=db,
+                                          likes=likes,
+                                          total_rec_cnt=page_size*10,
+                                          cat_rec_cnt=page_size*5,
+                                          sim_rec_cnt=page_size*5)
+        cand_id_list = [outfit.outfit_id for outfit in cand_outfits]
+        outfits = get_mab_recommendation(mab_model, user_id, session_id, db, cand_id_list, page_size)
 
     # 마지막 페이지인지 확인
     is_last = len(outfits) < page_size

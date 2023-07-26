@@ -6,14 +6,14 @@ from ..models import Click, Like, Outfit, Similar, UserSession, MAB
 
 def get_recommendation(db: Session,
                        likes: list | None,
-                       page_size: int,
+                       total_rec_cnt: int,
                        cat_type: str='cat_gpt',
                        sim_type: str='gpt',
                        cat_rec_cnt: int=4,
                        sim_rec_cnt: int=4) -> list:
-    if cat_rec_cnt + sim_rec_cnt > page_size:
-        cat_rec_cnt = round(page_size * cat_rec_cnt / (cat_rec_cnt + sim_rec_cnt))
-        sim_rec_cnt = page_size - cat_rec_cnt
+    if cat_rec_cnt + sim_rec_cnt > total_rec_cnt:
+        cat_rec_cnt = round(total_rec_cnt * cat_rec_cnt / (cat_rec_cnt + sim_rec_cnt))
+        sim_rec_cnt = total_rec_cnt - cat_rec_cnt
     if cat_type not in ['cat_gpt', 'cat_base']:
         cat_type = 'cat_gpt'
     if sim_type not in ['gpt', 'kkma']:
@@ -50,8 +50,8 @@ def get_recommendation(db: Session,
                 outfits.append(outfit)
         # print("outfits:", [o.outfit_id for o in outfits])
         # print("cnt:", len([o.outfit_id for o in outfits]))
-    if len(outfits) < page_size:
-        k = page_size - len(outfits)
+    if len(outfits) < total_rec_cnt:
+        k = total_rec_cnt - len(outfits)
         
         f_outfits = (
             db.query(Outfit)
@@ -73,4 +73,5 @@ def get_recommendation(db: Session,
     # print("cnt:", len([o.outfit_id for o in outfits]))
     np.random.shuffle(outfits)
     print("content based:", [outfit.outfit_id for outfit in outfits])
+    # return [outfit.outfit_id for outfit in outfits]
     return outfits

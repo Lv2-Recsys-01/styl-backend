@@ -9,26 +9,32 @@ from ..models import Click, Like, Outfit, Similar, UserSession, MAB
 class MultiArmedBandit(object):
     def __init__(self, 
                  n_unique_tags: int,
-                 outfit_id_list: np.ndarray, 
-                 outfit_tag_list: list[np.ndarray]):
+                #  outfit_id_list: np.ndarray, 
+                #  outfit_tag_list: list[np.ndarray],
+                 ):
         self.n_arms = n_unique_tags
         self.alpha = np.ones(n_unique_tags)
         self.beta = np.ones(n_unique_tags)
-        self.outfit_id_list = outfit_id_list
-        self.outfit_tag_list = outfit_tag_list
+        # self.outfit_id_list = outfit_id_list
+        # self.outfit_tag_list = outfit_tag_list
         
-    def sample(self, n_samples):
-        rvs = []
+    def softmax(self, x):
+        e_x = np.exp(x - np.max(x))  # subtract max for numerical stability
+        return e_x / e_x.sum(axis=0)
+        
+    def sample(self, cand_id_list: list, cand_tag_list: list, n_samples: int):
+        tag_score = []
         for i in range(self.n_arms):
-            rvs.append(np.random.beta(self.alpha[i], self.beta[i]))
-        rvs = np.array(rvs)
+            tag_score.append(np.random.beta(self.alpha[i], self.beta[i]))
+        tag_score = np.array(tag_score)
         
-        prob_score = []
-        for outfit_tag in self.outfit_tag_list:
-            prob_score.append(np.mean(rvs[outfit_tag]))
+        outfit_score = []
+        for tags in cand_tag_list:
+            outfit_score.append(np.mean(tag_score[tags]))
             
-        probs = prob_score / np.sum(prob_score)
-        samples = np.random.choice(self.outfit_id_list, n_samples, p=probs).tolist()
+        # probs = outfit_score / np.sum(outfit_score)
+        probs = self.softmax(outfit_score)
+        samples = np.random.choice(cand_id_list, n_samples, p=probs).tolist()
         
         return samples
     
@@ -38,12 +44,14 @@ def get_mab_model(user_id: int | None,
                   db: Session):
     # n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
     n_unique_tags = 200
-    all_outfit = db.query(Outfit).all()
-    outfit_id_list = np.array([outfit.outfit_id for outfit in all_outfit])
+    # all_outfit = db.query(Outfit).all()
+    # outfit_id_list = np.array([outfit.outfit_id for outfit in all_outfit])
     # outfit_tag_list = [np.array(outfit.tags) for outfit in all_outfit]
-    outfit_tag_list = [np.array(outfit.tags_filtered) for outfit in all_outfit]
+    # outfit_tag_list = [np.array(outfit.tags_filtered) for outfit in all_outfit]
         
-    mab_model = MultiArmedBandit(n_unique_tags, outfit_id_list, outfit_tag_list)
+    mab_model = MultiArmedBandit(n_unique_tags,
+                                #  outfit_id_list, outfit_tag_list,
+                                 )
     
     # db에 있으면 불러오고
     if user_id is None:
@@ -90,7 +98,7 @@ async def update_ab(user_id: int | None,
     beta = np.array(mab.beta)
     for outfit_id, reward in zip(outfit_id_list, reward_list):
         outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
-        tags = np.array(outfit.tags)
+        tags = np.array(outfit.tags_filtered)
         if interaction_type == 'view':
             alpha[tags] += reward
             beta[tags] += (1 - reward)
@@ -114,6 +122,7 @@ def get_mab_recommendation(mab_model: MultiArmedBandit,
                            user_id: int | None,
                            session_id: str,
                            db: Session,
+                           cand_id_list: list,
                            n_samples: int=10):
     if user_id is None:
         mab = db.query(MAB).filter(MAB.session_id == session_id,
@@ -123,7 +132,13 @@ def get_mab_recommendation(mab_model: MultiArmedBandit,
                                       MAB.user_id == user_id).first()
     mab_model.alpha = mab.alpha
     mab_model.beta = mab.beta
-    mab_recs = mab_model.sample(n_samples)
+
+    cand_tag_list = list()
+    for outfit_id in cand_id_list:
+        cand_tag = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).tags_filtered.first()
+        cand_tag_list.append(np.array(cand_tag))
+    
+    mab_recs = mab_model.sample(cand_id_list, cand_tag_list, n_samples)
     
     outfits = list()
     for outfit_id in mab_recs:
