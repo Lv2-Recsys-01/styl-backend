@@ -50,6 +50,7 @@ function ImageGridView(props) {
     const popuptext = props.view === "journey" ? (
         <>
           <HeartFilled className='popheart' />하트를 눌러, 당신의 스타일을 찾아보세요<HeartFilled className='popheart' />
+          <SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' />
         </>
       ) : (
         <>
