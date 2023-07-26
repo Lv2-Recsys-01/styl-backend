@@ -30,8 +30,11 @@ def show_journey_images(
     offset: Annotated[int, Query()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    rec_type: str = 'content'
 ) -> dict:
+    if rec_type not in ['content', 'mab']:
+        rec_type = 'content'
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
     if user_id is None and session_id is not None:
@@ -55,9 +58,11 @@ def show_journey_images(
             .all()
         )
     
-    # outfits = get_recommendation(db, likes, page_size)
-    mab_model = get_mab_model(user_id, session_id, db)
-    outfits = get_mab_recommendation(mab_model, user_id, session_id, db)
+    if rec_type == 'content':
+        outfits = get_recommendation(db, likes, page_size)
+    else:
+        mab_model = get_mab_model(user_id, session_id, db)
+        outfits = get_mab_recommendation(mab_model, user_id, session_id, db)
 
     # 마지막 페이지인지 확인
     is_last = len(outfits) < page_size
