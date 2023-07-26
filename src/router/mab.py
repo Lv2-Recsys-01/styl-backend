@@ -36,10 +36,12 @@ class MultiArmedBandit(object):
 def get_mab_model(user_id: int | None,
                   session_id: str,
                   db: Session):
-    n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
+    # n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
+    n_unique_tags = 200
     all_outfit = db.query(Outfit).all()
     outfit_id_list = np.array([outfit.outfit_id for outfit in all_outfit])
-    outfit_tag_list = [np.array(outfit.tags) for outfit in all_outfit]
+    # outfit_tag_list = [np.array(outfit.tags) for outfit in all_outfit]
+    outfit_tag_list = [np.array(outfit.tags_filtered) for outfit in all_outfit]
         
     mab_model = MultiArmedBandit(n_unique_tags, outfit_id_list, outfit_tag_list)
     

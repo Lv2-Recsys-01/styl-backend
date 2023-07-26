@@ -21,7 +21,8 @@ conn = psycopg2.connect(
 
 
 # csv_file = os.path.join(os.path.dirname(__file__), "../season_new_meta_22-23.csv")
-csv_file = os.path.join(os.path.dirname(__file__), "../mab_meta.csv")
+# csv_file = os.path.join(os.path.dirname(__file__), "../mab_meta.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../filtered_meta.csv")
 
 cursor = conn.cursor()
 
@@ -37,6 +38,8 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     origin_url_index = headers.index("origin_url")
     reporter_index = headers.index("reporter")
     tags_index = headers.index("tags")
+    # filtered
+    tags_filtered_index = headers.index("tags_filtered")
     brands_index = headers.index("brands")
     region_index = headers.index("region")
     occupation_index = headers.index("occupation")
@@ -62,15 +65,16 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
         age = int(row[age_index]) if row[age_index] != "연령미상" else None
         occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
         tags = ast.literal_eval(row[tags_index])
+        tags_filtered = ast.literal_eval(row[tags_filtered_index])
         brands = (
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )
 
-        # 15개
+        # 16개
         query = f'INSERT INTO outfit (outfit_id, img_url, origin_url, \
-        gender, age, reporter, tags, brands, region, occupation, style, date, season, \
+        gender, age, reporter, tags, tags_filtered, brands, region, occupation, style, date, season, \
         cat_base, cat_gpt) \
-                VALUES ({"%s," * 14} %s)'
+                VALUES ({"%s," * 15} %s)'
 
         values = (
             outfit_id,
@@ -80,6 +84,7 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             age,
             row[reporter_index],
             tags,
+            tags_filtered,
             brands,
             row[region_index],
             occupation,
