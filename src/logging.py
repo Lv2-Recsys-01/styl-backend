@@ -18,8 +18,9 @@ async def update_last_action_time(user_id: int | None,
             UserSession.session_id == session_id,
             UserSession.user_id == user_id,
         ).first()
-    
-    user.expired_at = datetime.now(timezone("Asia/Seoul")) # type: ignore
+        
+    if user:
+        user.expired_at = datetime.now(timezone("Asia/Seoul")) # type: ignore
 
     db.commit()
     

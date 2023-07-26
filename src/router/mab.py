@@ -34,7 +34,7 @@ class MultiArmedBandit(object):
             
         # probs = outfit_score / np.sum(outfit_score)
         probs = self.softmax(outfit_score)
-        samples = np.random.choice(cand_id_list, n_samples, p=probs).tolist()
+        samples = np.random.choice(cand_id_list, n_samples, replace=False, p=probs).tolist()
         
         return samples
     
@@ -135,7 +135,7 @@ def get_mab_recommendation(mab_model: MultiArmedBandit,
 
     cand_tag_list = list()
     for outfit_id in cand_id_list:
-        cand_tag = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).tags_filtered.first()
+        cand_tag = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first().tags_filtered
         cand_tag_list.append(np.array(cand_tag))
     
     mab_recs = mab_model.sample(cand_id_list, cand_tag_list, n_samples)
@@ -146,5 +146,5 @@ def get_mab_recommendation(mab_model: MultiArmedBandit,
         outfits.append(outfit)
     
     np.random.shuffle(outfits)
-    print("mab:", [outfit.outfit_id for outfit in outfits])
+    # print("mab:", [outfit.outfit_id for outfit in outfits])
     return outfits

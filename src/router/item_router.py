@@ -60,14 +60,19 @@ def show_journey_images(
     # mab 추천에 사용하지 않더라도 알파 베타 일단 업데이트    
     mab_model = get_mab_model(user_id, session_id, db)
     if rec_type == 'content':
-        outfits = get_recommendation(db, likes, page_size)
+        outfits = get_recommendation(db=db,
+                                     likes=likes,
+                                     total_rec_cnt=page_size,
+                                     rec_type='rec')
     else:
         cand_outfits = get_recommendation(db=db,
                                           likes=likes,
                                           total_rec_cnt=page_size*10,
+                                          rec_type='cand',
                                           cat_rec_cnt=page_size*5,
                                           sim_rec_cnt=page_size*5)
-        cand_id_list = [outfit.outfit_id for outfit in cand_outfits]
+        cand_id_list = list(set([outfit.outfit_id for outfit in cand_outfits]))
+        print("cand cnt:", len(cand_id_list))
         outfits = get_mab_recommendation(mab_model, user_id, session_id, db, cand_id_list, page_size)
 
     # 마지막 페이지인지 확인

@@ -66,8 +66,6 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
         occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
         tags = ast.literal_eval(row[tags_index])
         tags_filtered = ast.literal_eval(row[tags_filtered_index])
-        print(tags_filtered)
-        exit()
         brands = (
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )

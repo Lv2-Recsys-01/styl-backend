@@ -7,6 +7,7 @@ from ..models import Click, Like, Outfit, Similar, UserSession, MAB
 def get_recommendation(db: Session,
                        likes: list | None,
                        total_rec_cnt: int,
+                       rec_type: str='cand', # 서빙용 추천 목적 or mab 후보 생성 목적
                        cat_type: str='cat_gpt',
                        sim_type: str='gpt',
                        cat_rec_cnt: int=4,
@@ -14,6 +15,8 @@ def get_recommendation(db: Session,
     if cat_rec_cnt + sim_rec_cnt > total_rec_cnt:
         cat_rec_cnt = round(total_rec_cnt * cat_rec_cnt / (cat_rec_cnt + sim_rec_cnt))
         sim_rec_cnt = total_rec_cnt - cat_rec_cnt
+    if rec_type not in ['cand', 'rec']:
+        rec_type = 'rec'
     if cat_type not in ['cat_gpt', 'cat_base']:
         cat_type = 'cat_gpt'
     if sim_type not in ['gpt', 'kkma']:
@@ -34,12 +37,17 @@ def get_recommendation(db: Session,
                 similar_list = getattr(similar, f"{sim_type}")
                 sim_cand.extend(similar_list)
 
-        k = round(len(likes)/2)
+        if rec_type == 'rec':
+            k = round(len(likes)/2)
+            replace=False
+        else:
+            k = len(likes) * 5
+            replace=True
         cat_recs = np.random.choice(cat_cand, size=min(cat_rec_cnt, k)).tolist()
         unique_outfits, counts = np.unique(sim_cand, return_counts=True)
         sim_recs = np.random.choice(unique_outfits, size=min(sim_rec_cnt, k),
-                                replace=False, p=counts/counts.sum()).tolist()
-        
+                                replace=replace, p=counts/counts.sum()).tolist()
+
         for cat_id in cat_recs:
             outfit = db.query(Outfit).filter(getattr(Outfit, f"{cat_type}") == cat_id).order_by(func.random()).first()
             if outfit:
@@ -72,6 +80,6 @@ def get_recommendation(db: Session,
     # print("final outfits:", [o.outfit_id for o in outfits])
     # print("cnt:", len([o.outfit_id for o in outfits]))
     np.random.shuffle(outfits)
-    print("content based:", [outfit.outfit_id for outfit in outfits])
-    # return [outfit.outfit_id for outfit in outfits]
+    # print("content based:", [outfit.outfit_id for outfit in outfits])
+
     return outfits
