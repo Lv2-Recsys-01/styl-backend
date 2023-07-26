@@ -40,5 +40,8 @@
     color: var(--pointcolor);
   }
   .popmore{
-    color:var(--steelblue)
+    color:var(--steelblue);
+  }
+  .popnotice{
+    color:var(--yellow);
   }
