@@ -4,9 +4,9 @@ import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
+import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
 const PAGE_SIZE = 10;
-const DELAY = 1000;
 const S = {
     GridWrapper: styled.div`
         display: grid;
@@ -20,7 +20,7 @@ const S = {
         padding-top: 162%; /* 황금비 1.618의 근사값. 가로 대비 세로의 높이 */
         overflow: hidden;
         border-radius: 12px;
-        border: 3px double var(--graylilac);
+        border: 1px solid var(--subcolor);
         cursor: pointer;
         img {
             position: absolute;
@@ -29,7 +29,7 @@ const S = {
             width: 100%;
             height: 85%;
             object-fit: cover;
-            border-bottom: 2px dashed var(--graylilac);
+            border-bottom: 1px solid var(--subcolor);
         }
     `,
 };
@@ -64,7 +64,7 @@ function ImageGridView(props) {
                         !isFetchStopped &&
                         currentPage.current < totalPage.current
                     ) {
-                        fetchDataWithDelay(DELAY);
+                        fetchData();
                     }
                 });
             }, options);
@@ -73,16 +73,32 @@ function ImageGridView(props) {
         return () => {
             observer.disconnect();
         };
-    }, [isLoading, fetchDataWithDelay]);
-    async function fetchDataWithDelay(delay) {
-        setIsLoading(true);
-        const remainingDelay = Math.max(delay, 0);
-        await fetchData();
-        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
-        setIsLoading(false);
-    }
+    }, [isLoading]);
+
+    const handleShareClick = (outfit) => {
+        const DetailUrl = 'stylesjourney.com/detail/';
+        const newUrl = `${DetailUrl}${outfit}`;
+        try {
+            navigator.clipboard.writeText("");
+            navigator.clipboard.writeText(newUrl).then(() => {
+                console.log("URL copied to clipboard");
+                notification.success({
+                    message: "URL이 복사되었습니다!",
+                    description: "클립보드에 URL이 복사되었어요",
+                    duration: 1,
+                });
+            });
+            styleAxios.post(`/items/journey/${outfit}/musinsa-share/share`);
+        } catch (error) {
+            console.error("Failed to copy URL to clipboard:", error);
+        }
+    };
+    
     async function fetchData() {
         try {
+            setIsLoading(true); 
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
@@ -113,12 +129,30 @@ function ImageGridView(props) {
                                 });
                             }}
                         />
-                        <HeartButton
-                            className="heart-button"
-                            outfitId={single_outfit.outfit_id}
-                            likeState={single_outfit.is_liked}
-                            likeType="journey"
-                        />
+                        <div 
+                            className="journey-option"
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end", // Right-align the children
+                                alignItems: "center", // Center the content vertically
+                            }}
+                            >
+                            <ShareAltOutlined
+                                className="journey-share"
+                                style={{ fontSize: "25px", marginRight: "12px", marginBottom:"10px" }}
+                                onClick={() => handleShareClick(single_outfit.outfit_id)}
+                            />
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <HeartButton
+                                className="heart-button"
+                                outfitId={single_outfit.outfit_id}
+                                likeState={single_outfit.is_liked}
+                                likeType="journey"
+                                />
+                            </div>
+
+                        </div>
+
                     </GridItem>,
                 );
             }
@@ -139,7 +173,7 @@ function ImageGridView(props) {
                     duration: 3,
                 });
             }
-        } finally {
+        } finally{
             setIsLoading(false);
         }
     }

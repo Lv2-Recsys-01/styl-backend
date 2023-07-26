@@ -21,6 +21,7 @@ docker compose restart client # client만 재시작(nginx 설정을 자주 바�
 
 # 프로덕션 빌드
 docker compose -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.prod.yaml restart client
 docker compose -f docker-compose.prod.yaml build --no-cache
 ```
 

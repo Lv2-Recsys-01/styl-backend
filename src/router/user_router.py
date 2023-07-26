@@ -14,7 +14,7 @@ from ..models import Like, User, UserSession
 from ..schema import UserBase, UserSignUp
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"],
 )
 

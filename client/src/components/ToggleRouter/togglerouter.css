@@ -6,27 +6,26 @@
   .route-btn {
     width: 100%;
     height:35px;
-    border: double 2px var(--vivamagenta);
+    border: solid 2px var(--pointcolor);
     padding: 5px;
     border-radius: 10px;
     font-weight: 600;
     margin:10px;
-    background-color: var(--paledogwood);
-    color:var(--vivamagenta);
+    color:var(--pointcolor);
     font-size:16px;
     cursor: pointer;
   }
   .route-btn-journey {
-    background-color: var(--paledogwood);
-    color:var(--vivamagenta);
+    background-color: var(--headerbackground);
+    color:var(--pointcolor);
   }
 
   .route-btn-collection{
-    background-color: var(--paledogwood);
-    color:var(--vivamagenta);
+    background-color: var(--headerbackground);
+    color:var(--pointcolor);
   }
 
   .route-btn.active {
-    background-color: var(--vivamagenta);
-    color: var(--paledogwood);
+    background-color: var(--pointcolor);
+    color: var(--background);
   }

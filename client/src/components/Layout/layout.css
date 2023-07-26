@@ -15,12 +15,13 @@
   width: 100%;
   max-width: 500px;
   height:83px;
-  background-color: var(--paledogwood);
+  background-color: var(--headerbackground);
   z-index: 999;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 6px;
   border-bottom-right-radius:6px;
   border:3px solid var(--lilacgray);
+  
 }
 
 .header .wrapper .options{
@@ -32,6 +33,7 @@
     line-height: 64px;
     margin:10px;
     margin-top:20px;
+    opacity: 1;
   }
 
   .header .wrapper .user-name{
@@ -52,7 +54,7 @@
     font-weight: 600;
     text-decoration: underline;
     font-style: italic;
-    color:var(--vivamagenta)
+    color:var(--pointcolor)
   }
 
   .footer-container {

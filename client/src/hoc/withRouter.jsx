@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { notification } from "antd";
-import { styleAxios } from "../utils";
 
 function withRouter(Component) {
     function ComponentWithRouterProp(props) {
@@ -14,20 +13,13 @@ function withRouter(Component) {
             if (cookies.user_id !== undefined) {
                 setIsLoggedIn(true);
             }
-        }, [cookies]);
+        }, [cookies.user_id, cookies.user_name]);
 
         let location = useLocation();
         let params = useParams();
 
         useEffect(() => {
             window.scrollTo({ top: 0, behavior: "instant" });
-            const checkAuth = async () => {
-                const res = await styleAxios.get("/healthz");
-                console.log(res);
-            };
-
-            checkAuth();
-            // user info should save in context api
         }, [location.pathname]);
 
         useEffect(() => {
@@ -40,7 +32,7 @@ function withRouter(Component) {
                     duration: 3,
                 });
             }
-        }, [isLoggedIn, location.pathname, navigate]);
+        }, [isLoggedIn, location.pathname]);
 
         return <Component {...props} location={location} params={params} navigate={navigate} />;
     }

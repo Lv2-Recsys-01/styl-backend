@@ -22,10 +22,22 @@ services:
             context: .
             dockerfile: Dockerfile
         command:
-            ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+            [
+                "uvicorn",
+                "src.main:app",
+                "--root-path",
+                "/api",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+                "--proxy-headers",
+            ]
         depends_on:
             psql:
                 condition: service_healthy
+        networks:
+            - style-network
     psql:
         image: postgres:latest
         container_name: postgres-prod
@@ -45,6 +57,8 @@ services:
             timeout: 10s
             retries: 3
             start_period: 30s
+        networks:
+            - style-network
     client:
         container_name: styl-front-prod
         platform: "linux/amd64"
@@ -72,3 +86,8 @@ services:
             dockerfile: Dockerfile.prod
         depends_on:
             - app
+        networks:
+            - style-network
+networks:
+    style-network:
+        driver: bridge

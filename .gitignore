@@ -4,6 +4,7 @@
 
 top3_22-23.csv
 meta_22-23.csv
+*.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node

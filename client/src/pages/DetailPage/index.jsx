@@ -115,7 +115,6 @@ function DetailPage() {
                 setDetailOutfitId(singleOutfitData.outfit_id);
                 setDetailLikeState(singleOutfitData.is_liked);
                 setSimilarOutfitsList(fetchedSimilarOutfitsList);
-                console.log(response.data);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
                 setFetchError(true);
