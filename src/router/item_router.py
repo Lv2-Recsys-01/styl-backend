@@ -14,6 +14,7 @@ from ..logging import (log_click_image, log_click_share_musinsa,
 from ..ML.MAB import load_model
 from ..models import Click, Like, Outfit, Similar, UserSession
 from ..schema import OutfitOut
+import numpy as np
 
 router = APIRouter(
     prefix="/api/items",
@@ -56,8 +57,8 @@ def show_journey_images(
     # load_model 함수는 MAB 모델과 함께 dict들을 불러옵니다
     # MAB 라는 Table이 있어야 합니다!
     model, tag2idx, idx2tag, outfit2idx, idx2outfit = load_model()
-    model.alpha = db.query(MAB).filter(MAB.session_id == session_id).first().alpha
-    model.beta = db.query(MAB).filter(MAB.session_id == session_id).first().beta
+    model.alpha = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().alpha)
+    model.beta = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().beta)
 
     # model에서 sample page_size 개 뽑기
     outfits = model.sample(page_size).tolist()
@@ -67,7 +68,7 @@ def show_journey_images(
         model.view(outfit)
 
     # 이렇게 코드를 짜도 되는지 모르겠지만..? MAB 테이블 업데이트 합니다!
-    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha, "beta": model.beta})
+    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha.tolist(), "beta": model.beta.tolist()})
 
     # idx인 outfit을 outfit_id로 바꾸어 줍니다
     outfits = list(map(idx2outfit.get, outfits))
@@ -218,14 +219,14 @@ def user_like(
     model, tag2idx, idx2tag, outfit2idx, idx2outfit = load_model()
 
     # alpha beta 불러오기
-    model.alpha = db.query(MAB).filter(MAB.session_id == session_id).first().alpha
-    model.beta = db.query(MAB).filter(MAB.session_id == session_id).first().beta
+    model.alpha = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().alpha)
+    model.beta = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().beta)
 
     # click 하거나 like 했으므로 update
     model.click_like(outfit2idx[outfit_id])
 
     # DB에 업데이트!
-    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha, "beta": model.beta})
+    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha.tolist(), "beta": model.beta.tolist()})
     ### 여기까지가 바뀐 코드입니다 ###
 
 
@@ -407,14 +408,14 @@ def user_click(
     model, tag2idx, idx2tag, outfit2idx, idx2outfit = load_model()
 
     # alpha beta 불러오기
-    model.alpha = db.query(MAB).filter(MAB.session_id == session_id).first().alpha
-    model.beta = db.query(MAB).filter(MAB.session_id == session_id).first().beta
+    model.alpha = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().alpha)
+    model.beta = np.array(db.query(MAB).filter(MAB.session_id == session_id).first().beta)
 
     # click 하거나 like 했으므로 update
     model.click_like(outfit2idx[outfit_id])
 
     # DB에 업데이트!
-    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha, "beta": model.beta})
+    db.query(MAB).filter(MAB.session_id == session_id).update({"alpha": model.alpha.tolist(), "beta": model.beta.tolist()})
     ### 여기까지가 바뀐 코드입니다 ###
 
     background_tasks.add_task(update_last_action_time,
