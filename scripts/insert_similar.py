@@ -68,9 +68,18 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     
     for row in reader:
         outfit_id = int(row[outfit_id_index])
+        
+        # outfit_id(FK)가 "outfit" 테이블에 존재하는지 확인
+        check_query = 'SELECT COUNT(*) FROM "outfit" WHERE outfit_id = %s'
+        cursor.execute(check_query, (outfit_id,))
+        count = cursor.fetchone()[0]
 
+        if count == 0:
+            print(f"Skipping outfit_id not found in 'outfit' table: {outfit_id}")
+            continue
+        
         # outfit_id가 이미 존재하는지 확인
-        check_query = "SELECT COUNT(*) FROM outfit WHERE outfit_id = %s"
+        check_query = 'SELECT COUNT(*) FROM "similar" WHERE outfit_id = %s'
         cursor.execute(check_query, (outfit_id,))
         count = cursor.fetchone()[0]
     

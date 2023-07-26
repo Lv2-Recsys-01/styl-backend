@@ -36,6 +36,7 @@ class Outfit(Base):
     occupation = Column(String)
     style = Column(String)
     date = Column(DateTime, nullable=False)
+    season = Column(String)
     # for style category 
     no_season = Column(Integer)
     season_1 = Column(Integer)
@@ -85,7 +86,9 @@ class Similar(Base):
     outfit_id = Column(
         Integer, ForeignKey("outfit.outfit_id"), primary_key=True, index=True
     )
-    similar_outfits = Column(ARRAY(Integer))
+    # similar_outfits = Column(ARRAY(Integer))
+    kkma = Column(ARRAY(Integer))
+    gpt = Column(ARRAY(Integer))
 
     outfit = relationship("Outfit", back_populates="similars")
 

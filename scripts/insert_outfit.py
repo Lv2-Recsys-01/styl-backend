@@ -42,10 +42,10 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     occupation_index = headers.index("occupation")
     style_index = headers.index("style")
     date_index = headers.index("date")
-    # for style category
-    no_season_index = headers.index("no_season")
-    season_1_index = headers.index("season_1")
-    season_2_index = headers.index("season_2")
+    season_index = headers.index("season")
+    # for category
+    cat_base_index = headers.index("cat_base")
+    cat_gpt_index = headers.index("cat_gpt")
 
     for row in reader:
         outfit_id = int(row[outfit_id_index])
@@ -61,21 +61,22 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
 
         age = int(row[age_index]) if row[age_index] != "연령미상" else None
         occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
-        tags = list(ast.literal_eval(row[tags_index]))
+        tags = ast.literal_eval(row[tags_index])
         brands = (
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )
 
-        query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, date, \
-            no_season, season_1, season_2) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        query = f'INSERT INTO outfit (outfit_id, img_url, origin_url, \
+        gender, age, reporter, tags, brands, region, occupation, style, date, season, \
+        cat_base, cat_gpt) \
+                VALUES ({"%s" * 15})'
 
         values = (
             outfit_id,
-            row[gender_index],
-            age,
             row[img_url_index],
             row[origin_url_index],
+            row[gender_index],
+            age,
             row[reporter_index],
             tags,
             brands,
@@ -83,9 +84,9 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
             occupation,
             row[style_index],
             row[date_index],
-            row[no_season_index],
-            row[season_1_index],
-            row[season_2_index]
+            row[season_index],
+            row[cat_base_index],
+            row[cat_gpt_index],
         )
 
         cursor.execute(query, values)
