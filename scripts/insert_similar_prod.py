@@ -24,9 +24,10 @@ cursor = conn.cursor()
 with open(csv_file, "r") as f:
     reader = csv.DictReader(f)
     for row in reader:
-        outfit_id = int(row["id"])
+        outfit_id = int(row["outfit_id"])
         similar_outfits = [
-            int(outfit.strip()) for outfit in row["top3"].strip("[]").split(",")
+            int(outfit.strip())
+            for outfit in row["similar_outfits"].strip("[]").split(",")
         ]
 
         # outfit_id(FK)가 "outfit" 테이블에 존재하는지 확인

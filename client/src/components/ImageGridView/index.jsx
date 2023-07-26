@@ -6,6 +6,9 @@ import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
+import Information from "../information/information";
+import { HeartFilled, SkinFilled } from '@ant-design/icons';
+
 const PAGE_SIZE = 10;
 const S = {
     GridWrapper: styled.div`
@@ -44,6 +47,16 @@ function ImageGridView(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchStopped, setIsFetchStopped] = useState(false);
     const navigate = useNavigate(); // useNavigate 훅 사용
+    const popuptext = props.view === "journey" ? (
+        <>
+          <HeartFilled className='popheart' />하트를 눌러, 당신의 스타일을 찾아보세요<HeartFilled className='popheart' />
+          <SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' />
+        </>
+      ) : (
+        <>
+          <SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' />
+        </>
+      );
     const loadingText = props.view === "journey" ? "AI가 당신을 위한 코디를 추천하고 있습니다.." : "Loading...";
     useLayoutEffect(() => {
         totalPage.current = 100;
@@ -186,6 +199,7 @@ function ImageGridView(props) {
             <S.GridWrapper>{outfits}</S.GridWrapper>
             {currentPage.current > 0 && isLoading && <Skeleton text = {loadingText} />}
             <div ref={gridViewWrapperBottomDomRef} />
+            <Information text= {popuptext} />
         </div>
     );
 }
