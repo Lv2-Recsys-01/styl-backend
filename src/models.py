@@ -39,7 +39,7 @@ class Outfit(Base):
     occupation = Column(String)
     style = Column(String)
     date = Column(DateTime, nullable=False)
-    season = Column(String)
+    # season = Column(String)
     # for category
     cat_base = Column(Integer)
     cat_gpt = Column(Integer)
@@ -112,14 +112,15 @@ class UserSession(Base):
     clicks = relationship("Click", back_populates="session")
     mab = relationship("MAB", back_populates="session")
 
+
 class MAB(Base):
-    __tablename__ = 'mab'
+    __tablename__ = "mab"
 
     mab_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('user.user_id'))
-    session_id = Column(String, ForeignKey('session.session_id'))
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    session_id = Column(String, ForeignKey("session.session_id"))
     alpha = Column(ARRAY(Float))
     beta = Column(ARRAY(Float))
 
-    user = relationship('User', back_populates='mab')
-    session = relationship('UserSession', back_populates='mab')
+    user = relationship("User", back_populates="mab")
+    session = relationship("UserSession", back_populates="mab")
