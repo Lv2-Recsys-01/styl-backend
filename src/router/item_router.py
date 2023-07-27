@@ -37,7 +37,7 @@ def show_journey_images(
     if bucket:
         rec_type = bucket
     if rec_type not in ['content', 'mab']:
-        rec_type = 'content'
+        rec_type = 'mab'
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
     if user_id is None and session_id is not None:
@@ -62,7 +62,8 @@ def show_journey_images(
         )
     # mab 추천에 사용하지 않더라도 알파 베타 일단 업데이트    
     mab_model = get_mab_model(user_id, session_id, db)
-    if rec_type == 'content':
+    # like 개수가 적으면 일단 content based
+    if rec_type == 'content' or len(likes) < 4:
         outfits = get_recommendation(db=db,
                                      likes=likes,
                                      total_rec_cnt=page_size,
@@ -75,6 +76,7 @@ def show_journey_images(
                                           cat_rec_cnt=page_size*5,
                                           sim_rec_cnt=page_size*5)
         cand_id_list = list(set([outfit.outfit_id for outfit in cand_outfits]))
+        # print(cand_id_list)
         # print("cand cnt:", len(cand_id_list))
         outfits = get_mab_recommendation(mab_model, user_id, session_id, db, cand_id_list, page_size)
 

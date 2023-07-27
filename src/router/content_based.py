@@ -47,7 +47,8 @@ def get_recommendation(db: Session,
         unique_outfits, counts = np.unique(sim_cand, return_counts=True)
         sim_recs = np.random.choice(unique_outfits, size=min(sim_rec_cnt, k),
                                 replace=replace, p=counts/counts.sum()).tolist()
-
+        # print("cat_recs", cat_recs)
+        # print("sim_recs", sim_recs)
         for cat_id in cat_recs:
             outfit = db.query(Outfit).filter(getattr(Outfit, f"{cat_type}") == cat_id).order_by(func.random()).first()
             if outfit:
@@ -75,7 +76,9 @@ def get_recommendation(db: Session,
             .limit(k - (k // 2))
             .all()
         )
+        # print("random", f_outfits + m_outfits)
         outfits += f_outfits + m_outfits
+        
     
     # print("final outfits:", [o.outfit_id for o in outfits])
     # print("cnt:", len([o.outfit_id for o in outfits]))
