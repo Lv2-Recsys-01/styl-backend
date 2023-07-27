@@ -28,7 +28,7 @@ ADD COLUMN cat_gpt VARCHAR
 cursor.execute(alter_outfit_table_query)
 
 # CSV 파일에서 데이터 읽어서 outfit 테이블에 추가
-csv_file = "your_csv_file_path.csv"
+csv_file = os.path.join(os.path.dirname(__file__), "../filtered_meta.csv")
 
 with open(csv_file, "r", encoding="utf-8-sig") as f:
     reader = csv.DictReader(f)

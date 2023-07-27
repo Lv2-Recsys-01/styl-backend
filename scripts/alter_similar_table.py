@@ -31,7 +31,7 @@ ADD COLUMN gpt INTEGER[]
 cursor.execute(alter_similar_table_query)
 
 # CSV 파일에서 데이터 읽어서 similar 테이블에 추가
-csv_file = "similar.csv"
+csv_file = s.path.join(os.path.dirname(__file__), "../similar.csv")
 
 with open(csv_file, "r", encoding="utf-8-sig") as f:
     reader = csv.DictReader(f)
