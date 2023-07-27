@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
-from sqlalchemy import (ARRAY, CHAR, Boolean, Column, DateTime, ForeignKey,
-                        Integer, Float, String)
+from sqlalchemy import (ARRAY, CHAR, Boolean, Column, DateTime, Float,
+                        ForeignKey, Integer, String)
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -19,6 +19,7 @@ class User(Base):
     likes = relationship("Like", back_populates="user")
     clicks = relationship("Click", back_populates="user")
     session = relationship("UserSession", back_populates="user")
+    mab = relationship("MAB", back_populates="user")
 
 
 class Outfit(Base):
@@ -37,7 +38,7 @@ class Outfit(Base):
     style = Column(String)
     date = Column(DateTime, nullable=False)
     season = Column(String)
-    # for category 
+    # for category
     cat_base = Column(Integer)
     cat_gpt = Column(Integer)
 
@@ -105,13 +106,16 @@ class UserSession(Base):
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")
     clicks = relationship("Click", back_populates="session")
-    
+    mab = relationship("MAB", back_populates="session")
+
 class MAB(Base):
     __tablename__ = 'mab'
-    
-    mab_id = Column(Integer, primary_key=True)
-    session_id = Column(String, ForeignKey("session.session_id"), index=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), index=True, default=None)
+
+    mab_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    session_id = Column(String, ForeignKey('session.session_id'))
     alpha = Column(ARRAY(Float))
     beta = Column(ARRAY(Float))
-    
+
+    user = relationship('User', back_populates='mab')
+    session = relationship('Session', back_populates='mab')
