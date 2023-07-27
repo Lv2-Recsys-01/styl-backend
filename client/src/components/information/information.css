@@ -12,12 +12,12 @@
     top: 90px;
     right: 10px; 
     transform: translateX(-50%);
-    background-color: var(--background);
-    padding: 10px;
-    width: 280px;
+    background-color: var(--pleinair);
+    padding: 12px;
+    width: 300px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    border: solid 1px var(--pointcolor);
+    border: solid 1px var(--steelblue);
     animation: popupSlideIn 0.6s forwards; 
   }
 
@@ -49,4 +49,14 @@
   }
   .popnotice{
     color:var(--yellow);
+  }
+
+  .google-form{
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .click-here{
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--pointcolor);
   }
