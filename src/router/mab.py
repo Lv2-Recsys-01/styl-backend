@@ -33,6 +33,7 @@ class MultiArmedBandit(object):
             outfit_score.append(np.mean(tag_score[tags]))
             
         # probs = outfit_score / np.sum(outfit_score)
+        # print(outfit_score)
         probs = self.softmax(outfit_score)
         samples = np.random.choice(cand_id_list, n_samples, replace=False, p=probs).tolist()
         
@@ -40,8 +41,8 @@ class MultiArmedBandit(object):
     
     
 def get_mab_model(user_id: int | None,
-                  session_id: str,
-                  db: Session):
+                  session_id: str | None,
+                  db: Session) -> MultiArmedBandit:
     # n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
     n_unique_tags = 200
     # all_outfit = db.query(Outfit).all()
@@ -56,10 +57,10 @@ def get_mab_model(user_id: int | None,
     # db에 있으면 불러오고
     if user_id is None:
         mab = db.query(MAB).filter(MAB.user_id.is_(None),
-                                         MAB.session_id == session_id).first()
+                                   MAB.session_id == session_id).first()
     else:
         mab = db.query(MAB).filter(MAB.session_id.is_(None),
-                                         MAB.user_id == user_id).first()
+                                   MAB.user_id == user_id).first()
     # 없으면 만들고 db에 추가
     if mab is None:
         if user_id is not None:
@@ -94,6 +95,7 @@ async def update_ab(user_id: int | None,
     else:
         mab = db.query(MAB).filter(MAB.session_id.is_(None),
                                       MAB.user_id == user_id).first()
+
     alpha = np.array(mab.alpha)
     beta = np.array(mab.beta)
     for outfit_id, reward in zip(outfit_id_list, reward_list):

@@ -60,6 +60,7 @@ class Like(Base):
     like_type = Column(String, default="unknown")
     is_deleted = Column(Boolean, default=False)
     as_login = Column(Boolean)
+    bucket = Column(String, default=None)
 
     user = relationship("User", back_populates="likes")
     outfit = relationship("Outfit", back_populates="likes")
@@ -104,6 +105,7 @@ class UserSession(Base):
     created_at = Column(DateTime)
     login_at = Column(DateTime, default=None)
     expired_at = Column(DateTime, default=None)
+    bucket = Column(String, default=None)
 
     user = relationship("User", back_populates="session")
     likes = relationship("Like", back_populates="session")

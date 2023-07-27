@@ -27,6 +27,7 @@ csv_file = os.path.join(os.path.dirname(__file__), "../filtered_meta.csv")
 cursor = conn.cursor()
 
 with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
+    print("Start Insert")
     reader = csv.reader(f)
     headers = next(reader)
 
@@ -96,8 +97,8 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
         )
 
         cursor.execute(query, values)
-
     conn.commit()
+    print("Finish Insert")
 
 cursor.close()
 conn.close()

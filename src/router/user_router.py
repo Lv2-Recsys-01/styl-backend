@@ -1,4 +1,5 @@
 import uuid
+import numpy as np
 from datetime import datetime
 from typing import Annotated
 
@@ -10,8 +11,11 @@ from pytz import timezone
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Like, User, UserSession
+from ..models import Like, User, UserSession, MAB
 from ..schema import UserBase, UserSignUp
+
+from .mab import get_mab_model
+
 
 router = APIRouter(
     prefix="/api/users",
@@ -73,8 +77,28 @@ def login(
     for like in guest_likes:
         if like.outfit_id not in login_user_likes_outfit_id:
             like.user_id = login_user.user_id
-
-    db.commit()
+            
+    # 알파 베타 추가
+    guest_mab = (
+        db.query(MAB)
+        .filter(MAB.user_id.is_(None), MAB.session_id == session_id)
+        .first()
+    )
+    if guest_mab:
+        guest_alpha = guest_mab.alpha
+        guest_beta = guest_mab.beta
+    else:
+        guest_alpha = [0] * 200
+        guest_beta = [0] * 200
+    
+    user_mab_model = get_mab_model(user_id=user_id, session_id=None, db=db)
+    user_mab_model.alpha = user_mab_model.alpha + np.array(guest_alpha)
+    user_mab_model.beta = user_mab_model.beta + np.array(guest_beta)
+    user_mab = db.query(MAB).filter(MAB.user_id == user_id,
+                                    MAB.session_id.is_(None)).first()
+    
+    user_mab.alpha = user_mab_model.alpha.tolist()
+    user_mab.beta = user_mab_model.beta.tolist()
 
     # 현재 비회원 세션에 user_id 추가하기
     cur_session: UserSession | None = (

@@ -28,12 +28,17 @@ async def update_last_action_time(user_id: int | None,
 async def log_view_image(user_id: int | None,
                          session_id: str,
                          outfits_list: list,
-                         view_type: str):
+                         view_type: str,
+                         bucket: str | None = None):
     logs_dir = "./logging"
     os.makedirs(logs_dir, exist_ok=True)
     date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(date_dir, exist_ok=True)
-    file_path = os.path.join(date_dir, "view_image_log.txt")
+    if bucket is None:
+        bucket = 'none'
+        file_path = os.path.join(date_dir, "view_image_log.txt")
+    else:
+        file_path = os.path.join(date_dir, "view_image_log_ab-test.txt")
     
     if user_id is None:
         user_id = 0
@@ -41,23 +46,28 @@ async def log_view_image(user_id: int | None,
     
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
-            log_file.write("session_id,user_id,outfit_id,timestamp,view_type\n")
+            log_file.write("session_id,user_id,outfit_id,timestamp,view_type,bucket\n")
 
     with open(file_path, "a") as log_file:
         for outfit_out in outfits_list:
-            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type}\n"
+            log_entry = f"{session_id},{user_id},{outfit_out.outfit_id},{timestamp},{view_type},{bucket}\n"
             log_file.write(log_entry)
             
             
 async def log_click_image(user_id: int | None,
                          session_id: str,
                          outfit_id: int,
-                         click_type: str | None = None):
+                         click_type: str | None = None,
+                         bucket: str | None = None):
     logs_dir = "./logging"
     os.makedirs(logs_dir, exist_ok=True)
     date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(date_dir, exist_ok=True)
-    file_path = os.path.join(date_dir, "click_image_log.txt")
+    if bucket is None:
+        bucket = 'none'
+        file_path = os.path.join(date_dir, "click_image_log.txt")
+    else:
+        file_path = os.path.join(date_dir, "click_image_log_ab-test.txt")
     
     if user_id is None:
         user_id = 0
@@ -65,22 +75,27 @@ async def log_click_image(user_id: int | None,
 
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
-            log_file.write("session_id,user_id,outfit_id,timestamp,click_type\n")
+            log_file.write("session_id,user_id,outfit_id,timestamp,click_type,bucket\n")
             
     with open(file_path, "a") as log_file:
-        log_entry = f"{session_id},{user_id},{outfit_id},{timestamp},{click_type}\n"
+        log_entry = f"{session_id},{user_id},{outfit_id},{timestamp},{click_type},{bucket}\n"
         log_file.write(log_entry)
 
 
 async def log_click_share_musinsa(session_id: str,
                                   user_id: int | None,
                                   outfit_id: int,
-                                  click_type: str):
+                                  click_type: str,
+                                  bucket: str | None = None):
     logs_dir = "./logging"
     os.makedirs(logs_dir, exist_ok=True)
     date_dir = os.path.join(logs_dir, datetime.now().strftime("%Y-%m-%d"))
     os.makedirs(date_dir, exist_ok=True)
-    file_path = os.path.join(date_dir, "click_share_musinsa_log.txt")
+    if bucket is None:
+        bucket = 'none'
+        file_path = os.path.join(date_dir, "click_share_musinsa_log.txt")
+    else:
+        file_path = os.path.join(date_dir, "click_share_musinsa_log_ab-test.txt")
     
     if user_id is None:
         user_id = 0
@@ -88,10 +103,10 @@ async def log_click_share_musinsa(session_id: str,
 
     if not os.path.exists(file_path):
         with open(file_path, "w") as log_file:
-            log_file.write("session_id,user_id,outfit_id,timestamp,click_type\n")
+            log_file.write("session_id,user_id,outfit_id,timestamp,click_type,bucket\n")
     
     with open(file_path, "a") as log_file:
-        log_entry = f"{session_id},{user_id},{outfit_id},{timestamp},{click_type}\n"
+        log_entry = f"{session_id},{user_id},{outfit_id},{timestamp},{click_type},{bucket}\n"
         log_file.write(log_entry)
 
 
