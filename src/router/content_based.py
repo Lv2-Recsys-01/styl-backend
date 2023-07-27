@@ -9,7 +9,7 @@ def get_recommendation(db: Session,
                        total_rec_cnt: int,
                        rec_type: str='cand', # 서빙용 추천 목적 or mab 후보 생성 목적
                        cat_type: str='cat_gpt',
-                       sim_type: str='gpt',
+                       sim_type: str='kkma',
                        cat_rec_cnt: int=4,
                        sim_rec_cnt: int=4) -> list:
     if cat_rec_cnt + sim_rec_cnt > total_rec_cnt:
@@ -20,7 +20,7 @@ def get_recommendation(db: Session,
     if cat_type not in ['cat_gpt', 'cat_base']:
         cat_type = 'cat_gpt'
     if sim_type not in ['gpt', 'kkma']:
-        sim_type = 'gpt'
+        sim_type = 'kkma'
     
     outfits = list()
     cat_cand = list() # 카테고리 기반 추천 후보
