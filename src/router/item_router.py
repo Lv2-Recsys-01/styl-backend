@@ -1,3 +1,4 @@
+import numpy as np
 import random
 from datetime import datetime
 from typing import Annotated
@@ -9,14 +10,18 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Click, Like, Outfit, Similar, UserSession
+from ..models import Click, Like, Outfit, Similar, UserSession, MAB
 from ..schema import OutfitOut
 from ..logging import log_click_image, log_view_image, update_last_action_time, log_click_share_musinsa
+
+from .mab import get_mab_model, update_ab, get_mab_recommendation
+from .content_based import get_recommendation
 
 router = APIRouter(
     prefix="/api/items",
     tags=["items"],
 )
+
 
 @router.get("/journey")
 def show_journey_images(
@@ -26,34 +31,10 @@ def show_journey_images(
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
+    rec_type: str = 'mab'
 ) -> dict:
-    # 남/여 구분 x
-    # outfits = (
-    #     db.query(Outfit).order_by(func.random()).offset(offset).limit(page_size).all()
-    # )
-
-    f_outfits = (
-        db.query(Outfit)
-        .filter(Outfit.gender == "F")
-        .order_by(func.random())
-        .limit(page_size // 2)
-        .all()
-    )
-
-    m_outfits = (
-        db.query(Outfit)
-        .filter(Outfit.gender == "M")
-        .order_by(func.random())
-        .limit(page_size - (page_size // 2))
-        .all()
-    )
-
-    outfits = f_outfits + m_outfits
-    random.shuffle(outfits)
-
-    # 마지막 페이지인지 확인
-    is_last = len(outfits) < page_size
-
+    if rec_type not in ['content', 'mab']:
+        rec_type = 'content'
     # 유저가 좋아요 누른 전체 이미지 목록
     # 비회원일때
     if user_id is None and session_id is not None:
@@ -76,6 +57,26 @@ def show_journey_images(
             )
             .all()
         )
+    # mab 추천에 사용하지 않더라도 알파 베타 일단 업데이트    
+    mab_model = get_mab_model(user_id, session_id, db)
+    if rec_type == 'content':
+        outfits = get_recommendation(db=db,
+                                     likes=likes,
+                                     total_rec_cnt=page_size,
+                                     rec_type='rec')
+    else:
+        cand_outfits = get_recommendation(db=db,
+                                          likes=likes,
+                                          total_rec_cnt=page_size*10,
+                                          rec_type='cand',
+                                          cat_rec_cnt=page_size*5,
+                                          sim_rec_cnt=page_size*5)
+        cand_id_list = list(set([outfit.outfit_id for outfit in cand_outfits]))
+        # print("cand cnt:", len(cand_id_list))
+        outfits = get_mab_recommendation(mab_model, user_id, session_id, db, cand_id_list, page_size)
+
+    # 마지막 페이지인지 확인
+    is_last = len(outfits) < page_size
 
     # 유저가 좋아요 누른 이미지의 id 집합 생성
     likes_set = {like.outfit_id for like in likes}
@@ -98,6 +99,15 @@ def show_journey_images(
                               session_id=session_id,
                               outfits_list=outfits_list,
                               view_type="journey")
+    
+    background_tasks.add_task(update_ab,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db,
+                              outfit_id_list=[outfit.outfit_id for outfit in outfits_list],
+                              reward_list = [0 for _ in range(page_size)],
+                              interaction_type = 'view'                          
+                              )
     
     return {
         "ok": True,
@@ -230,6 +240,15 @@ def user_like(
                               session_id=session_id,
                               db=db)
         
+        background_tasks.add_task(update_ab,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db,
+                              outfit_id_list=[outfit_id],
+                              reward_list = [1],
+                              interaction_type = 'click_like'                          
+                              )
+        
         return {"ok": True}
     # 누른적 있으면 업데이트
     else:
@@ -240,7 +259,17 @@ def user_like(
         background_tasks.add_task(update_last_action_time,
                               user_id=user_id,
                               session_id=session_id,
-                              db=db)  
+                              db=db)
+        
+        background_tasks.add_task(update_ab,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db,
+                              outfit_id_list=[outfit_id],
+                              reward_list = [1],
+                              interaction_type = 'like_cancel' if already_like.is_deleted else 'like_click'
+                              )
+        
         
         return {"ok": True}
 
@@ -252,7 +281,12 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
+    sim_type: str = 'kkma',
+    n_samples: int = 3
 ):
+    if sim_type not in ['gpt', 'kkma']:
+        sim_type = 'kkma'
+        
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
         raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
@@ -291,8 +325,7 @@ def show_single_image(
     if similar_outfits is None:
         raise HTTPException(status_code=500, detail="유사 코디 이미지가 존재하지 않습니다.")
 
-    sampled_k = 3
-    sampled_similar_outfits = random.sample(similar_outfits.similar_outfits, sampled_k)
+    sampled_similar_outfits = random.sample(getattr(similar_outfits, f"{sim_type}"), n_samples)
 
     similar_outfits_list = list()
 
@@ -340,6 +373,15 @@ def show_single_image(
                               session_id=session_id,
                               outfits_list=similar_outfits_list,
                               view_type="similar")
+    
+    background_tasks.add_task(update_ab,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db,
+                              outfit_id_list=[outfit.outfit_id for outfit in similar_outfits_list],
+                              reward_list = [0 for _ in range(n_samples)],
+                              interaction_type = 'view'                         
+                              )
 
     return {
         "ok": True,
@@ -405,4 +447,3 @@ def click_share_musinsa(
                               click_type=click_type)
 
     return {"ok": True}
-  

@@ -20,7 +20,9 @@ conn = psycopg2.connect(
 )
 
 
-csv_file = os.path.join(os.path.dirname(__file__), "../meta_21-23.csv")
+# csv_file = os.path.join(os.path.dirname(__file__), "../season_new_meta_22-23.csv")
+# csv_file = os.path.join(os.path.dirname(__file__), "../mab_meta.csv")
+csv_file = os.path.join(os.path.dirname(__file__), "../filtered_meta.csv")
 
 cursor = conn.cursor()
 
@@ -36,11 +38,17 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
     origin_url_index = headers.index("origin_url")
     reporter_index = headers.index("reporter")
     tags_index = headers.index("tags")
+    # filtered
+    tags_filtered_index = headers.index("tags_filtered")
     brands_index = headers.index("brands")
     region_index = headers.index("region")
     occupation_index = headers.index("occupation")
     style_index = headers.index("style")
     date_index = headers.index("date")
+    season_index = headers.index("season")
+    # for category
+    cat_base_index = headers.index("cat_base")
+    cat_gpt_index = headers.index("cat_gpt")
 
     for row in reader:
         outfit_id = int(row[outfit_id_index])
@@ -57,25 +65,34 @@ with codecs.open(csv_file, "r", encoding="utf-8-sig") as f:
         age = int(row[age_index]) if row[age_index] != "연령미상" else None
         occupation = row[occupation_index] if row[occupation_index] != "정보없음" else None
         tags = ast.literal_eval(row[tags_index])
+        tags_filtered = ast.literal_eval(row[tags_filtered_index])
         brands = (
             ast.literal_eval(row[brands_index]) if row[brands_index] != "[]" else None
         )
 
-        query = 'INSERT INTO outfit (outfit_id, gender, age, img_url, origin_url, reporter, tags, brands, region, occupation, style, "date") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        # 16개
+        query = f'INSERT INTO outfit (outfit_id, img_url, origin_url, \
+        gender, age, reporter, tags, tags_filtered, brands, region, occupation, style, date, season, \
+        cat_base, cat_gpt) \
+                VALUES ({"%s," * 15} %s)'
 
         values = (
             outfit_id,
-            row[gender_index],
-            age,
             row[img_url_index],
             row[origin_url_index],
+            row[gender_index],
+            age,
             row[reporter_index],
             tags,
+            tags_filtered,
             brands,
             row[region_index],
             occupation,
             row[style_index],
             row[date_index],
+            row[season_index],
+            row[cat_base_index],
+            row[cat_gpt_index],
         )
 
         cursor.execute(query, values)
