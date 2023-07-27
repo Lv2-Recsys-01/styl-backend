@@ -24,6 +24,7 @@ def create_session_id_first_visit(
     response: Response,
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
+    bucket: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
     if session_id is None:
@@ -31,20 +32,37 @@ def create_session_id_first_visit(
         response.set_cookie(key="session_id", value=session_id)
         bucket = hash(session_id) % 2
         if bucket == 0:
-            bucket = 'content'
+            bucket = "content"
         else:
-            bucket = 'mab'
-        response.set_cookie(key='bucket', value=bucket)
-        
+            bucket = "mab"
+        response.set_cookie(key="bucket", value=bucket)
         user_session = UserSession(
             session_id=session_id,
             user_id=user_id if user_id else None,
             created_at=datetime.now(timezone("Asia/Seoul")),
-            bucket=bucket
+            bucket=bucket,
         )  # type: ignore
 
         db.add(user_session)
         db.commit()
+    else:
+        if bucket is None:
+            user_session = (
+                db.query(UserSession)
+                .filter(
+                    UserSession.user_id == user_id, UserSession.session_id == session_id
+                )
+                .first()
+            )
+            bucket = hash(session_id) % 2
+            if bucket == 0:
+                bucket = "content"
+            else:
+                bucket = "mab"
+            user_session.bucket = bucket
+            response.set_cookie(key="bucket", value=bucket)
+
+            db.commit()
 
     return session_id
 
