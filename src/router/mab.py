@@ -40,7 +40,7 @@ class MultiArmedBandit(object):
     
     
 def get_mab_model(user_id: int | None,
-                  session_id: str,
+                  session_id: str | None,
                   db: Session):
     # n_unique_tags = 1879 # 이거 하드코딩 안하고 가능??
     n_unique_tags = 200
@@ -56,10 +56,10 @@ def get_mab_model(user_id: int | None,
     # db에 있으면 불러오고
     if user_id is None:
         mab = db.query(MAB).filter(MAB.user_id.is_(None),
-                                         MAB.session_id == session_id).first()
+                                   MAB.session_id == session_id).first()
     else:
         mab = db.query(MAB).filter(MAB.session_id.is_(None),
-                                         MAB.user_id == user_id).first()
+                                   MAB.user_id == user_id).first()
     # 없으면 만들고 db에 추가
     if mab is None:
         if user_id is not None:

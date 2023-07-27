@@ -29,11 +29,18 @@ def create_session_id_first_visit(
     if session_id is None:
         session_id = str(uuid.uuid4())
         response.set_cookie(key="session_id", value=session_id)
-
+        bucket = hash(session_id) % 2
+        if bucket == 0:
+            bucket = 'content'
+        else:
+            bucket = 'mab'
+        response.set_cookie(key='bucket', value=bucket)
+        
         user_session = UserSession(
             session_id=session_id,
             user_id=user_id if user_id else None,
             created_at=datetime.now(timezone("Asia/Seoul")),
+            bucket=bucket
         )  # type: ignore
 
         db.add(user_session)

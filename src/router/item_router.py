@@ -31,8 +31,11 @@ def show_journey_images(
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
+    bucket : Annotated[str | None, Cookie()] = None,
     rec_type: str = 'mab'
 ) -> dict:
+    if bucket:
+        rec_type = bucket
     if rec_type not in ['content', 'mab']:
         rec_type = 'content'
     # 유저가 좋아요 누른 전체 이미지 목록
@@ -98,7 +101,8 @@ def show_journey_images(
                               user_id=user_id,
                               session_id=session_id,
                               outfits_list=outfits_list,
-                              view_type="journey")
+                              view_type="journey",
+                              bucket=bucket)
     
     background_tasks.add_task(update_ab,
                               user_id=user_id,
@@ -192,6 +196,7 @@ def user_like(
     like_type: Annotated[str, Path()],
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
+    bucket : Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
@@ -231,7 +236,8 @@ def user_like(
             outfit_id=outfit_id,
             timestamp=datetime.now(timezone("Asia/Seoul")),
             like_type=like_type,
-            as_login=bool(user_id)            
+            as_login=bool(user_id),
+            bucket=bucket        
         )
         db.add(new_like)
         db.commit()
