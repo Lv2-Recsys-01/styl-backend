@@ -32,6 +32,8 @@ class Outfit(Base):
     origin_url = Column(String)
     reporter = Column(String)
     tags = Column(ARRAY(Integer))
+    # tags_filtered
+    tags_filtered = Column(ARRAY(Integer))
     brands = Column(ARRAY(String))
     region = Column(String)
     occupation = Column(String)
