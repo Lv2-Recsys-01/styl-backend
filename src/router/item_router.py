@@ -112,7 +112,7 @@ def show_journey_images(
                               db=db,
                               outfit_id_list=[outfit.outfit_id for outfit in outfits_list],
                               reward_list = [0 for _ in range(page_size)],
-                              interaction_type = 'view'                          
+                              interaction_type = 'view'                    
                               )
     
     return {
@@ -247,7 +247,7 @@ def user_like(
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-        
+        mab_model = get_mab_model(user_id, session_id, db)
         background_tasks.add_task(update_ab,
                               user_id=user_id,
                               session_id=session_id,
@@ -268,7 +268,7 @@ def user_like(
                               user_id=user_id,
                               session_id=session_id,
                               db=db)
-        
+        mab_model = get_mab_model(user_id, session_id, db)
         background_tasks.add_task(update_ab,
                               user_id=user_id,
                               session_id=session_id,
@@ -289,7 +289,8 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
-    n_samples: int = 3
+    n_samples: int = 3,
+    bucket : Annotated[str | None, Cookie()] = None,
 ):
         
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
@@ -377,8 +378,9 @@ def show_single_image(
                               user_id=user_id,
                               session_id=session_id,
                               outfits_list=similar_outfits_list,
-                              view_type="similar")
-    
+                              view_type="similar",
+                              bucket=bucket)
+    mab_model = get_mab_model(user_id, session_id, db) 
     background_tasks.add_task(update_ab,
                               user_id=user_id,
                               session_id=session_id,
@@ -404,6 +406,7 @@ def user_click(
     user_id: Annotated[int | None, Cookie()] = None,
     session_id: Annotated[str | None, Cookie()] = None,
     db: Session = Depends(get_db),
+    bucket : Annotated[str | None, Cookie()] = None,
 ):
     db_outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if db_outfit is None:
@@ -422,8 +425,18 @@ def user_click(
                               session_id=session_id,
                               outfit_id=outfit_id,
                               click_type=click_type,
+                              bucket=bucket
                             )
-
+    mab_model = get_mab_model(user_id, session_id, db)
+    background_tasks.add_task(update_ab,
+                              user_id=user_id,
+                              session_id=session_id,
+                              db=db,
+                              outfit_id_list=[outfit_id],
+                              reward_list = [1],
+                              interaction_type = 'like_click'
+                              )
+    
     return {"ok": True}
 
 
@@ -436,6 +449,7 @@ def click_share_musinsa(
     session_id: Annotated[str | None, Cookie()] = None,
     user_id: Annotated[int | None, Cookie()] = None,
     db: Session = Depends(get_db),
+    bucket : Annotated[str | None, Cookie()] = None,
 ):
     if click_type not in ["share", "musinsa"]:
         click_type = "unknown"
@@ -449,6 +463,7 @@ def click_share_musinsa(
                               session_id = session_id,
                               user_id = user_id,
                               outfit_id = outfit_id,
-                              click_type=click_type)
+                              click_type=click_type,
+                              bucket=bucket)
 
     return {"ok": True}
