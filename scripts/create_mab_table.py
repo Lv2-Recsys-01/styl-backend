@@ -47,7 +47,7 @@ class MAB(Base):
     beta = Column(ARRAY(Float))
 
     user = relationship('User', back_populates='mab')
-    session = relationship('Session', back_populates='mab')
+    session = relationship('UserSession', back_populates='mab')
 
 
 Base.metadata.create_all(bind=engine)
