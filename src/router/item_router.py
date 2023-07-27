@@ -72,7 +72,7 @@ def show_journey_images(
                                           cat_rec_cnt=page_size*5,
                                           sim_rec_cnt=page_size*5)
         cand_id_list = list(set([outfit.outfit_id for outfit in cand_outfits]))
-        print("cand cnt:", len(cand_id_list))
+        # print("cand cnt:", len(cand_id_list))
         outfits = get_mab_recommendation(mab_model, user_id, session_id, db, cand_id_list, page_size)
 
     # 마지막 페이지인지 확인
@@ -281,11 +281,11 @@ def show_single_image(
     user_id: int = Cookie(None),
     session_id: str = Cookie(None),
     db: Session = Depends(get_db),
-    sim_type: str = 'gpt',
+    sim_type: str = 'kkma',
     n_samples: int = 3
 ):
     if sim_type not in ['gpt', 'kkma']:
-        sim_type = 'gpt'
+        sim_type = 'kkma'
         
     outfit = db.query(Outfit).filter(Outfit.outfit_id == outfit_id).first()
     if outfit is None:
