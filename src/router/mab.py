@@ -103,10 +103,10 @@ async def update_ab(user_id: int | None,
             alpha[tags] += reward
             beta[tags] += (1 - reward)
         elif interaction_type == 'click_like':
-            alpha[tags] += reward * 10
+            alpha[tags] += reward * 5
             beta[tags] += -reward
         elif interaction_type == 'like_cancel':
-            alpha['tags'] += -reward * 10
+            alpha['tags'] += -reward * 5
             beta['tags'] += reward
             
     mab.alpha = alpha.tolist()

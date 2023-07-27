@@ -9,7 +9,7 @@ Modal.setAppElement("#root");
 
 function GoToLoginLessNav() {
     return (
-        <div>
+        <div className='guest'>
             <NavLink to="/journey">로그인 없이 사용</NavLink>
         </div>
     );

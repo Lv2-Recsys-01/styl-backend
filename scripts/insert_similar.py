@@ -12,8 +12,7 @@ user = "postgres"
 password = "password"
 
 
-# csv_file = os.path.join(os.path.dirname(__file__), "../top3_22-23.csv")
-csv_file = os.path.join(os.path.dirname(__file__), "../similar.csv") # kkma, gpt 두 종류 similar
+csv_file = os.path.join(os.path.dirname(__file__), "../similar_filter.csv")
 
 conn = psycopg2.connect(
     host=host,
@@ -24,13 +23,14 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-# with open(csv_file, "r") as f:
-#     reader = csv.DictReader(f)
-#     for row in reader:
-#         outfit_id = int(row["id"])
-#         similar_outfits = [
-#             int(outfit.strip()) for outfit in row["top3"].strip("[]").split(",")
-#         ]
+with open(csv_file, "r") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        outfit_id = int(row["outfit_id"])
+        similar_outfits = [
+            int(outfit.strip())
+            for outfit in row["similar_outfits"].strip("[]").split(",")
+        ]
 
 #         # outfit_id(FK)가 "outfit" 테이블에 존재하는지 확인
 #         check_query = 'SELECT COUNT(*) FROM "outfit" WHERE outfit_id = %s'
