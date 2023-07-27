@@ -22,7 +22,7 @@ const lightColor = {
     agategray: "#b4b1a1",
     palekhaki: "#bfb092",
     paledogwood: "#edcdc2",
-    pleinair: "#bfcad6",
+    pleinair: "rgba(191, 202, 214, 0.9)",
     steelblue: "#36618C",
     background: "rgba(256, 256, 256, 0.9)",
     headerbackground: "rgba(256, 256, 256, 0)",

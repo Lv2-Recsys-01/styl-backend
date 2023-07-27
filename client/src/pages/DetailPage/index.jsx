@@ -181,7 +181,7 @@ function DetailPage() {
                     <SimilarItems similarOutfitsList={similarOutfitsList} goToDetailPage={goToDetailPage} />
                 </Footer>
                 <Information text=     {     <>
-                    <BulbFilled className="popnotice"/>유사한 코디를 클릭하면, 자세히 볼 수 있어요<BulbFilled className="popnotice"/>
+                    <p><BulbFilled className="popnotice"/>유사한 코디를 클릭하면, 자세히 볼 수 있어요<BulbFilled className="popnotice"/></p>
                  </>}
                  position="special-position"
                 />
