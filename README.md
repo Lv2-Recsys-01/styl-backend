@@ -1,346 +1,107 @@
-# styl-backend
-
-```bash
-conda create -n backend python=3.10.4 -y
-conda activate backend
-pip install -r requirements.txt
-```
-
-## docker
-
-```bash
-
-# single container
-docker build --platform=linux/amd64 -t stylback .
-docker run -it -p 8000:8000 stylback
-
-# docker compose
-docker compose up
-docker compose build --no-cache # 패키지 설치했는데도 인식 하지 못하면.
-docker compose restart client # client만 재시작(nginx 설정을 자주 바꾸게 됨.)
+<a name="readme-top"></a>
 
-# 프로덕션 빌드
-docker compose -f docker-compose.prod.yaml up -d
-docker compose -f docker-compose.prod.yaml restart client
-docker compose -f docker-compose.prod.yaml build --no-cache
-```
-
-## SSL 인증서 발급
+<div align="center">  
 
-```bash
-# /var/lib/letsencrypt는 acme 인증의 root. 인증서 발급을 위한 임시 파일이 저장되는 공간 (nginx.conf 참조)
-# /etc/letsencrypt는 ssl 인증서, 키 등이 인증서가 저장되는 공간.
-docker run -it --rm --name certbot \
-            -v "/etc/letsencrypt:/etc/letsencrypt" \
-            -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
-            certbot/certbot \
-            certonly \
-            --webroot \
-            -w /var/lib/letsencrypt \
-            -d stylesjourney.com \
-            --agree-tos
-```
+![header](https://capsule-render.vercel.app/api?type=soft&color=0:AAE1FF,100:67A3EF&text=Style%20Bible&height=150&fontSize=80&fontColor=1269AF)
 
-# GET /healthz
+---
+  <br>
+  :sunglasses:곽동호 T5013 :moneybag:권수훈 T5017 :smile_cat:박상우 T5081
+  <br><br>
+  :smile:이민호 T5140 :stuck_out_tongue_winking_eye:이한정 T5166 :relaxed:이준원 T5237
+  <br><br><br>
+  
+  <p align="center"><strong>Skills</strong>
+    <br />
 
-목적 : sys. health check.
+---
+<br>
 
-[request]
+<p align="center">
+    <img src = "https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="react badge"/>
+    <img src = "https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt ="fastapi badge"/>
+    <img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" alt='aws badge'/>
+    <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt='postgres badge'/>
+    <br>
+    <img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" alt="pandas badge"/>
+    <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white" alt="numpy badge"/>
+    <img src="https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="scikitlearn badge">
+    <img src="https://img.shields.io/badge/apache%20airflow-%23017CEE.svg?&style=for-the-badge&logo=apache%20airflow&logoColor=white" alt="airflow badge"/>
+</p>
+  
+<br><br>
 
-[response(json)]
-
--   정상 response
-
-```json
-{
-    "ok": true
-}
-```
-
-# POST /login
-
-[목적 및 기능]
-
--   목적 : 로그인
--   guest인 경우에만 로그인 가능
--   user_name, user_pwd 자리수 체크, user_pwd 맞는지 검증
--   로그인 성공 시
-    -   비회원 상태에서 좋아요 목록 병합 (DB의 Like 테이블 수정)
-    -   현재 비회원 세션 만료 시간 표시 (DB의 UserSession 테이블 수정)
-    -   새 세션 id 생성, DB의 UserSession 테이블에 추가
-    -   cookie의 session_id, user_id, user_name 변경
-
-[request]
-
--   body params
-    -   user_name
-    -   user_pwd
--   cookie params
-    -   user_id
-    -   session_id
-
-[response(json)]
-
--   user_id가 guest_user_id(=1)이 아니면 -> 이미 로그인 된 상태
-    -   raise HTTPException(status_code=500, detail="로그아웃을 먼저 하십시오.")
--   user_name 4자리 미만 or 20자리 초과
-    -   raise HTTPException(status_code=500, detail="아이디는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_pwd가 4자리 미만 or 20자리 초과
-    -   raise HTTPException(status_code=500, detail="비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_name이 DB에 존재하지 않거나 user_pwd가 일치하지 않을때
-    -   raise HTTPException(status_code=500, detail="존재하지 않는 아이디이거나 잘못된 비밀번호입니다.")
--   정상 response
-
-```json
-{
-    "ok": true,
-    "user_name": user_name
-}
-```
-
-# POST /logout
-
-[목적 및 기능]
+<h1>AI 코디 추천 서비스</h1>
+<img src = ./docs/journey-logo.png width =600 height=300 />
+</div>
 
--   목적 : 로그아웃
--   DB의 UserSession 테이블 수정
-    -   expired_at 업데이트
--   쿠키의 user_id, session_id, user_name 삭제
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#프로젝트-개요">프로젝트 개요</a></li>
+    <li><a href="#시연-영상">시연 영상</a></li>
+    <li><a href="#아키텍처">아키텍처</a></li>
+    <li><a href="#추천-로직">추천 로직</a></li>
+    <li><a href="#프로젝트-구조">프로젝트 구조</a></li>
+    <li><a href="#타임라인">로드맵</a></li>
+  </ol>
+</details>
+<br>
 
-[request]
+<!-- 프로젝트 개요 -->
+## 프로젝트 개요
 
--   cookie params
-    -   user_id
-    -   session_id
-
-[response(json)]
+<br>
 
--   정상 response
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-```json
-{
-    "ok": true
-}
-```
+## 시연 영상
 
-# POST /singup
-
-[목적 및 기능]
+<br>
 
--   목적 : 회원가입
--   user_name, user_pwd 자리수 확인
--   user_pwd, confirm_pwd 같은지 확인
--   DB의 User 테이블에 존재하는 user_name인지 확인
--   검증 통과하면 DB의 User 테이블에 추가
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-[request]
+## 아키텍처
 
--   body params
-    -   user_name
-    -   user_pwd
-    -   confirm_pwd
+<br>
 
-[response(json)]
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
--   user_name 4자리 미만 or 20자리 초과
-    -   raise HTTPException(status_code=500, detail="아이디는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_pwd가 4자리 미만 or 20자리 초과
-    -   raise HTTPException(status_code=500, detail="비밀번호는 4자리 이상 20자리 이하의 숫자 or 영문자")
--   user_pwd와 confirm_pwd가 같지 않으면
-    -   raise HTTPException(status_code=500, detail="비밀번호가 일치하지 않습니다")
--   user_name이 이미 DB에 존재
-    -   raise HTTPException(status_code=500, detail="이미 존재하는 아이디입니다")
--   정상 response
+## 추천 로직
 
-```json
-{
-    "ok": true,
-    "user_name": user_name
-}
-```
+<br>
 
-# GET /journey
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-[목적 및 기능]
 
--   유저에게 코디 이미지를 보여줌
--   한 페이지당 offset부터 pagesize 개수만큼 보여줌
-    -   /journey?pagesize=10&offset=0 (0번째 ~ 10번째)
-    -   /journey?pagesize=10&offset=10 (10번째 ~ 20번째)
--   DB의 Outfit 테이블에서 가져올 이미지 목록 불러옴
-    -   이 개수가 pagesize보다 작으면 is_last = True
--   유저가 좋아요 누른 outfit_id 집합 생성
--   각 outfit마다 유저가 좋아요 눌렀는지 확인
--   이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 outfits_list로 목록 생성
+## 프로젝트 구조
 
-[request]
+    📦STYL
+    ┣ 📂client
+    ┣ 📂docs
+    ┣ 📂logging
+    ┣ 📂scripts
+    ┣ 📂src
+    ┃ ┣ 📂router
+    ┃ ┗ 📜backend
+    ┣ 📜Dockerfile
+    ┣ 📜nginx.conf
+    ┗ 📜README.md
 
--   query params
-    -   pagesize
-    -   offset
--   cookie params
-    -   user_id
-    -   session_id
+- [styl-frontend](https://github.com/Lv2-Recsys-01/styl-frontend)
 
-[response]
-
--   정상 response
+- [styl-backend](/docs/README.md)
 
-```json
-{
-  "ok": true,
-  "outfits_list": outfits_list,
-  "pagesize": pagesize,
-  "offset": offset,
-  "is_last": is_last,
-  "total_page_count": total_page_count
-}
-```
-
-# POST /journey/{outfit_id}/click
+- [styl-ml](https://github.com/Lv2-Recsys-01/styl-ml)
 
-[목적 및 기능]
-
--   목적 : 유저가 이미지를 클릭한 경우 DB에 반영
--   outfit_id가 존재하지 않으면 에러 반환
--   DB의 Click 테이블에 클릭 로그 저장
-
-[request]
-
--   query params
-    -   outfit_id
--   cookie params
-    -   user_id
-    -   session_id
-
-[response(json)]
-
--   해당 outfit_id의 이미지가 존재하지 않을 때
-    -   raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
--   정상 response
-
-```json
-{
-    "ok": true
-}
-```
-
-# POST /journey/{outfit_id}/like
-
-[목적 및 기능]
-
--   목적 : 유저가 좋아요를 누르거나 취소한 경우 DB에 반영
--   outfit_id가 존재하지 않으면 에러 반환
--   이전에 유저가 좋아요 누른적 있는지 DB의 Like 테이블에서 확인
--   없으면 DB에 추가
--   있으면 is_deleted 바꿔줌(True면 False로, False면 True로)
-
-[request]
-
--   query params
-    -   outfit_id
--   cookie params
-    -   user_id
-    -   session_id
-
-[response(json)]
-
--   성공 여부와 관련 없이 프론트에서는 optimistic하게 하트를 채워야 함.
--   해당 outfit_id의 이미지가 존재하지 않을 때
-    -   raise HTTPException(status_code=500, detail="해당 이미지는 존재하지 않습니다.")
--   정상 response
-
-```json
-{
-    "ok": true
-}
-```
-
-# GET /collection
-
-[목적 및 기능]
-
--   목적 : 유저가 좋아요 한 코디 이미지 가져옴
--   한 페이지당 offset부터 pagesize 개수만큼 보여줌
-    -   /collection?pagesize=10&offset=0 (0번째 ~ 10번째)
-    -   /collection?pagesize=10&offset=10 (10번째 ~ 20번째)
--   DB의 Like 테이블에서 outfit_id 목록 가져옴
--   목록 길이가 pagesize보다 작으면 is_last = True
--   좋아요 목록이 없으면 에러 반환
--   이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부(모두 True) 합쳐서 outfits_list로 목록 생성
-
-[request]
-
--   query params
-    -   pagesize
-    -   offset
--   cookie params
-    -   user_id
-    -   session_id
-
-[response(json)]
-
--   좋아요한 이미지가 없을때
-    -   raise HTTPException(status_code=500, detail="좋아요한 사진이 없습니다.")
--   정상 response
-
-```json
-{
-  "ok": True,
-  "outfits_list": outfits_list,
-  "pagesize": pagesize,
-  "offset": offset,
-  "is_last": is_last
-}
-```
-
-# GET /journey/{outfit_id}
-
-[목적 및 기능]
-
--   목적 : 이미지 하나의 상세 정보와 유사 이미지를 가져옴
--   해당 outfit_id의 이미지가 없으면 에러 반환
--   DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 outfit 생성
--   DB의 Similar 테이블에서 유사 이미지의 outfit_id 목록 가져옴
-    -   해당 목록에서 outfit_id의 이미지가 없으면 에러 반환
--   개별 유사 이미지마다 DB의 Outfit 테이블에서 가져온 메타정보 + 좋아요 여부 합쳐서 similar_outfits_list 목록 생성
-
-[request]
-
--   query params
-    -   outfit_id
--   cookie params
-    -   user_id
-    -   sesseion_id
-
-[response(json)]
-
--   해당 outfit_id가 존재하지 않을때
-    -   raise HTTPException(status_code=500, detail="Outfit not found")
--   해당 outfit과 유사한 outfit이 존재하지 않을때
-    -   raise HTTPException(status_code=500, detail="Similar outfits not found")
--   유사 이미지의 outfit_id가 존재하지 않을 때
-    -   raise HTTPException(status_code=500, detail="Id for this similar outfit not found")
--   정상 response
-
-```json
-{
-  "ok": true,
-  "outfit": outfit_out,
-  "similar_outfits_list": similar_outfits_list
-}
-
-```
-
-# 기타
-
--   auth 체크는 미들웨어로 작성해서 request 객체에 append해서 넘겨주길 바람
--   모든 요청의 query param에 유저 식별자 넣기
--   outfit id는 코디의 식별자를 의미함
--   timestamp는 서버에서 찍어주세요
-
-# 미들웨어를 거친 후의 로직
-
--   미들웨어에서 로그인 여부 및 로그인했다면 어떤 유저인지 확인 -> request.user dict에 키, 값 추가
--   해당 유저의 db pk를 통해서 sqlalchemy를 통해서 join 등을 통해 여러 테이블을 연산하여 결과값을 만들어냄
--   response로 보내줌.
+- [styl-airflow](https://github.com/Lv2-Recsys-01/styl-airflow)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 타임라인
+
+<img src = "./docs/timeline.png" width=500/>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<br>
