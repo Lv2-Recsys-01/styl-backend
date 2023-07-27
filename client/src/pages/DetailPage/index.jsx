@@ -1,12 +1,13 @@
 import { Layout, Space } from "antd";
 import "./index.css";
-import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined, BulbFilled} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
 import { useEffect, useState } from "react";
 import { styleAxios } from "../../utils";
 import NotFoundPage from "../NotFoundPage";
+import Information from "../../components/information/information";
 
 const { Header, Footer, Content } = Layout;
 
@@ -179,6 +180,11 @@ function DetailPage() {
                 <Footer className="detail-footer">
                     <SimilarItems similarOutfitsList={similarOutfitsList} goToDetailPage={goToDetailPage} />
                 </Footer>
+                <Information text=     {     <>
+                    <BulbFilled className="popnotice"/>유사한 코디를 클릭하면, 자세히 볼 수 있어요<BulbFilled className="popnotice"/>
+                 </>}
+                 position="special-position"
+                />
             </Layout>
         </Space>
     );
