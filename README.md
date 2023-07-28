@@ -53,6 +53,8 @@
 <!-- 프로젝트 개요 -->
 ## 프로젝트 개요
 
+### 문제 정의
+
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -64,8 +66,15 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 아키텍처
-
 <br>
+
+### 데이터
+
+### 프론트
+
+### 백
+
+<img src = "./docs/architecture.png" width=500/>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -73,8 +82,14 @@
 
 <br>
 
+<img src = "./docs/model1.png" width=500/>
+<img src = "./docs/model2.png" width=500/>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## 유저 로그 분석
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 프로젝트 구조
 
@@ -105,4 +120,9 @@
 <img src = "./docs/timeline.png" width=500/>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 팀원소개
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <br>
