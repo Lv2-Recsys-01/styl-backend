@@ -2,14 +2,13 @@
 
 <div align="center">  
 
-![header](https://capsule-render.vercel.app/api?type=soft&color=0:AAE1FF,100:67A3EF&text=Style%20Bible&height=150&fontSize=80&fontColor=1269AF)
+![header](https://capsule-render.vercel.app/api?&height=150&type=transparent&text=Journey&fontSize=120&fontColor=be3455&fontAlign=50&desc=개인화%20코디%20추천%20서비스&descAlign=64&descAlignY=95)
 
----
-  <br>
-  :sunglasses:곽동호 T5013 :moneybag:권수훈 T5017 :smile_cat:박상우 T5081
-  <br><br>
-  :smile:이민호 T5140 :stuck_out_tongue_winking_eye:이한정 T5166 :relaxed:이준원 T5237
-  <br><br><br>
+![header](https://capsule-render.vercel.app/api?&height=70&type=transparent&text=-%20Team%20Style%20Bible%20-&fontSize=30&fontColor=36618C&fontAlign=50)
+
+<img src = ./docs/journey-logo.png width =400 height=200 />
+
+<br>
   
   <p align="center"><strong>Skills</strong>
     <br />
@@ -31,9 +30,6 @@
 </p>
   
 <br><br>
-
-<h1>AI 코디 추천 서비스</h1>
-<img src = ./docs/journey-logo.png width =600 height=300 />
 </div>
 
 <!-- TABLE OF CONTENTS -->
@@ -61,11 +57,13 @@
 
 ## 시연 영상
 
+<img src = './docs/demonstration.gif' width= 500 alt= 'vedio'/>
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 아키텍처
+<img src = "./docs/architecture.png" width=500/>
 <br>
 
 ### 데이터
@@ -74,7 +72,7 @@
 
 ### 백
 
-<img src = "./docs/architecture.png" width=500/>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -122,7 +120,11 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 팀원소개
-
+  <br>
+  :sunglasses:곽동호 T5013 :moneybag:권수훈 T5017 :smile_cat:박상우 T5081
+  <br><br>
+  :smile:이민호 T5140 :stuck_out_tongue_winking_eye:이한정 T5166 :relaxed:이준원 T5237
+  <br>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <br>
