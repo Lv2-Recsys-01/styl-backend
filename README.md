@@ -40,6 +40,7 @@
     <li><a href="#시연-영상">시연 영상</a></li>
     <li><a href="#아키텍처">아키텍처</a></li>
     <li><a href="#추천-로직">추천 로직</a></li>
+    <li><a href="#유저-로그-분석">유저 로그 분석</a></li>
     <li><a href="#프로젝트-구조">프로젝트 구조</a></li>
     <li><a href="#타임라인">로드맵</a></li>
   </ol>
@@ -50,7 +51,7 @@
 ## 프로젝트 개요
 ‘Journey’는 수많은 사진 속에서 자신만의 패션을 찾아가는 AI 코디 추천 서비스입니다.
 
-[서비스 링크](https://stylesjourney.com)
+[서비스 링크](https://stylesjourney.com) (23년 8월 중순까지 서비스 운영 예정입니다.)
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -64,23 +65,43 @@
 
 ## 아키텍처
 <img src = "./docs/architecture.png" width=500/>
+
+### Front End
+- React
+
+### Back End
+- FastAPI
+
+### Data
+
+- Entity Relationship Diagram
+
+<img src = "./docs/ERD.png" width =500 />
+
 <br>
 
-### 데이터
+- 무신사 스트릿 스냅 이미지 크롤링
+- 선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도
 
-### 프론트
-
-### 백
-
-
+### Ops
+<img src = "./docs/ops.png" width =500 />
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 추천 로직
 
-<br>
+### 유사한 코디 추천
+<img src = "./docs/similar.png" width=500/>
+
+
+### 개인화 코디 추천
+
+1. MAB
 
 <img src = "./docs/model1.png" width=500/>
+
+2. Contents based 
+
 <img src = "./docs/model2.png" width=500/>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -124,11 +145,20 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 팀원소개
-  <br>
-  :sunglasses:곽동호 T5013 :moneybag:권수훈 T5017 :smile_cat:박상우 T5081
-  <br><br>
-  :smile:이민호 T5140 :stuck_out_tongue_winking_eye:이한정 T5166 :relaxed:이준원 T5237
-  <br>
+
+:sunglasses:[곽동호](https://github.com/CIOI): Data Engineering, Modeling
+
+:moneybag:[권수훈](https://github.com/DarrenKwonDev): PM, BE, FE, Ops
+
+:smile_cat:[박상우](https://github.com/sangwu99): BE, Modeling
+
+:smile:[이민호](https://github.com/RonaldFisher9999): Data Engineering, BE, Modeling, AB Test
+
+:relaxed:[이준원](https://github.com/junwon-0313?tab=repositories): FE, Modeling
+
+:stuck_out_tongue_winking_eye:[이한정](https://github.com/leehanjeong): Data Engineering, BE, Ops
+
+<br>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <br>
