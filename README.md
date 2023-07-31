@@ -8,7 +8,7 @@
 
 <img src = ./docs/journey-logo.png width =400 height=200 />
 
-<br>
+<br><br>
   
   <p align="center"><strong>Skills</strong>
     <br />
@@ -48,9 +48,9 @@
 
 <!-- 프로젝트 개요 -->
 ## 프로젝트 개요
+‘Journey’는 수많은 사진 속에서 자신만의 패션을 찾아가는 AI 코디 추천 서비스입니다.
 
-### 문제 정의
-
+[서비스 링크](https://stylesjourney.com)
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -102,6 +102,10 @@
     ┣ 📜Dockerfile
     ┣ 📜nginx.conf
     ┗ 📜README.md
+
+  총 4개의 repo를 만들어 작업하였고 backend repo에 통합하여 서비스를 배포하였습니다.
+
+  docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축하여 개발을 진행했습니다.
 
 - [styl-frontend](https://github.com/Lv2-Recsys-01/styl-frontend)
 
