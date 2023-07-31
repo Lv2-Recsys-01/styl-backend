@@ -137,6 +137,7 @@ def ping_pong():
     response = urllib.request.urlopen(url)
     data = response.read()
 
+    # FIXME: do not show public ip in production
     return {
         "ping": f"pong!, IS_PROD: {IS_PROD}, public ip is {str(data.strip(), 'utf-8')}"
     }
