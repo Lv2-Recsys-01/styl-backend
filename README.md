@@ -89,29 +89,26 @@
 
 ## 추천 로직
 
-### 유사한 코디 추천 로직 (Journey)
+### 유사한 코디 추천 로직 (Similar Style)
 
+<br>
 <div align="center">
 <img src = "./docs/similar.png" width=800/>
 </div>
 
-### 개인화 코디 추천 로직 (Similar Style)
+### 개인화 코디 추천 로직 (Journey)
 
 <br>
-
-### 1. MAB
-
 <div align="center">
 <img src = "./docs/model1.png" width=800/>
 </div>
-
-<br>
-
-### 2. Contents based
-
+<br> 
 <div align="center">
 <img src = "./docs/model2.png" width=800/>
 </div>
+
+1. Contents based
+2. MAB + Content-based 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
