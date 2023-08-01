@@ -6,7 +6,7 @@
 
 ![header](https://capsule-render.vercel.app/api?&height=70&type=transparent&text=-%20Team%20Style%20Bible%20-&fontSize=30&fontColor=36618C&fontAlign=50)
 
-<img src = ./docs/journey-logo.png width =400 height=200 />
+<img src = ./docs/journey-logo.png width =1000/>
 
 <br><br>
 
@@ -60,62 +60,46 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 시연 영상
-
-<div align="center">
-<img src = './docs/demonstration.gif' width= 1000 alt= 'vedio'/>
-</div>
-<br>
+<p align="center">
+  <a href="https://youtu.be/uY6cEJMjPDs target="_blank">
+    <img src="https://img.shields.io/badge/YouTube-team_video-red?&style=for-the-badge&logo=youtube" />
+  </a>
+</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 아키텍처
-
+### 프로젝트 아키텍처
 <div align="center">
 <img src = "./docs/architecture.png" width=800/>
 </div>
 
-### Front End
+### Airflow Pipeline
+<div align="center">
+<img src = "./docs/ops.png" width =800 />
+</div>
 
--   React
-
-### Back End
-
--   FastAPI
-
-### Data
-
-**ERD**
-
+### ERD
 <div align="center">
 <img src = "./docs/ERD.png" width =1000 />
 </div>
 <br>
 
--   무신사 스트릿 스냅 이미지 크롤링
--   선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도
-
-<br>
-
-**Airflow Pipeline**
-
-<div align="center">
-<img src = "./docs/ops.png" width =800 />
-</div>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 추천 로직
 
-### 유사한 코디 추천 (Journey)
+### 유사한 코디 추천 로직 (Journey)
 
 <div align="center">
 <img src = "./docs/similar.png" width=800/>
 </div>
 
-### 개인화 코디 추천 (Similar Style)
+### 개인화 코디 추천 로직 (Similar Style)
 
 <br>
 
-**1. MAB**
+### 1. MAB
 
 <div align="center">
 <img src = "./docs/model1.png" width=800/>
@@ -123,7 +107,7 @@
 
 <br>
 
-**2. Contents based**
+### 2. Contents based
 
 <div align="center">
 <img src = "./docs/model2.png" width=800/>
@@ -172,7 +156,7 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 <td align="center">
     <img width="100%" src="./docs/동호.png"/>
     <div><a href="https://github.com/CIOI">곽동호</a></div>
-    <div>Data Engineering, Modeling</div>
+    <div>Data, Modeling</div>
 </td>
 <td align="center">
         <img width="100%" src="./docs/수훈.png"/>
@@ -189,7 +173,7 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 <td align="center">
         <img width="100%" src="./docs/민호.png"/>
         <div><a href="https://github.com/RonaldFisher9999">이민호</a></div>
-        <div>Data Engineering, BE, Modeling, AB Test</div>
+        <div>BE, BA, Modeling, AB Test</div>
     </td>
 <td align="center">
         <img width="100%" src="./docs/준원.png"/>
@@ -199,7 +183,7 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 <td align="center">
         <img width="100%" src="./docs/한정.png"/>
         <div><a href="https://github.com/leehanjeong">이한정</a></div>
-        <div>Data Engineering, BE, Ops</div>
+        <div>DE, BE, Ops</div>
     </td>
 </tr>
 </tbody></table>
