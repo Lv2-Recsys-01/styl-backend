@@ -120,7 +120,7 @@ def show_journey_images(
         db=db,
         outfit_id_list=[outfit.outfit_id for outfit in outfits_list],
         reward_list=[0 for _ in range(page_size)],
-        interaction_type="view",
+        interaction_type="view_journey",
     )
 
     return {
@@ -261,7 +261,7 @@ def user_like(
             db=db,
             outfit_id_list=[outfit_id],
             reward_list=[1],
-            interaction_type="click_like",
+            interaction_type="like",
         )
 
         return {"ok": True}
@@ -282,7 +282,7 @@ def user_like(
             db=db,
             outfit_id_list=[outfit_id],
             reward_list=[1],
-            interaction_type="like_cancel" if already_like.is_deleted else "like_click",
+            interaction_type="like_cancel" if already_like.is_deleted else "like"
         )
 
         return {"ok": True}
@@ -396,7 +396,7 @@ def show_single_image(
         db=db,
         outfit_id_list=[outfit.outfit_id for outfit in similar_outfits_list],
         reward_list=[0 for _ in range(n_samples)],
-        interaction_type="view",
+        interaction_type="view_similar",
     )
 
     return {
@@ -444,7 +444,7 @@ def user_click(
         db=db,
         outfit_id_list=[outfit_id],
         reward_list=[1],
-        interaction_type="like_click",
+        interaction_type="click_journey" if click_type=="journey" else "click_similar",
     )
 
     return {"ok": True}

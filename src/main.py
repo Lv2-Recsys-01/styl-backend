@@ -32,7 +32,7 @@ def create_session_id_first_visit(
         response.set_cookie(key="session_id", value=session_id)
         bucket = hash(session_id) % 2
         if bucket == 0:
-            bucket = "content"
+            bucket = "mab"
         else:
             bucket = "mab"
         response.set_cookie(key="bucket", value=bucket)
