@@ -1,6 +1,6 @@
 <a name="readme-top"></a>
 
-<div align="center">  
+<div align="center">
 
 ![header](https://capsule-render.vercel.app/api?&height=150&type=transparent&text=Journey&fontSize=120&fontColor=be3455&fontAlign=50&desc=개인화%20코디%20추천%20서비스&descAlign=64&descAlignY=95)
 
@@ -9,11 +9,12 @@
 <img src = ./docs/journey-logo.png width =400 height=200 />
 
 <br><br>
-  
+
   <p align="center"><strong>Skills</strong>
     <br />
 
 ---
+
 <br>
 
 <p align="center">
@@ -28,7 +29,7 @@
     <img src="https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="scikitlearn badge">
     <img src="https://img.shields.io/badge/apache%20airflow-%23017CEE.svg?&style=for-the-badge&logo=apache%20airflow&logoColor=white" alt="airflow badge"/>
 </p>
-  
+
 <br><br>
 </div>
 
@@ -48,7 +49,9 @@
 <br>
 
 <!-- 프로젝트 개요 -->
+
 ## 프로젝트 개요
+
 ‘Journey’는 수많은 사진 속에서 자신만의 패션을 찾아가는 AI 코디 추천 서비스입니다.
 
 [서비스 링크](https://stylesjourney.com) (23년 8월 중순까지 서비스 운영 예정입니다.)
@@ -57,6 +60,7 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 시연 영상
+
 <div align="center">
 <img src = './docs/demonstration.gif' width= 1000 alt= 'vedio'/>
 </div>
@@ -65,29 +69,33 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 아키텍처
+
 <div align="center">
 <img src = "./docs/architecture.png" width=800/>
 </div>
 
 ### Front End
-- React
+
+-   React
 
 ### Back End
-- FastAPI
+
+-   FastAPI
 
 ### Data
 
 **ERD**
+
 <div align="center">
 <img src = "./docs/ERD.png" width =1000 />
 </div>
 <br>
 
-- 무신사 스트릿 스냅 이미지 크롤링
-- 선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도  
-
+-   무신사 스트릿 스냅 이미지 크롤링
+-   선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도
 
 **Airflow Pipeline**
+
 <div align="center">
 <img src = "./docs/ops.png" width =800 />
 </div>
@@ -96,6 +104,7 @@
 ## 추천 로직
 
 ### 유사한 코디 추천 (Journey)
+
 <div align="center">
 <img src = "./docs/similar.png" width=800/>
 </div>
@@ -108,7 +117,7 @@
 <img src = "./docs/model1.png" width=800/>
 </div>
 
-**2. Contents based** 
+**2. Contents based**
 
 <div align="center">
 <img src = "./docs/model2.png" width=800/>
@@ -134,17 +143,17 @@
     ┣ 📜nginx.conf
     ┗ 📜README.md
 
-  총 4개의 repo를 만들어 작업하였고 backend repo에 통합하여 서비스를 배포하였습니다.
+총 4개의 repo를 만들어 작업하였고 backend repo에 통합하여 서비스를 배포하였습니다.
 
-  docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축하여 개발을 진행했습니다.
+docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축하여 개발을 진행했습니다.
 
-- [styl-frontend](https://github.com/Lv2-Recsys-01/styl-frontend)
+-   [styl-frontend](https://github.com/Lv2-Recsys-01/styl-frontend)
 
-- [styl-backend](/docs/README.md)
+-   [styl-backend](/docs/README.md)
 
-- [styl-ml](https://github.com/Lv2-Recsys-01/styl-ml)
+-   [styl-ml](https://github.com/Lv2-Recsys-01/styl-ml)
 
-- [styl-airflow](https://github.com/Lv2-Recsys-01/styl-airflow)
+-   [styl-airflow](https://github.com/Lv2-Recsys-01/styl-airflow)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
