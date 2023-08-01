@@ -41,9 +41,9 @@
     <li><a href="#시연-영상">시연 영상</a></li>
     <li><a href="#아키텍처">아키텍처</a></li>
     <li><a href="#추천-로직">추천 로직</a></li>
-    <li><a href="#유저-로그-분석">유저 로그 분석</a></li>
     <li><a href="#프로젝트-구조">프로젝트 구조</a></li>
-    <li><a href="#타임라인">로드맵</a></li>
+    <li><a href="#랩업리포트"></a>랩업리포트</li>
+    <li><a href="#팀원소개">팀원소개</a></li>
   </ol>
 </details>
 <br>
@@ -125,10 +125,6 @@
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 유저 로그 분석
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## 프로젝트 구조
 
     📦STYL
@@ -157,11 +153,9 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 타임라인
+## 랩업리포트
 
-<div align="center">
-<img src = "./docs/timeline.png" width=1000/>
-</div>
+[Wrap Up Report](./docs/wrapup.pdf)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
