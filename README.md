@@ -146,18 +146,41 @@
 
 ## 팀원소개
 
-:sunglasses:[곽동호](https://github.com/CIOI): Data Engineering, Modeling
-
-:moneybag:[권수훈](https://github.com/DarrenKwonDev): PM, BE, FE, Ops
-
-:smile_cat:[박상우](https://github.com/sangwu99): BE, Modeling
-
-:smile:[이민호](https://github.com/RonaldFisher9999): Data Engineering, BE, Modeling, AB Test
-
-:relaxed:[이준원](https://github.com/junwon-0313?tab=repositories): FE, Modeling
-
-:stuck_out_tongue_winking_eye:[이한정](https://github.com/leehanjeong): Data Engineering, BE, Ops
-
+<table><tbody><tr>
+<td align="center">
+    <img width="100%" src="./docs/동호.png"/>
+    <div><a href="https://github.com/CIOI">곽동호</a></div>
+    <div>Data Engineering, Modeling</div>
+</td>
+<td align="center">
+        <img width="100%" src="./docs/수훈.png"/>
+        <div><a href="https://github.com/DarrenKwonDev">권수훈</a></div>
+        <div>PM, BE, FE, Ops</div>
+    </td>
+<td align="center">
+        <img width="100%" src="./docs/상우.png"/>
+        <div><a href="https://github.com/sangwu99">박상우</a></div>
+        <div>BE, Modeling</div>
+    </td>
+</tr>
+<tr>
+<td align="center">
+        <img width="100%" src="./docs/민호.png"/>
+        <div><a href="https://github.com/RonaldFisher9999">이민호</a></div>
+        <div>Data Engineering, BE, Modeling, AB Test</div>
+    </td>
+<td align="center">
+        <img width="100%" src="./docs/준원.png"/>
+        <div><a href="https://github.com/junwon-0313">이준원</a></div>
+        <div>FE, BA, Modeling</div>
+    </td>
+<td align="center">
+        <img width="100%" src="./docs/한정.png"/>
+        <div><a href="https://github.com/leehanjeong">이한정</a></div>
+        <div>Data Engineering, BE, Ops</div>
+    </td>
+</tr>
+</tbody></table>
 <br>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
