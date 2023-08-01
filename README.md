@@ -43,7 +43,7 @@
     <li><a href="#추천-로직">추천 로직</a></li>
     <li><a href="#프로젝트-구조">프로젝트 구조</a></li>
     <li><a href="#랩업-리포트-및-발표-영상">랩업 리포트 및 발표 영상</a></li>
-    <li><a href="#팀원소개">팀원소개</a></li>
+    <li><a href="#팀원-소개">팀원 소개</a></li>
   </ol>
 </details>
 <br>
@@ -160,12 +160,13 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 랩업 리포트 및 발표 영상
-[랩업 리포트](./docs/wrapup.pdf)
-[발표 영상](https://www.youtube.com/watch?v=M98BRk6CqNE&t=152s)
+- [랩업 리포트](./docs/wrapup.pdf)
+
+- [발표 영상](https://www.youtube.com/watch?v=M98BRk6CqNE&t=152s)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 팀원소개
+## 팀원 소개
 
 <table><tbody><tr>
 <td align="center">
