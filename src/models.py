@@ -39,7 +39,7 @@ class Outfit(Base):
     occupation = Column(String)
     style = Column(String)
     date = Column(DateTime, nullable=False)
-    season = Column(String)
+    # season = Column(String)
     # for category
     cat_base = Column(Integer)
     cat_gpt = Column(Integer)
