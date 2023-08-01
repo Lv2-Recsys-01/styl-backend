@@ -79,26 +79,43 @@ def login(
             like.user_id = login_user.user_id
             
     # 알파 베타 추가
-    guest_mab = (
-        db.query(MAB)
-        .filter(MAB.user_id.is_(None), MAB.session_id == session_id)
-        .first()
-    )
-    if guest_mab:
-        guest_alpha = guest_mab.alpha
-        guest_beta = guest_mab.beta
-    else:
+    # print("guest")
+    if session_id is None:
+        # print("no guest")
         guest_alpha = [0] * 200
         guest_beta = [0] * 200
+    else:    
+        guest_params = (
+            db.query(MAB)
+            .filter(MAB.user_id.is_(None), MAB.session_id == session_id)
+            .first()
+        )
+        if guest_params:
+            guest_alpha = [a-1 for a in guest_params.alpha]
+            guest_beta = [b-1 for b in guest_params.beta]
+        else:
+            print("no guest")
+            guest_alpha = [0] * 200
+            guest_beta = [0] * 200
     
-    user_mab_model = get_mab_model(user_id=user_id, session_id=None, db=db)
+    # print("session id:", session_id)
+    # print("alpha:", sum(guest_alpha))
+    # print("beta:", sum(guest_beta))
+    # print("user")
+    # print("user id:", login_user.user_id)
+    user_mab_model = get_mab_model(user_id=login_user.user_id, session_id=None, db=db)
+    # print("alpha:", sum(user_mab_model.alpha))
+    # print("beta:", sum(user_mab_model.beta))
     user_mab_model.alpha = user_mab_model.alpha + np.array(guest_alpha)
     user_mab_model.beta = user_mab_model.beta + np.array(guest_beta)
-    user_mab = db.query(MAB).filter(MAB.user_id == user_id,
+    user_params = db.query(MAB).filter(MAB.user_id == login_user.user_id,
                                     MAB.session_id.is_(None)).first()
     
-    user_mab.alpha = user_mab_model.alpha.tolist()
-    user_mab.beta = user_mab_model.beta.tolist()
+    user_params.alpha = user_mab_model.alpha.tolist()
+    user_params.beta = user_mab_model.beta.tolist()
+    print("MAB Params Merged")
+    # print("alpha:", sum(user_params.alpha))
+    # print("beta:", sum(user_params.beta))
 
     # 현재 비회원 세션에 user_id 추가하기
     cur_session: UserSession | None = (

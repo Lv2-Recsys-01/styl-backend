@@ -10,8 +10,8 @@ def get_recommendation(
     likes: list | None,
     total_rec_cnt: int,
     rec_type: str = "cand",  # 서빙용 추천 목적 or mab 후보 생성 목적
-    cat_type: str = "cat_gpt",
-    sim_type: str = "kkma",
+    cat_type: str = "cat_base", # 어떤 카테고리 사용할건지
+    sim_type: str = "mixed", # 어떤 유사도 사용할건지
     cat_rec_cnt: int = 4,
     sim_rec_cnt: int = 4,
 ) -> list:
@@ -22,8 +22,8 @@ def get_recommendation(
         rec_type = "rec"
     if cat_type not in ["cat_gpt", "cat_base"]:
         cat_type = "cat_gpt"
-    if sim_type not in ["gpt", "kkma"]:
-        sim_type = "kkma"
+    if sim_type not in ["mixed", "gpt", "kkma"]:
+        sim_type = "mixed"
 
     outfits = list()
     cat_cand = list()  # 카테고리 기반 추천 후보
@@ -37,7 +37,10 @@ def get_recommendation(
                 cat_cand.append(cat_id)
             similar = db.query(Similar).filter(Similar.outfit_id == outfit_id).first()
             if similar:
-                similar_list = getattr(similar, f"{sim_type}")
+                if sim_type == 'mixed':
+                    similar_list = list(set(similar.kkma + similar.gpt))
+                else:
+                    similar_list = getattr(similar, f"{sim_type}")
                 sim_cand.extend(similar_list)
 
         if rec_type == "rec":
