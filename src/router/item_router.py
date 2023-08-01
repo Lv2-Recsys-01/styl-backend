@@ -336,9 +336,7 @@ def show_single_image(
     if similar_outfits is None:
         raise HTTPException(status_code=500, detail="유사 코디 이미지가 존재하지 않습니다.")
 
-    sampled_similar_outfits = set(
-        getattr(similar_outfits, "kkma") + getattr(similar_outfits, "gpt")
-    )
+    sampled_similar_outfits = set(similar_outfits.kkma + similar_outfits.gpt)
     random_sampled_outfits = random.sample(sampled_similar_outfits, n_samples)
     similar_outfits_list = list()
 
