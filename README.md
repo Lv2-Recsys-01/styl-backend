@@ -57,14 +57,17 @@
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 시연 영상
-
-<img src = './docs/demonstration.gif' width= 500 alt= 'vedio'/>
+<div align="center">
+<img src = './docs/demonstration.gif' width= 1000 alt= 'vedio'/>
+</div>
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 아키텍처
-<img src = "./docs/architecture.png" width=500/>
+<div align="center">
+<img src = "./docs/architecture.png" width=800/>
+</div>
 
 ### Front End
 - React
@@ -74,35 +77,42 @@
 
 ### Data
 
-- Entity Relationship Diagram
-
-<img src = "./docs/ERD.png" width =500 />
-
+**ERD**
+<div align="center">
+<img src = "./docs/ERD.png" width =1000 />
+</div>
 <br>
 
 - 무신사 스트릿 스냅 이미지 크롤링
-- 선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도
+- 선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도  
 
-### Ops
-<img src = "./docs/ops.png" width =500 />
 
+**Airflow Pipeline**
+<div align="center">
+<img src = "./docs/ops.png" width =800 />
+</div>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 추천 로직
 
-### 유사한 코디 추천
-<img src = "./docs/similar.png" width=500/>
+### 유사한 코디 추천 (Journey)
+<div align="center">
+<img src = "./docs/similar.png" width=800/>
+</div>
 
+### 개인화 코디 추천 (Similar Style)
 
-### 개인화 코디 추천
+**1. MAB**
 
-1. MAB
+<div align="center">
+<img src = "./docs/model1.png" width=800/>
+</div>
 
-<img src = "./docs/model1.png" width=500/>
+**2. Contents based** 
 
-2. Contents based 
-
-<img src = "./docs/model2.png" width=500/>
+<div align="center">
+<img src = "./docs/model2.png" width=800/>
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -140,7 +150,9 @@
 
 ## 타임라인
 
-<img src = "./docs/timeline.png" width=500/>
+<div align="center">
+<img src = "./docs/timeline.png" width=1000/>
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
