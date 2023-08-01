@@ -42,7 +42,7 @@
     <li><a href="#아키텍처">아키텍처</a></li>
     <li><a href="#추천-로직">추천 로직</a></li>
     <li><a href="#프로젝트-구조">프로젝트 구조</a></li>
-    <li><a href="#랩업리포트"></a>랩업리포트</li>
+    <li><a href="#랩업-리포트-및-발표-영상">랩업 리포트 및 발표 영상</a></li>
     <li><a href="#팀원소개">팀원소개</a></li>
   </ol>
 </details>
@@ -94,6 +94,8 @@
 -   무신사 스트릿 스냅 이미지 크롤링
 -   선정 이유: 다양한 메타 데이터, 다양한 스타일, 비상업성, 무보정, 비슷한 구도
 
+<br>
+
 **Airflow Pipeline**
 
 <div align="center">
@@ -111,11 +113,15 @@
 
 ### 개인화 코디 추천 (Similar Style)
 
+<br>
+
 **1. MAB**
 
 <div align="center">
 <img src = "./docs/model1.png" width=800/>
 </div>
+
+<br>
 
 **2. Contents based**
 
@@ -153,9 +159,9 @@ docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축�
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 랩업리포트
-
-[Wrap Up Report](./docs/wrapup.pdf)
+## 랩업 리포트 및 발표 영상
+[랩업 리포트](./docs/wrapup.pdf)
+[발표 영상](https://www.youtube.com/watch?v=M98BRk6CqNE&t=152s)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
