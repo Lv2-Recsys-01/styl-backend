@@ -95,38 +95,30 @@
 <div align="center">
 <img src = "./docs/similar.png" width=800/>
 </div>
+<br>
+
+수집한 코디의 메타 데이터 중에서 reporter 데이터를 활용하여 형태소 분석을 수행했습니다.
+
+TF-IDF와 벡터화를 사용하여 코디 정보를 벡터로 표현하고, 코사인 유사도를 계산하여 유사한 코디 리스트를 생성했습니다.
+
+<br>
 
 ### 개인화 코디 추천 로직 (Journey)
 
-<br>
-<div align="center">
-<img src = "./docs/model1.png" width=800/>
-</div>
-<br> 
 <div align="center">
 <img src = "./docs/model2.png" width=800/>
 </div>
+<br> 
 
-1. Contents based
-2. MAB + Content-based 
+개인화 코디 추천 서비스에는 Contents based와 MAB + Content-based 모델을 적용했습니다.
+
+AB 테스트를 위해 랜덤하게 하나의 모델을 적용하여 사용자에게 서빙했습니다. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 프로젝트 구조
 
-    📦STYL
-    ┣ 📂client
-    ┣ 📂docs
-    ┣ 📂logging
-    ┣ 📂scripts
-    ┣ 📂src
-    ┃ ┣ 📂router
-    ┃ ┗ 📜backend
-    ┣ 📜Dockerfile
-    ┣ 📜nginx.conf
-    ┗ 📜README.md
-
-총 4개의 repo를 만들어 작업하였고 backend repo에 통합하여 서비스를 배포하였습니다.
+총 4개의 repo를 만들어 작업하였고 backend repo에 통합하여 서비스를 배포했습니다.
 
 docker를 사용하여 로컬에서 실제 서비스와 같은 환경을 구축하여 개발을 진행했습니다.
 
