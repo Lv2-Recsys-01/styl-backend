@@ -9,9 +9,9 @@ class MoveBottom extends React.Component {
 
     render() {
         return (
-            <div className="bottom-arrow-container">
+            <div className="bottom-arrow-container" onClick={this.handleScrollToBottom}>
                 <span className="bottom-arrow-text">나만의 스타일 찾기</span>
-                <ArrowDownOutlined className="bottom-arrow" onClick={this.handleScrollToBottom}/>
+                <ArrowDownOutlined className="bottom-arrow"/>
             </div>
         );
     }
