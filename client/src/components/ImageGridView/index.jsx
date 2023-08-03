@@ -7,7 +7,7 @@ import { notification } from "antd";
 import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
 import Information from "../information/information";
-import { HeartFilled, SkinFilled } from '@ant-design/icons';
+import { HeartFilled} from '@ant-design/icons';
 
 const PAGE_SIZE = 10;
 const S = {
@@ -49,12 +49,12 @@ function ImageGridView(props) {
     const navigate = useNavigate(); // useNavigate 훅 사용
     const popuptext = props.view === "journey" ? (
         <>
-          <p><HeartFilled className='popheart' />하트를 눌러, 당신의 스타일을 찾아보세요<HeartFilled className='popheart' /></p>
-          <p><SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' /></p>
+          <p>마음에 드는 코디에 <HeartFilled className='popheart' />하트<HeartFilled className='popheart' />를 눌러보세요!</p>
+          <p>취향이 반영되어 코디가 업데이트됩니다.</p>
         </>
       ) : (
         <>
-          <p><SkinFilled className='popmore' />코디를 클릭해, 유사한 코디를 확인하세요<SkinFilled className='popmore' /></p>
+          <p>코디 이미지를 클릭하면 상세페이지를 볼 수 있어요!</p>
         </>
       );
     const loadingText = props.view === "journey" ? "AI가 당신을 위한 코디를 추천하고 있습니다.." : "Loading...";

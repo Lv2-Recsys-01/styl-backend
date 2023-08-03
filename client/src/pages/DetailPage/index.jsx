@@ -1,6 +1,6 @@
 import { Layout, Space } from "antd";
 import "./index.css";
-import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined, BulbFilled} from "@ant-design/icons";
+import { ArrowLeftOutlined, CloseOutlined, ShareAltOutlined} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
@@ -181,7 +181,7 @@ function DetailPage() {
                     <SimilarItems similarOutfitsList={similarOutfitsList} goToDetailPage={goToDetailPage} />
                 </Footer>
                 <Information text=     {     <>
-                    <p><BulbFilled className="popnotice"/>유사한 코디를 클릭하면, 자세히 볼 수 있어요<BulbFilled className="popnotice"/></p>
+                    <p>유사한 코디 이미지도 클릭할 수 있어요!</p>
                  </>}
                  position="special-position"
                 />

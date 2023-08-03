@@ -87,9 +87,11 @@
   }
 
   .detail .similar img {
-    max-width:150px;
+    max-width: 150px;
+    max-height: 200px;
     width: 100%;
-    height:auto;
+    height: auto;
     border-radius: 6px;
     cursor: pointer;
+    border: 1px solid var(--background);
   }
