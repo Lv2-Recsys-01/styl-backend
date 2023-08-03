@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { CloseCircleFilled, EditFilled } from '@ant-design/icons';
+import { CloseCircleFilled } from '@ant-design/icons';
 import './information.css';
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 
 const Information = (props) => {
   const { text, position } = props;
   const [visible, setVisible] = useState(true);
-  const [cookies, _] = useCookies("Cookies");
+  // const [cookies, _] = useCookies("Cookies");
 
   const handleToggle = () => {
     setVisible(!visible);

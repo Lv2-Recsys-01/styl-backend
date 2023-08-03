@@ -151,6 +151,7 @@ function DetailPage() {
 
     const goToDetailPage = (similarOutfitId) => {
         navigate(`/detail/${similarOutfitId}`);
+        window.scrollTo({top: 0, behavior: "instant"});
     };
 
     if (fetchError) {
