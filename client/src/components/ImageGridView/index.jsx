@@ -39,6 +39,29 @@ const S = {
 const GridItem = ({ children, index }) => {
     return <S.GridItem key={index}>{children}</S.GridItem>;
 };
+
+// 로컬 스토리지에 journey 상태의 outfits 정보 저장
+const saveJourneyOutfitsToCache = (data) => {
+    localStorage.setItem("journeyOutfitsCache", JSON.stringify(data));
+  };
+
+// 로컬 스토리지에서 journey 상태의 outfits 정보 불러오기
+const getJourneyOutfitsFromCache = () => {
+const cachedOutfits = localStorage.getItem("journeyOutfitsCache");
+return cachedOutfits ? JSON.parse(cachedOutfits) : [];
+};
+
+// 로컬 스토리지에 collection 상태의 outfits 정보 저장
+const saveCollectionOutfitsToCache = (data) => {
+localStorage.setItem("collectionOutfitsCache", JSON.stringify(data));
+};
+
+// 로컬 스토리지에서 collection 상태의 outfits 정보 불러오기
+const getCollectionOutfitsFromCache = () => {
+const cachedOutfits = localStorage.getItem("collectionOutfitsCache");
+return cachedOutfits ? JSON.parse(cachedOutfits) : [];
+};
+  
 function ImageGridView(props) {
     const gridViewWrapperBottomDomRef = useRef(null);
     const currentPage = useRef(0);
@@ -47,6 +70,13 @@ function ImageGridView(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchStopped, setIsFetchStopped] = useState(false);
     const navigate = useNavigate(); // useNavigate 훅 사용
+    let clickType;
+    if (props.view === "journey") {
+        clickType = "journey";
+    } else {
+        clickType = "collection";
+    }
+
     const popuptext = props.view === "journey" ? (
         <>
           <p>마음에 드는 코디에 <HeartFilled className='popheart' />하트<HeartFilled className='popheart' />를 눌러보세요!</p>
@@ -61,6 +91,25 @@ function ImageGridView(props) {
     useLayoutEffect(() => {
         totalPage.current = 100;
     }, []);
+
+    useEffect(() => {
+        // journey 상태일 때만 outfits 정보를 journeyOutfitsCache에서 불러오기
+        if (props.view === "journey") {
+          const cachedOutfits = getJourneyOutfitsFromCache();
+          if (cachedOutfits.length > 0) {
+            setOutfits(cachedOutfits);
+          }
+        }
+        // collection 상태일 때만 outfits 정보를 collectionOutfitsCache에서 불러오기
+        else {
+          const cachedOutfits = getCollectionOutfitsFromCache();
+          if (cachedOutfits.length > 0) {
+            setOutfits(cachedOutfits);
+          }
+        }
+      }, [props.view]);
+
+      
     useEffect(() => {
         let observer;
         const gridViewWrapperBottomDom = gridViewWrapperBottomDomRef.current;
@@ -111,9 +160,9 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             setIsLoading(true); 
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // await new Promise((resolve) => setTimeout(resolve, 1000));
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
-            const clickType = props.view === "journey" ? "journey" : "collection";
+            // const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
                 offset: (currentPage.current * PAGE_SIZE).toString(),
@@ -125,51 +174,24 @@ function ImageGridView(props) {
             const newData = [...outfits];
             for (let i = 0; i < outfitsList.length; i++) {
                 const single_outfit = outfitsList[i];
-                newData.push(
-                    <GridItem key={currentPage.current * PAGE_SIZE + i}>
-                        <img
-                            src={single_outfit.img_url}
-                            alt={currentPage.current * PAGE_SIZE + i}
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src =
-                                    "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-                            }}
-                            onClick={() => {
-                                goToDetailPage(single_outfit.outfit_id);
-                                styleAxios.post(`/items/journey/${single_outfit.outfit_id}/click/${clickType}`).catch((error) => {
-                                    console.error(error);
-                                });
-                            }}
-                        />
-                        <div 
-                            className="journey-option"
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end", // Right-align the children
-                                alignItems: "center", // Center the content vertically
-                            }}
-                            >
-                            <ShareAltOutlined
-                                className="journey-share"
-                                style={{ fontSize: "25px", marginRight: "12px", marginBottom:"10px" }}
-                                onClick={() => handleShareClick(single_outfit.outfit_id)}
-                            />
-                            <div style={{ display: "flex", alignItems: "center" }}>
-                                <HeartButton
-                                className="heart-button"
-                                outfitId={single_outfit.outfit_id}
-                                likeState={single_outfit.is_liked}
-                                likeType="journey"
-                                />
-                            </div>
-
-                        </div>
-
-                    </GridItem>,
-                );
-            }
+                newData.push({
+                    id: currentPage.current * PAGE_SIZE + i,
+                    img_url: single_outfit.img_url,
+                    is_liked: single_outfit.is_liked,
+                    outfit_id: single_outfit.outfit_id,
+                });
+            }    
             setOutfits(newData);
+
+            // journey 상태일 때 outfits 정보를 journeyOutfitsCache에 저장
+            if (props.view === "journey") {
+                saveJourneyOutfitsToCache(newData);
+            }
+            // collection 상태일 때 outfits 정보를 collectionOutfitsCache에 저장
+            else {
+                saveCollectionOutfitsToCache(newData);
+            }
+
             currentPage.current += 1;
 
             if (isLast) {
@@ -196,11 +218,54 @@ function ImageGridView(props) {
     };
     return (
         <div className="custom-wrapper">
-            <S.GridWrapper>{outfits}</S.GridWrapper>
+            <S.GridWrapper>
+                {outfits.map((outfit) => (
+                    <GridItem key={outfit.id}>
+                        <img
+                            src={outfit.img_url}
+                            alt={outfit.id}
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src =
+                                    "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                            }}
+                            onClick={() => {
+                                goToDetailPage(outfit.outfit_id);
+                                styleAxios.post(`/items/journey/${outfit.outfit_id}/click/${clickType}`).catch((error) => {
+                                    console.error(error);
+                                });
+                            }}
+                        />
+                        <div 
+                            className="journey-option"
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end", // Right-align the children
+                                alignItems: "center", // Center the content vertically
+                            }}
+                            >
+                            <ShareAltOutlined
+                                className="journey-share"
+                                style={{ fontSize: "25px", marginRight: "12px", marginBottom:"10px" }}
+                                onClick={() => handleShareClick(outfit.outfit_id)}
+                            />
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <HeartButton
+                                    className="heart-button"
+                                    outfitId={outfit.outfit_id}
+                                    likeState={outfit.is_liked}
+                                    likeType="journey"
+                                />
+                            </div>
+                        </div>
+                    </GridItem>
+                ))}
+            </S.GridWrapper>
             {currentPage.current > 0 && isLoading && <Skeleton text = {loadingText} />}
             <div ref={gridViewWrapperBottomDomRef} />
             <Information text= {popuptext} />
         </div>
     );
+    
 }
 export default ImageGridView;
