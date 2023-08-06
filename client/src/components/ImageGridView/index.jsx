@@ -64,7 +64,8 @@ return cachedOutfits ? JSON.parse(cachedOutfits) : [];
   
 function ImageGridView(props) {
     const gridViewWrapperBottomDomRef = useRef(null);
-    const currentPage = useRef(0);
+    // const currentPage = useRef(0);
+    const [currentPage, setCurrentPage] = useState(0);
     const totalPage = useRef(100);
     const [outfits, setOutfits] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -99,8 +100,8 @@ function ImageGridView(props) {
           if (cachedOutfits.length > 0) {
             const newcachedOutfits = [...cachedOutfits];
             setOutfits(newcachedOutfits);
-            currentPage.current = Math.floor(cachedOutfits.length / PAGE_SIZE);
-          }
+            setCurrentPage(Math.floor(cachedOutfits.length / PAGE_SIZE));
+        }
         }
         // collection 상태일 때만 outfits 정보를 collectionOutfitsCache에서 불러오기
         else {
@@ -108,8 +109,8 @@ function ImageGridView(props) {
           if (cachedOutfits.length > 0) {
             const newcachedOutfits = [...cachedOutfits];
             setOutfits(newcachedOutfits);
-            currentPage.current = Math.floor(cachedOutfits.length / PAGE_SIZE);
-          }
+            setCurrentPage(Math.floor(cachedOutfits.length / PAGE_SIZE));
+        }
         }
       }, [props.view]);
 
@@ -129,7 +130,7 @@ function ImageGridView(props) {
                         entry.isIntersecting &&
                         !isLoading &&
                         !isFetchStopped &&
-                        currentPage.current < totalPage.current
+                        currentPage < totalPage.current
                     ) {
                         fetchData();
                     }
@@ -140,7 +141,7 @@ function ImageGridView(props) {
         return () => {
             observer.disconnect();
         };
-    }, [isLoading, isFetchStopped]);
+    }, [isLoading, isFetchStopped, currentPage]);
 
     const handleShareClick = (outfit) => {
         const DetailUrl = 'stylesjourney.com/detail/';
@@ -168,7 +169,7 @@ function ImageGridView(props) {
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
-                offset: (currentPage.current * PAGE_SIZE).toString(),
+                offset: (currentPage * PAGE_SIZE).toString(),
             });
             const response = await styleAxios.get(`${viewUrl}?${viewParams.toString()}`);
 
@@ -176,15 +177,17 @@ function ImageGridView(props) {
             const newData = [];
             for (let i = 0; i < outfitsList.length; i++) {
                 const single_outfit = outfitsList[i];
-                newData.push({
-                id: currentPage.current * PAGE_SIZE + i,
-                img_url: single_outfit.img_url,
-                is_liked: single_outfit.is_liked,
-                outfit_id: single_outfit.outfit_id,
-                });
+                const newId = currentPage * PAGE_SIZE + i;
+
+                if (!outfits.some((outfit) => outfit.id === newId)) {
+                    newData.push({
+                    id: newId,
+                    img_url: single_outfit.img_url,
+                    is_liked: single_outfit.is_liked,
+                    outfit_id: single_outfit.outfit_id
+                    });
             } 
-               
-            setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
+        }
 
             // journey 상태일 때 outfits 정보를 journeyOutfitsCache에 저장
             if (props.view === "journey") {
@@ -195,7 +198,9 @@ function ImageGridView(props) {
                 saveCollectionOutfitsToCache([...outfits, ...newData]);
             }
 
-            currentPage.current += 1;
+            setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
+
+            setCurrentPage((prevPage) => prevPage + 1);
 
             if (isLast) {
                 setIsFetchStopped(true);
@@ -265,7 +270,7 @@ function ImageGridView(props) {
                     </GridItem>
                 ))}
             </S.GridWrapper>
-            {currentPage.current > 0 && isLoading && <Skeleton text = {loadingText} />}
+            {currentPage > 0 && isLoading && <Skeleton text = {loadingText} />}
             <div ref={gridViewWrapperBottomDomRef} />
             <Information text= {popuptext} />
         </div>
