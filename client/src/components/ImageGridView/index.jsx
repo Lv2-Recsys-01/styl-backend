@@ -97,19 +97,23 @@ function ImageGridView(props) {
         if (props.view === "journey") {
           const cachedOutfits = getJourneyOutfitsFromCache();
           if (cachedOutfits.length > 0) {
-            setOutfits(cachedOutfits);
+            const newcachedOutfits = [...cachedOutfits];
+            setOutfits(newcachedOutfits);
+            currentPage.current = Math.floor(cachedOutfits.length / PAGE_SIZE);
           }
         }
         // collection 상태일 때만 outfits 정보를 collectionOutfitsCache에서 불러오기
         else {
           const cachedOutfits = getCollectionOutfitsFromCache();
           if (cachedOutfits.length > 0) {
-            setOutfits(cachedOutfits);
+            const newcachedOutfits = [...cachedOutfits];
+            setOutfits(newcachedOutfits);
+            currentPage.current = Math.floor(cachedOutfits.length / PAGE_SIZE);
           }
         }
       }, [props.view]);
 
-      
+
     useEffect(() => {
         let observer;
         const gridViewWrapperBottomDom = gridViewWrapperBottomDomRef.current;
@@ -136,7 +140,7 @@ function ImageGridView(props) {
         return () => {
             observer.disconnect();
         };
-    }, [isLoading]);
+    }, [isLoading, isFetchStopped]);
 
     const handleShareClick = (outfit) => {
         const DetailUrl = 'stylesjourney.com/detail/';
@@ -159,10 +163,9 @@ function ImageGridView(props) {
     
     async function fetchData() {
         try {
-            setIsLoading(true); 
-            // await new Promise((resolve) => setTimeout(resolve, 1000));
+            setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
-            // const clickType = props.view === "journey" ? "journey" : "collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
                 offset: (currentPage.current * PAGE_SIZE).toString(),
@@ -170,26 +173,26 @@ function ImageGridView(props) {
             const response = await styleAxios.get(`${viewUrl}?${viewParams.toString()}`);
 
             const { outfits_list: outfitsList, is_last: isLast } = response.data;
-
-            const newData = [...outfits];
+            const newData = [];
             for (let i = 0; i < outfitsList.length; i++) {
                 const single_outfit = outfitsList[i];
                 newData.push({
-                    id: currentPage.current * PAGE_SIZE + i,
-                    img_url: single_outfit.img_url,
-                    is_liked: single_outfit.is_liked,
-                    outfit_id: single_outfit.outfit_id,
+                id: currentPage.current * PAGE_SIZE + i,
+                img_url: single_outfit.img_url,
+                is_liked: single_outfit.is_liked,
+                outfit_id: single_outfit.outfit_id,
                 });
-            }    
-            setOutfits(newData);
+            } 
+               
+            setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
 
             // journey 상태일 때 outfits 정보를 journeyOutfitsCache에 저장
             if (props.view === "journey") {
-                saveJourneyOutfitsToCache(newData);
+                saveJourneyOutfitsToCache([...outfits, ...newData]);
             }
             // collection 상태일 때 outfits 정보를 collectionOutfitsCache에 저장
             else {
-                saveCollectionOutfitsToCache(newData);
+                saveCollectionOutfitsToCache([...outfits, ...newData]);
             }
 
             currentPage.current += 1;
@@ -211,7 +214,8 @@ function ImageGridView(props) {
         } finally{
             setIsLoading(false);
         }
-    }
+    } 
+    
     const goToDetailPage = (front_outfit_id) => {
         window.scrollTo({ top: 0, behavior: "instant" });
         navigate(`/detail/${front_outfit_id}`);
