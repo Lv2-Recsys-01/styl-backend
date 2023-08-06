@@ -51,20 +51,8 @@ const cachedOutfits = localStorage.getItem("journeyOutfitsCache");
 return cachedOutfits ? JSON.parse(cachedOutfits) : [];
 };
 
-// 로컬 스토리지에 collection 상태의 outfits 정보 저장
-const saveCollectionOutfitsToCache = (data) => {
-localStorage.setItem("collectionOutfitsCache", JSON.stringify(data));
-};
-
-// 로컬 스토리지에서 collection 상태의 outfits 정보 불러오기
-const getCollectionOutfitsFromCache = () => {
-const cachedOutfits = localStorage.getItem("collectionOutfitsCache");
-return cachedOutfits ? JSON.parse(cachedOutfits) : [];
-};
-  
 function ImageGridView(props) {
     const gridViewWrapperBottomDomRef = useRef(null);
-    // const currentPage = useRef(0);
     const [currentPage, setCurrentPage] = useState(0);
     const totalPage = useRef(100);
     const [outfits, setOutfits] = useState([]);
@@ -94,18 +82,8 @@ function ImageGridView(props) {
     }, []);
 
     useEffect(() => {
-        // journey 상태일 때만 outfits 정보를 journeyOutfitsCache에서 불러오기
         if (props.view === "journey") {
           const cachedOutfits = getJourneyOutfitsFromCache();
-          if (cachedOutfits.length > 0) {
-            const newcachedOutfits = [...cachedOutfits];
-            setOutfits(newcachedOutfits);
-            setCurrentPage(Math.floor(cachedOutfits.length / PAGE_SIZE));
-        }
-        }
-        // collection 상태일 때만 outfits 정보를 collectionOutfitsCache에서 불러오기
-        else {
-          const cachedOutfits = getCollectionOutfitsFromCache();
           if (cachedOutfits.length > 0) {
             const newcachedOutfits = [...cachedOutfits];
             setOutfits(newcachedOutfits);
@@ -165,7 +143,7 @@ function ImageGridView(props) {
     async function fetchData() {
         try {
             setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             const viewUrl = props.view === "journey" ? "/items/journey" : "/items/collection";
             const viewParams = new URLSearchParams({
                 page_size: PAGE_SIZE.toString(),
@@ -189,13 +167,8 @@ function ImageGridView(props) {
             } 
         }
 
-            // journey 상태일 때 outfits 정보를 journeyOutfitsCache에 저장
             if (props.view === "journey") {
                 saveJourneyOutfitsToCache([...outfits, ...newData]);
-            }
-            // collection 상태일 때 outfits 정보를 collectionOutfitsCache에 저장
-            else {
-                saveCollectionOutfitsToCache([...outfits, ...newData]);
             }
 
             setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
