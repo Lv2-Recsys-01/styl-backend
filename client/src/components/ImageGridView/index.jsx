@@ -268,7 +268,7 @@ function ImageGridView(props) {
             </S.GridWrapper>
             {currentPage > 0 && isLoading && <Skeleton text = {loadingText} />}
             <div ref={gridViewWrapperBottomDomRef} />
-            <Information text= {popuptext} />
+            {/* <Information text= {popuptext} /> */}
         </div>
     );
     

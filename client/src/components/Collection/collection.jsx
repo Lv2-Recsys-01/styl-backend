@@ -171,7 +171,7 @@ const CollectionGridView = () => {
       </S.GridWrapper>
       {currentPage > 0 && isLoading && <Skeleton text={loadingText} />}
       <div ref={gridViewWrapperBottomDomRef} />
-      <Information text={popuptext} position="collection-position"/>
+      {/* <Information text={popuptext} position="collection-position"/> */}
     </div>
   );
 };

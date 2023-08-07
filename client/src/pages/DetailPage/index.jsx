@@ -181,11 +181,11 @@ function DetailPage() {
                 <Footer className="detail-footer">
                     <SimilarItems similarOutfitsList={similarOutfitsList} goToDetailPage={goToDetailPage} />
                 </Footer>
-                <Information text=     {     <>
+                {/* <Information text=     {     <>
                     <p>유사한 코디 이미지도 클릭할 수 있어요!</p>
                  </>}
                  position="similar-position"
-                />
+                /> */}
             </Layout>
         </Space>
     );

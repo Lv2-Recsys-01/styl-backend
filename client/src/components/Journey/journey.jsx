@@ -42,21 +42,34 @@ const GridItem = ({ children, index }) => {
   return <S.GridItem key={index}>{children}</S.GridItem>;
 };
 
-// 로컬 스토리지에 journey 상태의 outfits 정보 저장
-const saveJourneyOutfitsToCache = (data) => {
-  localStorage.setItem("journeyOutfitsCache", JSON.stringify(data));
+const saveMenOutfitsToCache = (data) => {
+  sessionStorage.setItem("MenOutfitsCache", JSON.stringify(data));
 };
 
-// 로컬 스토리지에서 journey 상태의 outfits 정보 불러오기
-const getJourneyOutfitsFromCache = () => {
-const cachedOutfits = localStorage.getItem("journeyOutfitsCache");
-return cachedOutfits ? JSON.parse(cachedOutfits) : [];
+const getMenOutfitsFromCache = () => {
+  const cachedOutfits = sessionStorage.getItem("MenOutfitsCache");
+  return cachedOutfits ? JSON.parse(cachedOutfits) : [];
 };
 
-function resetJourneyOutfitsCache() {
-  localStorage.removeItem("journeyOutfitsCache");
-  window.scrollTo({ top: 0, behavior: "instant" });
+function resetMenOutfitsCache() {
+  sessionStorage.removeItem("MenOutfitsCache");
   window.location.reload();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+const saveWomenOutfitsToCache = (data) => {
+  sessionStorage.setItem("WomenOutfitsCache", JSON.stringify(data));
+};
+
+const getWomenOutfitsFromCache = () => {
+  const cachedOutfits = sessionStorage.getItem("WomenOutfitsCache");
+  return cachedOutfits ? JSON.parse(cachedOutfits) : [];
+};
+
+function resetWomenOutfitsCache() {
+  sessionStorage.removeItem("WomenOutfitsCache");
+  window.location.reload();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 const JourneyGridView = ({ view }) => {
@@ -68,15 +81,6 @@ const JourneyGridView = ({ view }) => {
   const [isFetchStopped, setIsFetchStopped] = useState(false);
   const navigate = useNavigate();
   const clickType = view === "men" ? "men" : "women";
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  const saveScrollPosition = () => {
-    setScrollPosition(window.scrollY);
-  };
-
-  const restoreScrollPosition = () => {
-    window.scrollTo({ top: scrollPosition, behavior: "smooth" });
-  };
 
   const popuptext = (
     <>
@@ -92,11 +96,15 @@ const JourneyGridView = ({ view }) => {
   }, []);
 
   useEffect(() => {
-    const cachedOutfits = getJourneyOutfitsFromCache();
-    if (cachedOutfits.length > 0) {
-      setOutfits(cachedOutfits);
-      setCurrentPage(Math.floor(cachedOutfits.length / PAGE_SIZE));
-      restoreScrollPosition();
+    const cachedMenOutfits = getMenOutfitsFromCache();
+    const cachedWomenOutfits = getWomenOutfitsFromCache();
+
+    if (view === "men" && cachedMenOutfits.length > 0) {
+      setOutfits(cachedMenOutfits);
+      setCurrentPage(Math.floor(cachedMenOutfits.length / PAGE_SIZE));
+    } else if (view ==="women" && cachedWomenOutfits.length>0){
+      setOutfits(cachedWomenOutfits);
+      setCurrentPage(Math.floor(cachedWomenOutfits.length / PAGE_SIZE));
     }
   }, [view]);
 
@@ -168,11 +176,15 @@ const JourneyGridView = ({ view }) => {
         }));
 
       if (view === "men" && outfits.length === 0) {
-        resetJourneyOutfitsCache();
+        resetMenOutfitsCache();
+      } else if (view ==="women"){
+        resetWomenOutfitsCache();
       }
 
       if (view === "men") {
-        saveJourneyOutfitsToCache([...outfits, ...newData]);
+        saveMenOutfitsToCache([...outfits, ...newData]);
+      } else if (view ==="women"){
+        saveWomenOutfitsToCache([...outfits, ...newData]);
       }
 
       setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
@@ -198,7 +210,6 @@ const JourneyGridView = ({ view }) => {
   }
 
   const goToDetailPage = (front_outfit_id) => {
-    saveScrollPosition();
     window.scrollTo({ top: 0, behavior: "instant" });
     navigate(`/detail/${front_outfit_id}`);
   };
@@ -252,7 +263,7 @@ const JourneyGridView = ({ view }) => {
       </S.GridWrapper>
       {currentPage > 0 && isLoading && <Skeleton text={loadingText} />}
       <div ref={gridViewWrapperBottomDomRef} />
-      <Information text={popuptext} />
+      {/* <Information text={popuptext} /> */}
     </div>
   );
 };
