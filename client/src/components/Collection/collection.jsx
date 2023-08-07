@@ -14,7 +14,7 @@ const S = {
   GridWrapper: styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 10px;
+    grid-gap: 1px;
     margin: 10px;
   `,
   GridItem: styled.div`
@@ -22,8 +22,8 @@ const S = {
     width: 100%;
     padding-top: 162%;
     overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid var(--subcolor);
+    border-radius: 10px;
+    border: 1px solid ;
     cursor: pointer;
     img {
       position: absolute;
@@ -158,44 +158,30 @@ const CollectionGridView = () => {
       <S.GridWrapper>
         {outfits.map((outfit) => (
           <S.GridItem key={outfit.id}>
-            <img
-              src={outfit.img_url}
-              alt={outfit.id}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src =
-                  "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
-              }}
-              onClick={() => {
-                goToDetailPage(outfit.outfit_id);
-                styleAxios
-                  .post(`/items/journey/${outfit.outfit_id}/click/${clickType}`)
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              }}
-            />
-            <div
-              className="journey-option"
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <ShareAltOutlined
-                className="journey-share"
-                style={{ fontSize: "25px", marginRight: "12px", marginBottom: "10px" }}
-                onClick={() => handleShareClick(outfit.outfit_id)}
+            <div className="image-container">
+              <img
+                src={outfit.img_url}
+                alt={outfit.id}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://codidatabucket.s3.ap-northeast-2.amazonaws.com/img/subimage/loading.jpg";
+                }}
+                onClick={() => {
+                  goToDetailPage(outfit.outfit_id);
+                  styleAxios
+                    .post(`/items/journey/${outfit.outfit_id}/click/${clickType}`)
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
               />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <HeartButton
-                  className="heart-button"
-                  outfitId={outfit.outfit_id}
-                  likeState={outfit.is_liked}
-                  likeType="journey"
-                />
-              </div>
+              <HeartButton
+                className="heart-button"
+                outfitId={outfit.outfit_id}
+                likeState={outfit.is_liked}
+                likeType="journey"
+              />
             </div>
           </S.GridItem>
         ))}

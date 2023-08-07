@@ -1,4 +1,7 @@
 /* mypage.css */
+.mypage-wrapper{
+    padding:5px;
+}
 .mypage {
     display: flex;
     align-items: center;
@@ -15,10 +18,10 @@
     text-align: right;
     margin-left:auto;
     font-size: 30px;
-    color: var(--steelblue);
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .collection-header {
-    margin-top: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
 }

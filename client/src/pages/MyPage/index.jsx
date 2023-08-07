@@ -2,7 +2,7 @@ import React from "react";
 import CollectionGridView from "../../components/Collection/collection";
 import "./mypage.css"
 import { Layout } from "antd";
-import { ArrowLeftOutlined, HomeOutlined } from "@ant-design/icons";
+import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 const { Header } = Layout;
@@ -23,7 +23,7 @@ function DetailHeader() {
 
 function MyPage() {
     return (
-        <div>
+        <div className="mypage-wrapper">
             <Header className="mypage">
                 {DetailHeader()}
             </Header>

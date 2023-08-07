@@ -85,7 +85,7 @@ const JourneyGridView = ({ view }) => {
     </>
   );
   
-  const loadingText = view === "men" ? "AI가 당신을 위한 코디를 추천하고 있습니다.." : "Loading...";
+  const loadingText ="AI가 당신을 위한 코디를 추천하고 있습니다..";
 
   useEffect(() => {
     totalPage.current = 100;
