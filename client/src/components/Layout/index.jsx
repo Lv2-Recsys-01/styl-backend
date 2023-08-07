@@ -62,11 +62,11 @@ export function Footer() {
 
 function Layout({ children, location }) {
     const [isMainlPage, setIsMainPage] = useState(
-        () => location.pathname === "/journey" || location.pathname === "/collections",
+        () => location.pathname === "/journey/men" || location.pathname === "/journey/women",
     );
 
     useEffect(() => {
-        setIsMainPage(location.pathname === "/journey" || location.pathname === "/collections");
+        setIsMainPage(location.pathname === "/journey/men" || location.pathname === "/journey/women");
     }, [location.pathname]);
 
     return (

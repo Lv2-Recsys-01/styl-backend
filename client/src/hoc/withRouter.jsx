@@ -20,7 +20,7 @@ function withRouter(Component) {
 
         useEffect(() => {
             if (isLoggedIn && location.pathname === "/") {
-                navigate("/journey", { replace: true });
+                navigate("/journey/men", { replace: true });
                 setIsLoggedIn(false);
                 notification.warning({
                     message: "로그인되어 있습니다!",

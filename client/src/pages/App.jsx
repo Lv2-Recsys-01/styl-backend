@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Outlet, Route, Routes, useParams } from "react-router-dom";
-import Journey from "./Journey";
+import JourneyMen from "./JourneyMen";
+import JourneyWomen from "./JourneyWomen";
 import EntryPage from "./EntryPage";
 import MyPage from "./MyPage";
 import DetailPage from "./DetailPage";
@@ -21,7 +22,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<LayoutOutlet />}>
                     <Route path="/" element={<EntryPage />} />
-                    <Route path="/journey" element={<Journey />} />
+                    <Route path="/journey/men" element={<JourneyMen />} />
+                    <Route path="/journey/women" element={<JourneyWomen />} />
                     <Route path="/collections" element={<MyPage />} />
                     <Route path="/detail/:front_outfit_id" element={<DetailPageWrapper />} />
                     {/* <Route path="*" element={<NotFoundPage />} /> */}

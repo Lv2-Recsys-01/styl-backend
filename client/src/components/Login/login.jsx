@@ -10,7 +10,7 @@ Modal.setAppElement("#root");
 function GoToLoginLessNav() {
     return (
         <div className='guest'>
-            <NavLink to="/journey">로그인 없이 사용</NavLink>
+            <NavLink to="/journey/men">로그인 없이 사용</NavLink>
         </div>
     );
 }
@@ -85,7 +85,7 @@ function Login({ closeModal = () => {} }) {
             .post("/users/login", LoginParams)
             .then((response) => {
                 console.log(response.data);
-                navigate("/journey");
+                navigate("/journey/men");
             })
             .catch((error) => {
                 console.error(error);

@@ -36,6 +36,7 @@ const S = {
         }
     `,
 };
+
 const GridItem = ({ children, index }) => {
     return <S.GridItem key={index}>{children}</S.GridItem>;
 };
@@ -51,6 +52,12 @@ const cachedOutfits = localStorage.getItem("journeyOutfitsCache");
 return cachedOutfits ? JSON.parse(cachedOutfits) : [];
 };
 
+function resetJourneyOutfitsCache() {
+    localStorage.removeItem("journeyOutfitsCache");
+    window.scrollTo({ top: 0, behavior: "instant" });
+    window.location.reload();
+}
+
 function ImageGridView(props) {
     const gridViewWrapperBottomDomRef = useRef(null);
     const [currentPage, setCurrentPage] = useState(0);
@@ -65,6 +72,15 @@ function ImageGridView(props) {
     } else {
         clickType = "collection";
     }
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const saveScrollPosition = () => {
+        setScrollPosition(window.scrollY);
+    };
+
+    const restoreScrollPosition = () => {
+        window.scrollTo({ top: scrollPosition, behavior: "smooth" });
+    };
+
 
     const popuptext = props.view === "journey" ? (
         <>
@@ -88,8 +104,9 @@ function ImageGridView(props) {
             const newcachedOutfits = [...cachedOutfits];
             setOutfits(newcachedOutfits);
             setCurrentPage(Math.floor(cachedOutfits.length / PAGE_SIZE));
-        }
-        }
+            restoreScrollPosition(); 
+            }
+        }   
       }, [props.view]);
 
 
@@ -166,6 +183,11 @@ function ImageGridView(props) {
                     });
             } 
         }
+            console.log('HERE1', outfits,outfits.length);
+            console.log('HERE2', newData,newData.length);
+            if (props.view === "journey" && outfits.length === 0) {
+                resetJourneyOutfitsCache();
+            }
 
             if (props.view === "journey") {
                 saveJourneyOutfitsToCache([...outfits, ...newData]);
@@ -182,7 +204,7 @@ function ImageGridView(props) {
         } catch (error) {
             console.log(error);
             if (error.response.request.status === 501) {
-                navigate("/journey");
+                navigate("/journey/men");
                 notification.warning({
                     message: "JOURNEY 페이지로 이동합니다.",
                     description: "먼저, 마음에 드는 코디에 하트를 눌러보세요!",
@@ -195,6 +217,7 @@ function ImageGridView(props) {
     } 
     
     const goToDetailPage = (front_outfit_id) => {
+        saveScrollPosition();
         window.scrollTo({ top: 0, behavior: "instant" });
         navigate(`/detail/${front_outfit_id}`);
     };

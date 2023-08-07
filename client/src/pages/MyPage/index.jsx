@@ -1,11 +1,11 @@
 import React from "react";
-import ImageGridView from "../../components/ImageGridView";
+import CollectionGridView from "../../components/Collection/collection";
 import "./mypage.css"
 
 function MyPage() {
     return (
         <div className="collection-header">
-            <ImageGridView view={'collections'}/>
+            <CollectionGridView/>
         </div>
     );
 }

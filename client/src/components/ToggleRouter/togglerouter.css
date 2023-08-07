@@ -1,31 +1,38 @@
+/* ToggleRouter Styles */
 .toggle_wrapper {
-    display: flex;
-    width: 100%;
-  }
+  display: flex;
+  width: 100%;
+}
 
-  .route-btn {
-    width: 100%;
-    height:35px;
-    border: solid 2px var(--pointcolor);
-    padding: 5px;
-    border-radius: 10px;
-    font-weight: 600;
-    margin:10px;
-    color:var(--pointcolor);
-    font-size:16px;
-    cursor: pointer;
-  }
-  .route-btn-journey {
-    background-color: var(--headerbackground);
-    color:var(--pointcolor);
-  }
+.route-btn {
+  width: 100%;
+  height: 35px;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-  .route-btn-collection{
-    background-color: var(--headerbackground);
-    color:var(--pointcolor);
-  }
+.route-btn-men {
+  border: solid 2px var(--steelblue);
+  color: var(--steelblue);
+  background-color: var(--headerbackground);
+}
 
-  .route-btn.active {
-    background-color: var(--pointcolor);
-    color: var(--background);
-  }
+.route-btn-women {
+  border: solid 2px var(--pointcolor);
+  color: var(--pointcolor);
+  background-color: var(--headerbackground);
+}
+
+.route-btn-men.active {
+  background-color: var(--steelblue);
+  color: var(--background);
+}
+
+.route-btn-women.active {
+  background-color: var(--pointcolor);
+  color: var(--background);
+}

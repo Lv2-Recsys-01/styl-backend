@@ -18,7 +18,7 @@ function DetailHeader() {
         navigate(-1);
     };
     const goJourney = () => {
-        navigate("/journey");
+        navigate("/journey/men");
     };
 
     return (
