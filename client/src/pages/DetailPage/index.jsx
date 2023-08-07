@@ -184,7 +184,7 @@ function DetailPage() {
                 <Information text=     {     <>
                     <p>유사한 코디 이미지도 클릭할 수 있어요!</p>
                  </>}
-                 position="special-position"
+                 position="similar-position"
                 />
             </Layout>
         </Space>

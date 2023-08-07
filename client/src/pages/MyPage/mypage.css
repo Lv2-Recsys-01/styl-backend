@@ -1,3 +1,24 @@
-.collection-header{
-    margin-top: 100px;
+/* mypage.css */
+.mypage {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    line-height: 64px;
+    padding: 40px;
+    padding-top: 40px;
+    padding-bottom: 10px;
+    background-color: var(--background);
+}
+
+.mypage .home {
+    text-align: right;
+    margin-left:auto;
+    font-size: 30px;
+    color: var(--steelblue);
+    opacity: 0.9;
+}
+
+.collection-header {
+    margin-top: 20px;
 }
