@@ -8,7 +8,7 @@ import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
 import Information from "../information/information";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 30;
 
 const S = {
   GridWrapper: styled.div`
@@ -44,10 +44,10 @@ const CollectionGridView = () => {
   const [outfits, setOutfits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchStopped, setIsFetchStopped] = useState(false);
-  const navigate = useNavigate(); // 이 부분에서 필요한 부분을 import해야 합니다.
+  const navigate = useNavigate();
   const clickType = 'collection';
 
-  const loadingText = "Loading..."; // 이 부분은 필요한 텍스트로 변경해야 합니다.
+  const loadingText = "Loading...";
 
   const popuptext = (
     <>
@@ -106,8 +106,7 @@ const CollectionGridView = () => {
   async function fetchData() {
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const viewUrl = "/items/women"; // 여기도 원하는 값을 할당해야 합니다.
+      const viewUrl = "/items/collection";
       const viewParams = new URLSearchParams({
         page_size: PAGE_SIZE.toString(),
         offset: (currentPage * PAGE_SIZE).toString(),
@@ -126,7 +125,6 @@ const CollectionGridView = () => {
           outfit_id: single_outfit.outfit_id,
         }));
 
-      // 여기서 resetJourneyOutfitsCache()와 saveJourneyOutfitsToCache() 관련된 로직을 구현
 
       setOutfits((prevOutfits) => [...prevOutfits, ...newData]);
 
@@ -138,7 +136,7 @@ const CollectionGridView = () => {
     } catch (error) {
       console.log(error);
       if (error.response?.request?.status === 501) {
-        navigate("/journey/men"); // 여기도 원하는 값을 할당해야 합니다.
+        navigate(-1);
         notification.warning({
           message: "JOURNEY 페이지로 이동합니다.",
           description: "먼저, 마음에 드는 코디에 하트를 눌러보세요!",

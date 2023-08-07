@@ -1,0 +1,13 @@
+ .collection-button-container{
+    position: fixed;
+    bottom: 40px;
+    right:20px;
+  }
+
+  .collection-star{
+    cursor: pointer;
+    color: var(--yellow);
+    font-size: 25px;
+    font-weight: 600;
+    opacity: 0.9;
+  }

@@ -8,6 +8,7 @@ import MoveBottom from "../MoveBottom";
 import { useCookies } from "react-cookie";
 import { styleAxios } from "../../utils";
 import ToggleRouter from "../../components/ToggleRouter";
+import CollectionButton from "../../components/CollectionButton"
 
 export function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -78,6 +79,7 @@ function Layout({ children, location }) {
                     <>
                         <MoveBottom />
                         <MoveToTop />
+                        <CollectionButton />
                     </>
                 )}
             </>
