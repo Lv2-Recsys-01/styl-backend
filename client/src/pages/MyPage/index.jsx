@@ -16,6 +16,7 @@ function DetailHeader() {
 
     return (
         <>
+            <div className= "collection-title"> My Collections</div>
             <HomeOutlined className="home" onClick={goHome} />
         </>
     );

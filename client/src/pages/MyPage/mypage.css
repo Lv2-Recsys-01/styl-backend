@@ -8,12 +8,16 @@
     justify-content: space-between;
     height: 40px;
     line-height: 64px;
-    padding: 40px;
+    padding: 25px;
     padding-top: 40px;
     padding-bottom: 10px;
     background-color: var(--background);
 }
-
+.mypage .collection-title{
+    text-align: left;
+    font-size: 18px;
+    opacity: 0.8;
+}
 .mypage .home {
     text-align: right;
     margin-left:auto;

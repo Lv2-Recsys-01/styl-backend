@@ -1,10 +1,9 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Skeleton from "../Skeleton";
 import HeartButton from "../../components/HeartButton";
 import { notification } from "antd";
-import { ShareAltOutlined } from "@ant-design/icons";
 import { styleAxios } from "../../utils";
 import Information from "../information/information";
 
@@ -86,23 +85,7 @@ const CollectionGridView = () => {
       observer.disconnect();
     };
   }, [isLoading, isFetchStopped, currentPage]);
-
-  const handleShareClick = async (outfit) => {
-    const DetailUrl = 'stylesjourney.com/detail/';
-    const newUrl = `${DetailUrl}${outfit}`;
-    try {
-      await navigator.clipboard.writeText(newUrl);
-      notification.success({
-        message: "URL이 복사되었습니다!",
-        description: "클립보드에 URL이 복사되었어요",
-        duration: 1,
-      });
-      await styleAxios.post(`/items/journey/${outfit}/musinsa-share/share`);
-    } catch (error) {
-      console.error("Failed to copy URL to clipboard:", error);
-    }
-  };
-
+  
   async function fetchData() {
     try {
       setIsLoading(true);
