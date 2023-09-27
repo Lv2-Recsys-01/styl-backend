@@ -54,7 +54,7 @@
 
 ‘Journey’는 수많은 사진 속에서 자신만의 패션을 찾아가는 AI 코디 추천 서비스입니다.
 
-[서비스 링크](https://stylesjourney.com) (23년 8월 중순까지 서비스 운영 예정입니다.)
+[서비스 링크](https://stylesjourney.com) (서비스는 2023년 8월부로 종료되었습니다.)
 <br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
